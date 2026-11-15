@@ -100,7 +100,7 @@ export const isOurAgyTool = (name: unknown) => typeof name === "string" && OURS.
  * existing high fallback for an unsupported maximum effort.
  */
 const agyEffort = (effort?: BrainEffort, model?: string) => {
-  if (model && (/-(:?low|medium|high|xhigh|max)$/.test(model) || /(?:^|-)orchestrator(?:-|$)/.test(model)))
+  if (model && (/-(?:low|medium|high|xhigh|max)$/.test(model) || /(?:^|-)orchestrator(?:-|$)/.test(model)))
     return undefined;
   if (effort === "xhigh" || effort === "max") return model === "gemini-4-hydrogen" ? "xhigh" : "high";
   return effort;
