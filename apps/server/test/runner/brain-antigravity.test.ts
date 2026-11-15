@@ -79,6 +79,22 @@ test("command line: headless stream-json in the sandbox; work takes edits, plan 
   expect(work).not.toContain("--effort");
   expect(work.join(" ")).toContain(`--conversation ${FIRST}`);
   expect(antigravityTurnArgs({ prompt: "oi", effort: "xhigh" }).join(" ")).toContain("--effort high");
+  // Hydrogen's variant slug chooses the effort; don't emit a conflicting second flag.
+  for (const suffix of ["low", "medium", "high", "xhigh"] as const) {
+    const args = antigravityTurnArgs({
+      prompt: "oi",
+      model: `gemini-4-hydrogen-${suffix}`,
+      effort: suffix === "low" ? "max" : "low",
+    });
+    expect(args).toContain(`gemini-4-hydrogen-${suffix}`);
+    expect(args).not.toContain("--effort");
+  }
+  // A family-only selection can request xhigh explicitly; legacy families retain high.
+  expect(antigravityTurnArgs({ prompt: "oi", model: "gemini-4-hydrogen", effort: "xhigh" }))
+    .toEqual(expect.arrayContaining(["--model", "gemini-4-hydrogen", "--effort", "xhigh"]));
+  expect(antigravityTurnArgs({ prompt: "oi", model: "gemini-4-argon", effort: "xhigh" }).join(" "))
+    .toContain("--effort high");
+
   const plan = antigravityTurnArgs({ prompt: "oi", profile: "plan" }).join(" ");
   expect(plan).not.toContain("--mode");
   expect(plan).not.toContain("--dangerously-skip-permissions");
