@@ -92,9 +92,19 @@ export const AGY_RUN_ENV = "AGENTES_MCP_RUN";
 const OURS = new RegExp(`^(?:mcp[_.:/-]{1,2})?${CODEX_MCP_SERVER}(?:__|[_.:/-])[\\w.-]+$`);
 export const isOurAgyTool = (name: unknown) => typeof name === "string" && OURS.test(name);
 
-/** `--effort`: low, medium or high (`xhigh` and `max` as high); a slug that names its level (`…-high`) takes none. */
-const agyEffort = (effort?: BrainEffort, model?: string) =>
-  model && /-(?:low|medium|high)$/.test(model) ? undefined : effort === "xhigh" || effort === "max" ? "high" : effort;
+/**
+ * The model slug wins when it already names an effort variant, including Hydrogen's xhigh.
+ * Never pass a second --effort for those slugs or for fixed-budget Orchestrator models:
+ * conflicting --model/--effort pairs can make the Antigravity CLI reject the turn.
+ * A family-only Hydrogen model can request xhigh directly; other families keep the
+ * existing high fallback for an unsupported maximum effort.
+ */
+const agyEffort = (effort?: BrainEffort, model?: string) => {
+  if (model && (/-(:?low|medium|high|xhigh|max)$/.test(model) || /(?:^|-)orchestrator(?:-|$)/.test(model)))
+    return undefined;
+  if (effort === "xhigh" || effort === "max") return model === "gemini-4-hydrogen" ? "xhigh" : "high";
+  return effort;
+};
 
 /** The `agy` arguments for one turn. */
 export function antigravityTurnArgs(input: {
