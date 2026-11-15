@@ -93,15 +93,13 @@ const OURS = new RegExp(`^(?:mcp[_.:/-]{1,2})?${CODEX_MCP_SERVER}(?:__|[_.:/-])[
 export const isOurAgyTool = (name: unknown) => typeof name === "string" && OURS.test(name);
 
 /**
- * The model slug wins when it already names an effort variant, including Hydrogen's xhigh.
- * Never pass a second --effort for those slugs or for fixed-budget Orchestrator models:
- * conflicting --model/--effort pairs can make the Antigravity CLI reject the turn.
- * A family-only Hydrogen model can request xhigh directly; other families keep the
- * existing high fallback for an unsupported maximum effort.
+ * A model slug with an embedded thinking level is already a complete model choice.
+ * Never add a second --effort alongside a fixed-variant model slug.
+ * For a family-only Hydrogen selection the CLI accepts xhigh; the other
+ * families retain their existing xhigh/max-to-high compatibility behavior.
  */
 const agyEffort = (effort?: BrainEffort, model?: string) => {
-  if (model && (/-(?:low|medium|high|xhigh|max)$/.test(model) || /(?:^|-)orchestrator(?:-|$)/.test(model)))
-    return undefined;
+  if (model && /-(?:low|medium|high|xhigh|max)$/.test(model)) return undefined;
   if (effort === "xhigh" || effort === "max") return model === "gemini-4-hydrogen" ? "xhigh" : "high";
   return effort;
 };
