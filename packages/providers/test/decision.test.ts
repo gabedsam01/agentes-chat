@@ -84,7 +84,11 @@ describe("OpenAI Decisions", () => {
       { apiKey: "sk-test", http },
       call("gpt-6-luna", { assets: { shot: { mediaType: "image/png", data: "AAAA" } } }),
     );
-    expect(body.input[0].content[1]).toEqual({ type: "input_image", image_url: "data:image/png;base64,AAAA" });
+    // Each picture follows a line with its name, so the state's key tells several apart.
+    expect(body.input[0].content.slice(1)).toEqual([
+      { type: "input_text", text: "shot" },
+      { type: "input_image", image_url: "data:image/png;base64,AAAA" },
+    ]);
     const refused = (async () =>
       Response.json({ error: { message: "bad key" } }, { status: 401 })) as unknown as typeof fetch;
     await expect(openAIDecision({ apiKey: "sk-test", http: refused }, call("gpt-6-luna"))).rejects.toMatchObject({
@@ -117,8 +121,16 @@ describe("Gemini Decisions", () => {
     expect(seen?.url).toBe("https://generativelanguage.googleapis.com/v1beta/decisions");
     expect(seen?.key).toBe("AQ.test");
     expect(seen?.body.questions.yes.criteria).toEqual({ true_description: "A greeting", false_description: "Not one" });
-    expect(seen?.body.input.map((b: { type: string }) => b.type)).toEqual(["text", "image", "document"]);
-    expect(seen?.body.input[2]).toMatchObject({ type: "document", mime_type: "application/pdf" });
+    expect(seen?.body.input.map((b: { type: string }) => b.type)).toEqual([
+      "text",
+      "text",
+      "image",
+      "text",
+      "document",
+    ]);
+    expect(seen?.body.input[1]).toEqual({ type: "text", text: "shot" });
+    expect(seen?.body.input[3]).toEqual({ type: "text", text: "claim" });
+    expect(seen?.body.input[4]).toMatchObject({ type: "document", mime_type: "application/pdf" });
     expect(result.answers.yes).toEqual({ noul: 0.99, confidence: 0.9 });
     expect(result.usage).toEqual({ inputTokens: 120, outputTokens: 0 });
   });
