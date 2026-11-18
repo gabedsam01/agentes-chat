@@ -41,9 +41,9 @@ describe("a target on the screen image", () => {
     const whole = judge.calls.filter((c) => "present" in c.questions);
     expect(whole).toHaveLength(1);
     expect(Object.keys(whole[0]?.questions ?? {})).toEqual(["present", "costly"]);
-    expect(Object.keys(whole[0]?.images ?? {})).toEqual([whole[0]?.state.screenshot]);
+    expect(Object.keys(whole[0]?.images ?? {})).toEqual([whole[0]?.state.screenshot as string]);
     const cell = judge.calls.find((c) => "holds" in c.questions);
-    expect(Object.keys(cell?.images ?? {})).toEqual([cell?.state.picture]);
+    expect(Object.keys(cell?.images ?? {})).toEqual([cell?.state.picture as string]);
     // Each close-up is the chosen cell, 40% of the last region.
     expect(z.asked).toHaveLength(3);
     expect(z.asked[0]?.width).toBe(Math.round(0.4 * 1280));
