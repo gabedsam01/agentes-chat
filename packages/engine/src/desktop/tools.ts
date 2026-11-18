@@ -23,6 +23,7 @@ import {
   FRESH_LOOK_MS,
   findInPage,
   formatPlanReport,
+  GOAL_STEP_PROPERTIES,
   KNOWN_LOOK_MS,
   MAX_WAIT_MS,
   type PlanReport,
@@ -89,6 +90,7 @@ const VERBS: readonly ScreenVerb[] = [
   "drag",
   "wait",
   "read",
+  "goal",
 ];
 
 const targetProp = {
@@ -104,6 +106,7 @@ const STEP_SCHEMA: JsonSchema = {
   properties: {
     do: { type: "string", enum: [...VERBS] },
     target: targetProp,
+    ...GOAL_STEP_PROPERTIES,
     to: { ...targetProp, description: "`drag`: where to drop it, as a number or in words like `target`." },
     app: {
       type: "string",
@@ -211,6 +214,7 @@ const TRAIL_AS: Partial<Record<ScreenVerb, ScreenVerb>> = { hover: "click", unch
  */
 function trailOf(report: PlanReport) {
   return report.steps
+    .flatMap((s) => s.goal?.actions ?? [s])
     .filter((s) => s.status !== "skipped")
     .map(({ step, status, ran }) => {
       const app = step.do === "open" ? step.app?.trim() : undefined;
@@ -441,7 +445,7 @@ export function createDesktopToolSource(deps: DesktopToolDeps): ToolSource {
   const definitions: ToolDefinition[] = [
     tool(
       "desktop_do",
-      `${DESKTOP_TOOL_INFO.desktop_do.description} For apps with no API or web version (native apps, file and system dialogs, a terminal window); web pages go to browser_do, and commands to run_code. Write the whole task as \`steps\` in one call, from the \`open\` (an app by its name, or a file) to the last click, the way you'd do it by hand: name each target in words (\`the File menu\`, \`Save\`) or by its number, and it is found on the screen as it is at that step. Give \`expect\` on steps whose result matters: it's checked, and the plan stops at the first step that fails or doesn't show it, saying why and what's on the screen then. A dialog in the way is never closed for you: the plan stops and names it, and you decide. ${changes}`,
+      `${DESKTOP_TOOL_INFO.desktop_do.description} For apps with no API or web version (native apps, file and system dialogs, a terminal window); web pages go to browser_do, and commands to run_code. Write the whole task as \`steps\` in one call, from the \`open\` (an app by its name, or a file) to the last click, the way you'd do it by hand: name each target in words (\`the File menu\`, \`Save\`) or by its number, and it is found on the screen as it is at that step. Give \`expect\` on steps whose result matters: it's checked, and the plan stops at the first step that fails or doesn't show it, saying why and what's on the screen then. A dialog in the way is never closed for you: the plan stops and names it, and you decide. For a short task of a few clicks in one window, one \`goal\` step does it without you naming each click: put any text it may type in \`values\` (never passwords); it stops when unsure and before anything that can't be undone, and tells you. ${changes}`,
       {
         type: "object",
         properties: { steps: { type: "array", minItems: 1, maxItems: MAX_PLAN_STEPS, items: STEP_SCHEMA } },

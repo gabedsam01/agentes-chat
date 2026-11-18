@@ -1,12 +1,14 @@
 /**
- * Browser microbenchmarks (ADR 0054) against a real Chrome and the real Jev: what one action
- * costs on the runner (action, settling, look), targets in words (time and whether the right
- * element was found), finding a control on a screenshot with choice questions (ADR 0200), checks, `find`, and a whole sign-in plan on
- * protocol 12 against 17.
+ * Browser microbenchmarks (ADR 0054) against a real Chrome: what one action costs on the runner
+ * (action, settling, look), targets in words (time and whether the right element was found),
+ * finding a control on a screenshot by choice over marks or tiles (ADR 0200), checks, `find`, and
+ * a whole sign-in plan on protocol 12 against 17.
  *
  *   bun run eval:browser:micro
  *
- * Needs TYPESAFE_API_KEY and `agent-browser` with its Chrome (`AGENT_BROWSER_BIN`).
+ * Needs `agent-browser` with its Chrome (`AGENT_BROWSER_BIN`), TYPESAFE_API_KEY for the text
+ * questions (Jev) and DECISION_PROVIDER (`openai` | `gemini`) + DECISION_API_KEY (optional
+ * DECISION_MODEL) for the ones with images: Jev never reads images (ADR 0200).
  */
 import { browserSurface, LOOK, observationOf } from "../../src/browser/surface";
 import {
@@ -19,7 +21,7 @@ import {
   type ScreenObservation,
   type TargetUse,
 } from "../../src/screen";
-import { capture, cli, cliLink, jevJudge, newJudgeLog, newMeter, p50, servePages, sum, writeReport } from "./harness";
+import { capture, cli, cliLink, imageJudge, jevJudge, newJudgeLog, newMeter, p50, servePages, sum, writeReport } from "./harness";
 
 const site = servePages();
 const ids = { orgId: "eval", agentId: "eval-agent", runId: "eval-run" };
@@ -63,6 +65,7 @@ try {
   // ── Targets in words with the real Jev, then again from the site memory ──
   const log = newJudgeLog();
   const judge = jevJudge(log);
+  const vision = imageJudge(log);
   await cli(["open", `${site.url}/login.html`]);
   const login = await look();
   const gearRef = board.elements.find((e) => e.role === "button" && e.name === "")?.ref ?? null;
@@ -125,7 +128,7 @@ try {
   if (shot) {
     const t0 = performance.now();
     const spot = await locateOnImage({
-      judge,
+      judge: vision,
       ...ids,
       target: "the gear-shaped settings icon",
       image: shot,
@@ -172,7 +175,7 @@ try {
     const t0 = performance.now();
     const r = await runPlan(
       {
-        judge: jevJudge(planLog),
+        judge: imageJudge(planLog),
         ...ids,
         surface: browserSurface({ link: cliLink({ rttMs: 100, fast, meter, vision: fast }) }),
         scope: `plan-${fast}`,

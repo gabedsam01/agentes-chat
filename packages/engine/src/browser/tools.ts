@@ -46,6 +46,7 @@ import {
   FRESH_LOOK_MS,
   findInPage,
   formatPlanReport,
+  GOAL_STEP_PROPERTIES,
   KNOWN_LOOK_MS,
   MAX_CODE_BOXES,
   MAX_WAIT_MS,
@@ -615,10 +616,13 @@ const TRAIL_TOOL: Record<ScreenVerb, BrowserToolName> = {
   right_click: "browser_click",
   drag: "browser_click",
   type: "browser_fill",
+  goal: "browser_click",
 };
 
 function trailOf(report: PlanReport) {
+  // A goal's own actions are the steps that went to the page (ADR 0200).
   return report.steps
+    .flatMap((s) => s.goal?.actions ?? [s])
     .filter((s) => s.status !== "skipped")
     .map((s) => {
       const tool = TRAIL_TOOL[s.step.do];
@@ -661,6 +665,7 @@ const VERBS: readonly ScreenVerb[] = [
   "wait",
   "back",
   "read",
+  "goal",
 ];
 
 /** One step of `browser_do`. */
@@ -669,6 +674,7 @@ const STEP_SCHEMA: JsonSchema = {
   properties: {
     do: { type: "string", enum: [...VERBS] },
     target: targetProp,
+    ...GOAL_STEP_PROPERTIES,
     url: { type: "string", description: "`open`: the full address (https://…).", maxLength: 2048 },
     text: {
       type: "string",
@@ -1489,7 +1495,7 @@ export function createBrowserToolSource(deps: BrowserToolDeps): ToolSource & { r
   const definitions: ToolDefinition[] = [
     tool(
       "browser_do",
-      `${BROWSER_TOOL_INFO.browser_do.description} The fastest way to use the browser: write the whole task as \`steps\` in one call, from the \`open\` to the last click and wait, the way you'd do it by hand. You don't need to have seen a page to plan on it: name each target in words (\`the Email field\`, \`Export\`) and it is found on the page as it is at that step, even pages the plan reaches on its way. Give \`expect\` on steps whose result matters (\`signed in\`, \`the order is confirmed\`): it's checked, and the plan stops at the first step that fails or doesn't show what you expected, telling you why and what's on the page then, so you can go on from there. To report what the page says at the end, finish with a \`read\` step and \`find\` (\`the status message\`). ${changes}`,
+      `${BROWSER_TOOL_INFO.browser_do.description} The fastest way to use the browser: write the whole task as \`steps\` in one call, from the \`open\` to the last click and wait, the way you'd do it by hand. You don't need to have seen a page to plan on it: name each target in words (\`the Email field\`, \`Export\`) and it is found on the page as it is at that step, even pages the plan reaches on its way. Give \`expect\` on steps whose result matters (\`signed in\`, \`the order is confirmed\`): it's checked, and the plan stops at the first step that fails or doesn't show what you expected, telling you why and what's on the page then, so you can go on from there. To report what the page says at the end, finish with a \`read\` step and \`find\` (\`the status message\`). For a short task of a few clicks on one page, one \`goal\` step does it without you naming each click: put any text it may type in \`values\` (never passwords: use \`type_secret\` steps); it stops when unsure and before anything that can't be undone, and tells you. ${changes}`,
       {
         type: "object",
         properties: { steps: { type: "array", minItems: 1, maxItems: MAX_PLAN_STEPS, items: STEP_SCHEMA } },

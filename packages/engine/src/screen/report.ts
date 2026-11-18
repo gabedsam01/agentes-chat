@@ -36,6 +36,7 @@ const DONE: Record<ScreenVerb, string> = {
   right_click: "Right-clicked",
   drag: "Dragged",
   type: "Typed",
+  goal: "Reached the goal",
 };
 
 /** One step in a few words ("click "the Sign in button""). */
@@ -55,6 +56,8 @@ export function stepLabel(step: ScreenStep, kind: ScreenKind = "browser"): strin
       return step.until ? `wait until "${step.until}"` : step.text ? `wait for "${step.text}"` : "wait";
     case "back":
       return "back";
+    case "goal":
+      return `reach the goal "${step.goal ?? ""}"`;
     case "read":
       return step.find || step.target ? `read "${step.find ?? step.target}"` : `read the ${SCREEN_NOUN[kind]}`;
     default:
@@ -178,6 +181,14 @@ export function formatPlanReport(r: PlanReport): FormattedReport {
     } else out.push(`Done: all ${r.steps.length} steps.`);
     done.forEach((s, i) => {
       out.push(`${i + 1}. ${stepLine(s, kind)}`);
+    });
+  }
+  // What a goal did on its way, also when it stopped short (ADR 0200).
+  const goalActions = r.steps.flatMap((s) => s.goal?.actions ?? []);
+  if (goalActions.length > 0) {
+    out.push(`Actions of the goal: ${goalActions.length}.`);
+    goalActions.forEach((a, i) => {
+      out.push(`  ${i + 1}. ${stepLine(a, kind)}`);
     });
   }
   // What `read` steps found goes with the page (it is page text), before what changed on it.

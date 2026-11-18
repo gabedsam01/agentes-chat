@@ -36,7 +36,7 @@ const ROLES: Partial<Record<TargetUse, ReadonlySet<string>>> = {
   check: new Set(["checkbox", "radio", "switch", "menuitemcheckbox", "menuitemradio"]),
 };
 /** Controls, as opposed to text with a ref (a heading "Sign in" next to the button "Sign in"). */
-const CONTROLS = new Set([
+export const CONTROLS = new Set([
   ...FIELDS,
   "button",
   "link",
@@ -138,7 +138,7 @@ const WINDOWS = new Set(["window", "dialog", "alertdialog"]);
  */
 const WINDOW_BUTTON = /^-\s+button(?:\s+"(?:[^"\\]|\\.)*")?\s*\[(?:[^\]]*?,\s*)?window\s*[,\]]/;
 
-const fits = (use: TargetUse, e: ScreenElement) =>
+export const fits = (use: TargetUse, e: ScreenElement) =>
   use === "window" ? WINDOWS.has(e.role) || WINDOW_BUTTON.test(e.line) : (ROLES[use]?.has(e.role) ?? true);
 
 /** The elements an action may target, best guesses first when there are too many for one question. */
@@ -193,7 +193,7 @@ function fromMemory(memory: TargetMemory, o: ScreenObservation): ScreenElement |
 const memoryOf = (e: ScreenElement): TargetMemory => ({ role: e.role, name: e.name, context: e.context });
 
 /** Most options one Choice offers (Jev takes 255, one is "none"). */
-const MAX_OPTIONS = 200;
+export const MAX_OPTIONS = 200;
 /** The judge's pick is taken from this probability, this far ahead of the next one. */
 export const PICK_AT = 0.55;
 const PICK_MARGIN = 0.2;
@@ -206,7 +206,7 @@ export const COSTLY_PICK_AT = 0.85;
  * Whether acting on the target can't be undone, asked of the judge with the pick: a screen in any language reads
  * the same. No answer is a yes.
  */
-const COSTLY: JudgeQuestion = {
+export const COSTLY: JudgeQuestion = {
   type: "noul",
   instructions:
     "Would acting on `target` pay, delete, send or do something else that can't be undone? A plain Yes or OK in a dialog that asks for such a thing does what the dialog asks.",
@@ -215,7 +215,7 @@ const COSTLY: JudgeQuestion = {
     false: "It can be undone, or only opens, shows, selects or types something.",
   },
 };
-const costlyOf = (answers: Record<string, JudgeAnswer>) => (answers.costly?.noul ?? 1) >= 0.5;
+export const costlyOf = (answers: Record<string, JudgeAnswer>) => (answers.costly?.noul ?? 1) >= 0.5;
 /** Below this, nothing on the screen is it. */
 const ABSENT_BELOW = 0.3;
 

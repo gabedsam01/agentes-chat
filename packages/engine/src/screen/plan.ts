@@ -1,6 +1,7 @@
 import type { ScreenKind } from "@agenteschat/adapters";
 import type { Judge } from "../judge";
 import { type ConditionResult, checkCondition, findDismiss, findInPage } from "./checks";
+import { goalValuesOf, runGoal } from "./goal";
 import {
   diffObservations,
   SCREEN_NOUN,
@@ -42,7 +43,8 @@ export type ScreenVerb =
   | "double_click"
   | "right_click"
   | "drag"
-  | "type";
+  | "type"
+  | "goal";
 
 /** One step as the agent writes it. */
 export interface ScreenStep {
@@ -70,6 +72,10 @@ export interface ScreenStep {
   seconds?: number;
   /** `read`: what to get from the screen ("the order total"): only the lines that answer it. */
   find?: string;
+  /** `goal` (ADR 0200): the task in words, the texts it may type or choose by name, and the most actions it takes. */
+  goal?: string;
+  values?: Record<string, string>;
+  steps?: number;
   /** After the step, this should be true on the screen; the plan stops when it isn't. */
   expect?: string;
 }
@@ -91,6 +97,7 @@ const STEP_TEXT = [
   "until",
   "find",
   "expect",
+  "goal",
 ] as const;
 
 /** A step from a model's input when its `do` is one of `verbs`; fields that aren't a step's are dropped. */
@@ -112,6 +119,11 @@ export function screenStepOf(v: unknown, verbs: readonly ScreenVerb[]): ScreenSt
   }
   if (typeof s.pixels === "number") out.pixels = s.pixels;
   if (typeof s.seconds === "number") out.seconds = s.seconds;
+  if (out.do === "goal") {
+    const values = goalValuesOf(s.values);
+    if (values) out.values = values;
+    if (typeof s.steps === "number") out.steps = s.steps;
+  }
   return out;
 }
 
@@ -227,6 +239,8 @@ export interface StepReport {
   ran?: boolean;
   /** What a `type_secret` typed, by name (the site a Vault login was typed for, ADR 0144): never a value. */
   typed?: string;
+  /** `goal`: every action it took, each as a step of its own (ADR 0200). */
+  goal?: { actions: StepReport[] };
   /** An `open` the site sent to another page than the one asked (a deep link it doesn't take). */
   landedElsewhere?: boolean;
   /** `read` with `find`: the lines that answer it (page text, untrusted), or why there are none. */
@@ -426,6 +440,14 @@ export async function runPlan(deps: PlanDeps, steps: ScreenStep[]): Promise<Plan
       case "read":
         await readStep(step, report);
         return;
+      case "goal": {
+        const out = await runGoal({ ...deps, last: screen }, step);
+        report.goal = { actions: out.actions };
+        report.note = `"${step.goal?.trim() ?? ""}"`;
+        screen = out.screen ?? screen;
+        if (out.stop) throw new Stop(out.stop.reason, out.stop.candidates);
+        return;
+      }
       default:
         await targeted(step, report);
     }

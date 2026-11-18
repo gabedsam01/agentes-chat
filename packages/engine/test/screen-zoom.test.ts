@@ -96,9 +96,8 @@ describe("a target on the screen image", () => {
       if (kind !== "screen_locate") return undefined;
       if (id !== "which") return id === "costly" ? 0 : 0.9;
       const criteria = (q as { criteria: Record<string, string> }).criteria;
-      return criteria.e7
-        ? { choice: "none", probabilities: { none: 0.9 } }
-        : { choice: "5", probabilities: { "5": 0.9 } };
+      const pick = criteria.e7 ? "none" : "5";
+      return { choice: pick, probabilities: { [pick]: 0.9 } };
     });
     const spot = await locate(judge, { image });
     expect(judge.calls.length).toBeGreaterThan(1);

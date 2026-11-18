@@ -8,7 +8,14 @@ import { existsSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { BrowserLink, BrowserReply } from "../../src/browser/surface";
-import { createJevJudge, type Judge } from "../../src/judge";
+import {
+  DECISION_MODELS,
+  type DecisionProviderId,
+  decide,
+  decisionCostNanoUsd,
+  isDecisionProvider,
+} from "@agenteschat/providers";
+import { createJevJudge, type Judge, judgeSeesImages } from "../../src/judge";
 import type { ScreenImage } from "../../src/screen";
 
 const PAGES = path.join(import.meta.dir, "pages");
@@ -230,7 +237,6 @@ export function jevJudge(log: JudgeLog): Judge {
       },
     },
     timeoutMs: Number(process.env.JEV_TIMEOUT_MS ?? 2000),
-    visionModel: process.env.JEV_VISION_MODEL ?? "jev-preview",
   });
   return {
     name: "jev",
@@ -251,6 +257,58 @@ export function jevJudge(log: JudgeLog): Judge {
       }
     },
   };
+}
+
+/**
+ * The installation's decision model (ADR 0200): the only judge that reads images. `DECISION_PROVIDER`
+ * (`openai` | `gemini`), `DECISION_API_KEY`, optional `DECISION_MODEL` (the provider's first listed model).
+ */
+export function decisionJudge(log: JudgeLog): Judge {
+  const provider = process.env.DECISION_PROVIDER ?? "";
+  if (!isDecisionProvider(provider) || provider === "local")
+    throw new Error("DECISION_PROVIDER must be `openai` or `gemini` (images go to the decision model, ADR 0200).");
+  const model = process.env.DECISION_MODEL || DECISION_MODELS.find((m) => m.provider === provider)?.id;
+  if (!model) throw new Error(`no default decision model for ${provider}: set DECISION_MODEL.`);
+  const apiKey = requireKey("DECISION_API_KEY");
+  return {
+    name: `decision:${provider}/${model}`,
+    async ask(request) {
+      const t0 = performance.now();
+      let ok = false;
+      try {
+        const images = request.images
+          ? Object.fromEntries(
+              Object.entries(request.images).map(([k, i]) => [k, { mediaType: `image/${i.format}`, data: i.data }]),
+            )
+          : undefined;
+        const result = await decide(
+          { provider: provider as DecisionProviderId, apiKey, timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000) },
+          { model, state: request.state, questions: request.questions, ...(images ? { assets: images } : {}) },
+        );
+        log.usage.push({
+          inputTokens: result.usage.inputTokens,
+          costNanoUsd: decisionCostNanoUsd(provider as DecisionProviderId, result.usage.inputTokens),
+          model: result.model,
+        });
+        ok = true;
+        return result.answers;
+      } finally {
+        log.calls.push({
+          kind: request.kind,
+          ms: Math.round(performance.now() - t0),
+          ok,
+          images: judgeSeesImages(request),
+        });
+      }
+    },
+  };
+}
+
+/** Text questions to Jev, requests with images to the decision model (ADR 0200). */
+export function imageJudge(log: JudgeLog): Judge {
+  const jev = jevJudge(log);
+  const decision = decisionJudge(log);
+  return { name: decision.name, ask: (request) => (judgeSeesImages(request) ? decision : jev).ask(request) };
 }
 
 export const p50 = (xs: number[]) => {
