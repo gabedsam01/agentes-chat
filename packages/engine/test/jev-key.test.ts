@@ -336,7 +336,7 @@ function recorder(status = 200, body?: unknown) {
 describe("Jev through OpenRouter (ADR 0073 §9)", () => {
   const call = (key: string, fetch: typeof globalThis.fetch) =>
     callJev(key, {
-      body: { model: "jev-preview", state: "a3f1-shot", questions: {}, assets: { "a3f1-shot": { format: "png" } } },
+      body: { model: "jev-latest", state: "a3f1", questions: {} },
       baseURL: "https://typesafe.test",
       timeoutMs: 2000,
       fetch,
@@ -354,9 +354,8 @@ describe("Jev through OpenRouter (ADR 0073 §9)", () => {
     expect(sent?.url).toBe("https://openrouter.ai/api/alpha/decisions");
     expect(sent?.body).toEqual({
       model: "~typesafe/jev-latest",
-      state: "a3f1-shot",
+      state: "a3f1",
       questions: {},
-      assets: { "a3f1-shot": { format: "png" } },
     });
     expect(sent?.headers.get("authorization")).toBe("Bearer sk-or-v1-secret");
     expect(sent?.headers.get("http-referer")).toBe("https://agentes.chat");
@@ -365,7 +364,7 @@ describe("Jev through OpenRouter (ADR 0073 §9)", () => {
     const ts = recorder();
     await call("ts_live_key_1", ts.fetch);
     expect(ts.calls[0]?.url).toBe("https://typesafe.test/v1/systemone");
-    expect(ts.calls[0]?.body.model).toBe("jev-preview");
+    expect(ts.calls[0]?.body.model).toBe("jev-latest");
     expect(ts.calls[0]?.headers.get("typesafe-danger-zone-images")).toBeNull();
     expect(ts.calls[0]?.headers.get("x-openrouter-title")).toBeNull();
   });
@@ -375,7 +374,6 @@ describe("Jev through OpenRouter (ADR 0073 §9)", () => {
     expect(jevViaOf("ts_live_abc")).toBe("typesafe");
     expect(jevViaOf("sk-ant-abc")).toBe("typesafe");
     expect(openRouterJevModel("jev-latest")).toBe("~typesafe/jev-latest");
-    expect(openRouterJevModel("jev-preview")).toBe("~typesafe/jev-latest");
     expect(openRouterJevModel("jev-1.14")).toBe("typesafe/jev-1.14");
   });
 
