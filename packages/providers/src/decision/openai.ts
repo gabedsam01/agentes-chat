@@ -22,7 +22,6 @@ const textOf = (q: DecisionQuestion) =>
 
 /** One question in OpenAI's words, with Jev's true/false criteria folded into a predicate's instructions. */
 function questionOf(id: string, q: DecisionQuestion): Record<string, unknown> {
-  if (q.type === "box") throw new DecisionError("box questions need Jev", "unchecked");
   if (q.type === "choice")
     return {
       type: "choice",

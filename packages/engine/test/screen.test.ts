@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import {
   checkCondition,
   createFakeJudge,
-  createJevJudge,
   createLlmJudge,
   createTargetCache,
   describeElement,
@@ -27,6 +26,7 @@ import {
   screenOverview,
   screenRef,
 } from "../src";
+import { cellsAnswer } from "./screen-fixtures";
 
 const ids = { orgId: "o", agentId: "a", runId: "r" };
 
@@ -349,7 +349,7 @@ describe("targets in words", () => {
     expect(await findDismiss({ judge: llm, ...ids, observation: banner, covering: "covered" })).toBeNull();
   });
 
-  test("on an image: Jev's box lands on a marked element's ref, or on a point", async () => {
+  test("on an image: a pick among the marks lands on its ref", async () => {
     const image: ScreenImage = {
       data: "AAAA",
       width: 1280,
@@ -359,21 +359,20 @@ describe("targets in words", () => {
     };
     const judge = createFakeJudge((kind, id) => {
       if (kind !== "screen_locate") return undefined;
-      return id === "present" ? 0.9 : { box: { top: 0.03, bottom: 0.07, left: 0.925, right: 0.95 }, confidence: 0.8 };
+      return id === "which" ? { choice: "e9", probabilities: { e9: 0.9 } } : 0.9;
     });
     const hit = await locateOnImage({ judge, ...ids, target: "the gear icon", image });
-    expect(hit).toMatchObject({ found: true, ref: "e9" });
+    expect(hit).toMatchObject({ found: true, ref: "e9", x: 1200, y: 40 });
     // The image goes as an asset; the placeholder stands in the state.
     const asked = judge.calls[0];
     const key = Object.keys(asked?.images ?? {})[0] as string;
     expect(asked?.state.screenshot).toBe(key);
     expect(asked?.images?.[key]).toEqual({ data: "AAAA", format: "jpeg" });
-    const point = await locateOnImage({ judge, ...ids, target: "the gear icon", image: { ...image, marks: [] } });
-    expect(point).toMatchObject({ found: true, ref: null, x: 1200, y: 40 });
-    const huge = createFakeJudge((kind, id) =>
-      kind !== "screen_locate" ? undefined : id === "present" ? 0.9 : { box: { top: 0, bottom: 1, left: 0, right: 1 } },
+    expect(Object.keys(asked?.questions ?? {})).toEqual(["which", "present", "costly"]);
+    const none = createFakeJudge((kind, id) =>
+      kind !== "screen_locate" ? undefined : id === "which" ? { choice: "none", probabilities: { none: 0.9 } } : 0.1,
     );
-    expect(await locateOnImage({ judge: huge, ...ids, target: "x", image })).toMatchObject({ found: false });
+    expect(await locateOnImage({ judge: none, ...ids, target: "x", image })).toMatchObject({ found: false });
   });
 });
 
@@ -725,10 +724,10 @@ describe("plans", () => {
   });
 
   test("a target the text lacks is looked for on the screen image", async () => {
-    const judge = createFakeJudge((kind, id) => {
+    const spotJudge = cellsAnswer({ x: 150, y: 75 }, { whole: { x: 0, y: 0, width: 1000, height: 500 } });
+    const judge = createFakeJudge((kind, id, state, q, request) => {
       if (kind === "screen_target") return id === "present" ? 0.05 : { choice: "none", probabilities: { none: 0.9 } };
-      if (kind === "screen_locate")
-        return id === "present" ? 0.9 : { box: { top: 0.1, bottom: 0.2, left: 0.1, right: 0.2 } };
+      if (kind === "screen_locate") return spotJudge(kind, id, state, q, request);
       return undefined;
     });
     const surface = fakeSurface(PAGES, "home");
@@ -745,7 +744,10 @@ describe("plans", () => {
       { do: "click", target: "the chart's settings gear" },
     ]);
     expect(report.stopped).toBeUndefined();
-    expect(surface.actions[0]).toMatchObject({ kind: "click", at: { x: 150, y: 75 } });
+    const click = surface.actions[0] as { kind: string; at: { x: number; y: number } };
+    expect(click.kind).toBe("click");
+    expect(Math.abs(click.at.x - 150)).toBeLessThanOrEqual(20);
+    expect(Math.abs(click.at.y - 75)).toBeLessThanOrEqual(20);
     expect(report.steps[0]?.via).toBe("image");
     // Without vision, the agent hears it isn't on the page.
     const blind = await runPlan({ judge, ...ids, surface: withImage, scope: "a" }, [
@@ -784,66 +786,5 @@ describe("plans", () => {
     ]);
     expect(report.stopped).toBeUndefined();
     expect(looks).toBe(2);
-  });
-});
-
-describe("the judge with images", () => {
-  test("Jev: the vision model, the images header, assets and boxes", async () => {
-    const sent: { headers: Record<string, string>; body: Record<string, unknown> }[] = [];
-    const judge = createJevJudge({
-      key: "tk",
-      gateway: { recordExternalUsage: async () => null },
-      visionModel: "jev-vision-test",
-      fetch: (async (_url: string, init?: RequestInit) => {
-        sent.push({
-          headers: init?.headers as Record<string, string>,
-          body: JSON.parse(String(init?.body)) as Record<string, unknown>,
-        });
-        return Response.json({
-          model: "jev-vision-test",
-          answers: { where: { type: "box", box: { top: 0.1, bottom: 0.2, left: 0.3, right: 0.4 }, confidence: 0.7 } },
-          usage: { input_tokens: 900 },
-        });
-      }) as unknown as typeof fetch,
-    });
-    const answers = await judge.ask({
-      ...ids,
-      kind: "screen_locate",
-      state: { screenshot: "img1" },
-      images: { img1: { data: "QUJD", format: "jpeg" } },
-      questions: { where: { type: "box", instructions: "Box the button in `screenshot`." } },
-    });
-    expect(answers.where).toEqual({ box: { top: 0.1, bottom: 0.2, left: 0.3, right: 0.4 }, confidence: 0.7 });
-    expect(sent[0]?.headers["TypeSafe-Danger-Zone-Images"]).toBe("true");
-    expect(sent[0]?.body).toMatchObject({
-      model: "jev-vision-test",
-      assets: { img1: { data_base64: "QUJD", format: "jpeg" } },
-    });
-    // Text only: the usual model, no header, no assets.
-    await judge
-      .ask({
-        ...ids,
-        kind: "x",
-        state: {},
-        questions: { q: { type: "noul", instructions: "?", criteria: { true: "y", false: "n" } } },
-      })
-      .catch(() => null);
-    expect(sent[1]?.headers["TypeSafe-Danger-Zone-Images"]).toBeUndefined();
-    expect(sent[1]?.body.model).toBe("jev-latest");
-    expect(sent[1]?.body.assets).toBeUndefined();
-  });
-
-  test("the cheap model refuses images and boxes (the caller falls back to text)", async () => {
-    const judge = createLlmJudge({
-      gateway: {
-        complete: async () => {
-          throw new Error("not called");
-        },
-      } as never,
-      resolveModel: async () => "m",
-    });
-    await expect(
-      judge.ask({ ...ids, kind: "screen_locate", state: {}, questions: { where: { type: "box", instructions: "x" } } }),
-    ).rejects.toThrow("images and boxes need Jev");
   });
 });

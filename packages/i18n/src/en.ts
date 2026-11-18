@@ -10946,7 +10946,7 @@ export const en = {
   decision: {
     title: "Decision model",
     offHint: "Off. Jev decides when it has a key. Otherwise, the small model on your key.",
-    onHint: "On. This model decides before Jev, which keeps images and boxes and takes over if it fails.",
+    onHint: "On. This model decides before Jev, which takes over the text if it fails. Only this model reads images.",
     setupHint: "Choose where it runs, then turn it on. Jev decides until then.",
     providersLabel: "Where the decision model runs",
     recommendedTag: "Recommended",

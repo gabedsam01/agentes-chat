@@ -10912,7 +10912,7 @@ export const ptBR = {
   decision: {
     title: "Modelo de decisão",
     offHint: "Desligado. O Jev decide quando tem chave. Senão, o modelo pequeno da sua chave.",
-    onHint: "Ligado. Este modelo decide antes do Jev, que continua com imagens e caixas e assume se ele falhar.",
+    onHint: "Ligado. Este modelo decide antes do Jev, que assume o texto se ele falhar. Imagens só ele lê.",
     setupHint: "Escolha onde ele roda e ative. Até lá, o Jev decide.",
     providersLabel: "Onde o modelo de decisão roda",
     recommendedTag: "Recomendado",

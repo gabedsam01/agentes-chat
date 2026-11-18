@@ -138,7 +138,7 @@ describe("Gemini Decisions", () => {
 });
 
 describe("System One", () => {
-  test("assets for a Jev-compatible runtime, images for llama.cpp, box and float scores", async () => {
+  test("assets for a Jev-compatible runtime, images for llama.cpp and float scores", async () => {
     // biome-ignore lint/suspicious/noExplicitAny: the fake transport's request body is JSON, read field by field.
     let body: any = null;
     const http = (async (_url: string, init: RequestInit) => {
@@ -147,7 +147,6 @@ describe("System One", () => {
         model: "laya",
         answers: {
           yes: { type: "noul", noul: 0.7 },
-          where: { type: "box", box: { top: 0.1, bottom: 0.5, left: 0.2, right: 0.6 }, confidence: 0.8 },
           level: { type: "score", score: 1.6 },
         },
         usage: { input_tokens: 30, output_tokens: 0 },
@@ -160,7 +159,6 @@ describe("System One", () => {
         state: { shot: "the screen" },
         questions: {
           yes: { type: "noul", instructions: "ok?" },
-          where: { type: "box", instructions: "where?" },
           level: { type: "score", instructions: "how?", criteria: ["a", "b", "c"] },
         },
         assets: { shot: { mediaType: "image/png", data: "DDDD" } },
@@ -168,7 +166,6 @@ describe("System One", () => {
     );
     expect(body.assets.shot).toEqual({ data_base64: "DDDD", format: "png" });
     expect(result.answers.yes?.noul).toBe(0.7);
-    expect(result.answers.where?.box).toEqual({ top: 0.1, left: 0.2, bottom: 0.5, right: 0.6 });
     expect(result.answers.level?.score).toBe(1.6);
 
     await systemOneCall(

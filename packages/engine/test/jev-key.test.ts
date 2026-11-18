@@ -337,7 +337,6 @@ describe("Jev through OpenRouter (ADR 0073 §9)", () => {
   const call = (key: string, fetch: typeof globalThis.fetch) =>
     callJev(key, {
       body: { model: "jev-preview", state: "a3f1-shot", questions: {}, assets: { "a3f1-shot": { format: "png" } } },
-      headers: { "TypeSafe-Danger-Zone-Images": "true" },
       baseURL: "https://typesafe.test",
       timeoutMs: 2000,
       fetch,
@@ -362,14 +361,12 @@ describe("Jev through OpenRouter (ADR 0073 §9)", () => {
     expect(sent?.headers.get("authorization")).toBe("Bearer sk-or-v1-secret");
     expect(sent?.headers.get("http-referer")).toBe("https://agentes.chat");
     expect(sent?.headers.get("x-openrouter-title")).toBe("agentes.chat");
-    // TypeSafe's own switch stays with TypeSafe: OpenRouter sets what Jev needs itself.
-    expect(sent?.headers.get("typesafe-danger-zone-images")).toBeNull();
 
     const ts = recorder();
     await call("ts_live_key_1", ts.fetch);
     expect(ts.calls[0]?.url).toBe("https://typesafe.test/v1/systemone");
     expect(ts.calls[0]?.body.model).toBe("jev-preview");
-    expect(ts.calls[0]?.headers.get("typesafe-danger-zone-images")).toBe("true");
+    expect(ts.calls[0]?.headers.get("typesafe-danger-zone-images")).toBeNull();
     expect(ts.calls[0]?.headers.get("x-openrouter-title")).toBeNull();
   });
 

@@ -375,23 +375,14 @@ export const envVars = {
   TYPESAFE_API_KEY: {
     schema: z.string().optional(),
     description:
-      "Your TypeSafe key for Jev (https://console.typesafe.ai/keys), optional. Jev picks who answers messages nobody @mentioned, keeps memory tidy and finds what agents look for on their screens. An OpenRouter key (sk-or-…) works too: the same Jev, called and billed through OpenRouter. The installation's owner can also add one in Settings › AI accounts. This variable wins over that one. Never sent to a browser. Calls are billed to the key's account.",
+      "Your TypeSafe key for Jev (https://console.typesafe.ai/keys), optional. Jev picks who answers messages nobody @mentioned and keeps memory tidy. An OpenRouter key (sk-or-…) works too: the same Jev, called and billed through OpenRouter. The installation's owner can also add one in Settings › AI accounts. This variable wins over that one. Never sent to a browser. Calls are billed to the key's account.",
     section: "Agents",
     secret: true,
   },
   JEV_TIMEOUT_MS: {
     schema: z.coerce.number().int().min(200).max(30_000).default(2000),
     description:
-      "Timeout for each Jev call: picking who answers and its judgments (memory, stops, hand-offs, the tools a turn loads). Screen judgments wait at least 6 s. After it, the next step decides, as without Jev.",
-    section: "Agents",
-  },
-  JEV_VISION_MODEL: {
-    schema: z
-      .string()
-      .regex(/^[a-z0-9][a-z0-9._-]{0,63}$/)
-      .default("jev-preview"),
-    description:
-      "Jev model for judgments over images (an agent finding a target on a screenshot of its browser or desktop). Needs a release that takes images.",
+      "Timeout for each Jev call: picking who answers and its judgments (memory, stops, hand-offs, the tools a turn loads). After it, the next step decides, as without Jev.",
     section: "Agents",
   },
   DECISION_MODEL_URL: {

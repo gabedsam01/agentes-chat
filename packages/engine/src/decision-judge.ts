@@ -1,7 +1,7 @@
 import { type DecisionProviderId, decide, decisionCostNanoUsd, decisionModelLabel } from "@agenteschat/providers";
 import type { DecisionModel } from "./decision-model";
 import type { ModelGateway } from "./gateway";
-import { type Judge, type JudgeAnswer, type JudgeQuestion, type JudgeRequest, judgeSeesImages } from "./judge";
+import { type Judge, type JudgeAnswer, type JudgeRequest, judgeSeesImages } from "./judge";
 import {
   asksAddressee,
   ROUTER_MESSAGE_CHARS,
@@ -17,7 +17,7 @@ import {
 
 /**
  * The installation's optional decision model, in front of Jev (ADR 0195). It answers the same typed questions; when
- * it has no picture or no box, the Jev chain answers as before. Any failure is reported on the model's state and the
+ * it can't read pictures, the Jev chain answers the text questions as before and refuses a request with images (ADR 0200). Any failure is reported on the model's state and the
  * Jev chain takes over, so a provider that is down never leaves a message unanswered.
  */
 
@@ -32,8 +32,6 @@ function assetsOf(request: JudgeRequest) {
     ]),
   );
 }
-
-const hasBox = (questions: Record<string, JudgeQuestion>) => Object.values(questions).some((q) => q.type === "box");
 
 /** One question set to the configured model, its answers normalized and its usage recorded. */
 async function askModel(
@@ -75,8 +73,8 @@ async function askModel(
 }
 
 /**
- * The configured model, then the Jev chain. Images and box go straight to the chain when the model can't read
- * pictures (box only Jev answers); a calibrated request the model fails goes to the chain, which either has Jev or
+ * The configured model, then the Jev chain. Images go straight to the chain when the model can't read
+ * pictures (the chain refuses them, ADR 0200); a calibrated request the model fails goes to the chain, which either has Jev or
  * refuses it as today.
  */
 export function createDecisionJudge(options: {
@@ -93,7 +91,7 @@ export function createDecisionJudge(options: {
     async ask(request) {
       const current = await options.model.current().catch(() => null);
       if (!current) return options.fallback.ask(request);
-      if (hasBox(request.questions) || (judgeSeesImages(request) && !current.capabilities.inputs.includes("image")))
+      if (judgeSeesImages(request) && !current.capabilities.inputs.includes("image"))
         return options.fallback.ask(request);
       try {
         const answers = await askModel(current, request, options.gateway, options.http);

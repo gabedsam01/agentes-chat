@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { ScreenKind } from "@agenteschat/adapters";
-import type { Judge, JudgeAnswer, JudgeBox, JudgeQuestion } from "../judge";
+import type { Judge, JudgeAnswer, JudgeQuestion } from "../judge";
 import {
   describeElement,
   type ScreenElement,
@@ -373,81 +373,34 @@ export type Located =
       refused?: true;
     };
 
-/** How the judge is asked about each kind of screen: the whole of it, and a close-up of part of it. */
-const ON_IMAGE: Record<ScreenKind, { where: string; closeUp: string; present: string; absent: string }> = {
+/** How the judge is asked about each kind of screen. */
+const ON_IMAGE: Record<ScreenKind, { what: string; present: string; absent: string }> = {
   browser: {
-    where:
-      "In `screenshot` (a web page), box the one control that does what `target` describes, tightly. It may be only an icon: a gear for settings, a trash can for delete, a pencil for edit, a magnifier for search, × for close.",
-    closeUp:
-      "`screenshot` is a close-up of part of a web page. Box the one control that does what `target` describes, tightly. It may be only an icon.",
+    what: "`screenshot` is a web page. The control may be only an icon: a gear for settings, a trash can for delete, a pencil for edit, a magnifier for search, × for close.",
     present: "Does `screenshot` show a control that does what `target` describes (maybe only as an icon)?",
     absent: "It isn't on the screenshot (hidden, scrolled away or not on this page).",
   },
   desktop: {
-    where:
-      "In `screenshot` (a computer's desktop: windows, menus, a panel), box the one control that does what `target` describes, tightly. It may be only an icon: a gear for settings, a trash can for delete, a magnifier for search, x for close.",
-    closeUp:
-      "`screenshot` is a close-up of part of a computer's desktop. Box the one control that does what `target` describes, tightly. It may be only an icon.",
+    what: "`screenshot` is a computer's desktop: windows, menus, a panel. The control may be only an icon: a gear for settings, a trash can for delete, a magnifier for search, x for close.",
     present: "Does `screenshot` show a control that does what `target` describes?",
     absent: "It isn't on the screenshot.",
   },
 };
-/** The judge must say it's there at least this sure, on the whole image and on a close-up. */
+/** The judge must say it's there at least this sure, in every round. */
 const PRESENT_AT = 0.6;
-/** A first box this small (of each side) is looked at again on a close-up, when the surface takes one. */
-const ZOOM_BELOW = 0.15;
-/** The image Jev sees of a close-up, whatever part of the screen it shows: Jev takes none under 280 px a side. */
+/**
+ * The decision model answers a choice over images but draws no box (ADR 0200), so a spot is found by
+ * narrowing: a 3x3 grid of cells that overlap, so a control on a border is whole in one cell.
+ */
+const GRID = 3;
+/** A cell side is this share of the region's: cells start every 30%, so each overlaps its neighbor by 10%. */
+const CELL = 0.4;
+/** The region is narrowed until both sides are this many screen pixels or fewer: a click at its center lands. */
+const SPOT_PX = 40;
+/** At most this many narrowing rounds (each one request): 1920x1080 ends near 49x28 px. */
+const MAX_ROUNDS = 4;
+/** The image of a close-up, whatever part of the screen it shows (small regions are enlarged). */
 const CLOSE_UP = { width: 480, height: 300 };
-/**
- * The most a close-up enlarges the screen. At native size Jev's box on a 14 px control (a title bar's ×)
- * lands on its neighbor; on 240×150 of the screen enlarged twice, it doesn't.
- */
-const CLOSE_UP_ZOOM = 2;
-/**
- * A close-up shows at least this many times the first box's height and width. Up close Jev may box the
- * target whole, larger than at first (a folder with its name under it); a box over half the close-up's
- * height or 80% of its width isn't one control, so this leaves room for 1.5 times the first box's height
- * and 1.2 times its width.
- */
-const CLOSE_UP_ROOM = { height: 3, width: 1.5 };
-
-/** One control: a box taller than half the image or wider than 80% of it isn't one. */
-const clearBox = (b: JudgeBox) => {
-  const w = b.right - b.left;
-  const h = b.bottom - b.top;
-  return w > 0 && h > 0 && h <= 0.5 && w <= 0.8;
-};
-
-/** A box's center on the screen. */
-const centerOf = (image: ScreenImage, b: JudgeBox) => ({
-  x: Math.round((image.origin?.x ?? 0) + ((b.left + b.right) / 2) * image.viewport.width),
-  y: Math.round((image.origin?.y ?? 0) + ((b.top + b.bottom) / 2) * image.viewport.height),
-});
-
-/**
- * The part of the screen a close-up of `box` shows: `CLOSE_UP_ROOM` times the box, and at least
- * `CLOSE_UP` over `CLOSE_UP_ZOOM`, in `CLOSE_UP`'s shape, centered on the box and kept inside the screen.
- */
-function closeUpAround(box: JudgeBox, image: ScreenImage): ScreenRegion {
-  const origin = image.origin ?? { x: 0, y: 0 };
-  const screen = image.viewport;
-  const perPixel = Math.max(
-    1 / CLOSE_UP_ZOOM,
-    (CLOSE_UP_ROOM.height * (box.bottom - box.top) * screen.height) / CLOSE_UP.height,
-    (CLOSE_UP_ROOM.width * (box.right - box.left) * screen.width) / CLOSE_UP.width,
-  );
-  const width = Math.min(Math.round(CLOSE_UP.width * perPixel), screen.width);
-  const height = Math.min(Math.round(CLOSE_UP.height * perPixel), screen.height);
-  const center = centerOf(image, box);
-  const within = (at: number, from: number, side: number, span: number) =>
-    Math.round(Math.min(Math.max(at - span / 2, from), from + side - span));
-  return {
-    x: within(center.x, origin.x, screen.width, width),
-    y: within(center.y, origin.y, screen.height, height),
-    width,
-    height,
-  };
-}
 
 /** `image` drawn at `CLOSE_UP`'s size (a JPEG at the runner's quality); what it shows, and where, stay the same. */
 async function asCloseUp(image: ScreenImage): Promise<ScreenImage> {
@@ -458,14 +411,37 @@ async function asCloseUp(image: ScreenImage): Promise<ScreenImage> {
   return { ...image, data, ...CLOSE_UP };
 }
 
+/** The pick of a Choice: its key, and how sure the judge is of it. */
+const pickOf = (a: JudgeAnswer | undefined) => {
+  const choice = a?.choice;
+  return { choice, p: choice ? (a?.probabilities?.[choice] ?? 0) : 0 };
+};
+
+/** The cells a region is split in, left to right and top to bottom, in screen pixels. */
+function cellsOf(region: ScreenRegion): ScreenRegion[] {
+  const out: ScreenRegion[] = [];
+  const stride = (1 - CELL) / (GRID - 1);
+  for (let r = 0; r < GRID; r++) {
+    for (let c = 0; c < GRID; c++) {
+      out.push({
+        x: Math.round(region.x + c * stride * region.width),
+        y: Math.round(region.y + r * stride * region.height),
+        width: Math.round(CELL * region.width),
+        height: Math.round(CELL * region.height),
+      });
+    }
+  }
+  return out;
+}
+
 /**
- * Looks for the target on an image of the screen (Jev's Box, plus whether it's
- * there). With marks (an annotated screenshot), the point lands on a marked
- * element's ref, so the action stays as exact as a ref; else it's a point.
- * With `zoom`, a small first box is boxed again on a close-up of the screen
- * around it, up to twice as large (small desktop targets: menu items, icons,
- * a title bar's buttons), and the close-up's answer is the one taken. A target
- * the judge finds can't be undone (delete, discard…) is never taken at a bare point.
+ * Looks for the target on an image of the screen, with `choice` questions only (ADR 0200).
+ * With marks (an annotated screenshot) one question picks a marked element, so the action stays as
+ * exact as a ref. Else, or when no mark fits, the screen is narrowed cell by cell (see `GRID`): each
+ * round asks which cell holds the control, then looks again at that cell (a native-resolution
+ * close-up through `zoom`, else the same image with the cells named by where they sit on it) until
+ * the cell is `SPOT_PX` or less. A target the judge finds can't be undone (delete, discard…) is
+ * never taken at a bare spot.
  */
 export async function locateOnImage(input: {
   judge: Judge;
@@ -482,7 +458,7 @@ export async function locateOnImage(input: {
 }): Promise<Located> {
   const words = ON_IMAGE[input.kind ?? "browser"];
   const target = input.target.trim();
-  const boxOn = async (image: ScreenImage, where: string, first = false) => {
+  const ask = async (image: ScreenImage, which: JudgeQuestion, first: boolean) => {
     const placeholder = `screen_${randomUUID()}`;
     const answers: Record<string, JudgeAnswer> = await input.judge.ask({
       orgId: input.orgId,
@@ -492,7 +468,7 @@ export async function locateOnImage(input: {
       state: { screenshot: placeholder, address: input.url ?? null, target },
       images: { [placeholder]: { data: image.data, format: "jpeg" } },
       questions: {
-        where: { type: "box", instructions: where },
+        which,
         present: {
           type: "noul",
           instructions: words.present,
@@ -501,41 +477,98 @@ export async function locateOnImage(input: {
         ...(first ? { costly: COSTLY } : {}),
       },
     });
-    return { box: answers.where?.box, present: answers.present?.noul ?? 0, costly: first && costlyOf(answers) };
+    return { ...pickOf(answers.which), present: answers.present?.noul ?? 0, costly: first && costlyOf(answers) };
   };
+  const fail = (error: unknown): Located => ({
+    found: false,
+    reason: error instanceof Error ? error.message : String(error),
+  });
 
-  let first: Awaited<ReturnType<typeof boxOn>>;
-  try {
-    first = await boxOn(input.image, words.where, true);
-  } catch (error) {
-    return { found: false, reason: error instanceof Error ? error.message : String(error) };
-  }
-  if (!first.box || first.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
-  if (!clearBox(first.box)) return { found: false, reason: "no clear element there" };
-  let point = centerOf(input.image, first.box);
-  let present = first.present;
-
-  const small = first.box.right - first.box.left <= ZOOM_BELOW && first.box.bottom - first.box.top <= ZOOM_BELOW;
-  if (input.zoom && small) {
-    const taken = await input.zoom(closeUpAround(first.box, input.image)).catch(() => null);
-    // Only an image that says where it sits maps back; without one the first answer stands.
-    const close = taken?.origin ? await asCloseUp(taken).catch(() => null) : null;
-    const second = close ? await boxOn(close, words.closeUp).catch(() => null) : null;
-    if (close && second) {
-      // Up close it isn't there, or isn't one control: the first box was most likely on a neighbor.
-      if (!second.box || second.present < PRESENT_AT || !clearBox(second.box)) {
-        return { found: false, reason: "not clear on a close-up" };
+  // Marks: one question over their numbers (the most a Choice takes, plus "none").
+  const marks = (input.image.marks ?? []).slice(0, MAX_OPTIONS);
+  let costly = true;
+  if (marks.length > 0) {
+    const criteria: Record<string, string> = {};
+    for (const m of marks) criteria[m.ref] = `${m.number}: ${m.role}${m.name ? ` "${m.name}"` : ""}`;
+    criteria.none = "None of the numbered elements is it.";
+    try {
+      const r = await ask(
+        input.image,
+        {
+          type: "choice",
+          instructions: `${words.what} Elements are drawn with a number. Which one does what \`target\` describes?`,
+          criteria,
+        },
+        true,
+      );
+      if (r.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
+      costly = r.costly;
+      const m = r.choice && r.choice !== "none" ? marks.find((e) => e.ref === r.choice) : undefined;
+      if (m && r.p >= PICK_AT) {
+        return {
+          found: true,
+          x: Math.round(m.box.x + m.box.width / 2),
+          y: Math.round(m.box.y + m.box.height / 2),
+          ref: m.ref,
+          confidence: Math.min(r.p, r.present),
+        };
       }
-      point = centerOf(close, second.box);
-      present = second.present;
+    } catch (error) {
+      return fail(error);
     }
   }
 
-  const { x, y } = point;
-  const hit = (input.image.marks ?? [])
-    .filter((m) => x >= m.box.x && x <= m.box.x + m.box.width && y >= m.box.y && y <= m.box.y + m.box.height)
-    .sort((a, b) => a.box.width * a.box.height - b.box.width * b.box.height)[0];
-  // A spot is only as exact as the box: something that can't be undone is done on an element, or not at all.
-  if (!hit && first.costly) return { found: false, reason: "only a spot on the image", refused: true };
-  return { found: true, x, y, ref: hit?.ref ?? null, confidence: present };
+  // No mark fits: narrow the screen down. `region` is in screen pixels; `shown` is what the image covers.
+  const origin = input.image.origin ?? { x: 0, y: 0 };
+  let region: ScreenRegion = { ...origin, ...input.image.viewport };
+  let image = input.image;
+  let shown: ScreenRegion = region;
+  let confidence = 1;
+  for (let round = 0; round < MAX_ROUNDS && (region.width > SPOT_PX || region.height > SPOT_PX); round++) {
+    if (round > 0 && input.zoom) {
+      // Only an image that says where it sits maps back; without one the cells are read on the image we have.
+      const taken = await input.zoom(region).catch(() => null);
+      const close = taken?.origin ? await asCloseUp(taken).catch(() => null) : null;
+      if (close) {
+        image = close;
+        shown = { ...close.origin!, ...close.viewport };
+      }
+    }
+    const cells = cellsOf(region);
+    const pct = (v: number, from: number, side: number) => Math.round(((v - from) / side) * 100);
+    const criteria: Record<string, string> = {};
+    cells.forEach((c, i) => {
+      criteria[String(i + 1)] =
+        `cell ${i + 1}: from ${pct(c.x, shown.x, shown.width)}% to ${pct(c.x + c.width, shown.x, shown.width)}% across, from ${pct(c.y, shown.y, shown.height)}% to ${pct(c.y + c.height, shown.y, shown.height)}% down`;
+    });
+    criteria.none = "No cell holds it.";
+    try {
+      const r = await ask(
+        image,
+        {
+          type: "choice",
+          instructions: `${words.what} Cells of overlapping parts are numbered left to right, top to bottom, and named by where they sit on the image. Which cell holds the one control that does what \`target\` describes, whole?`,
+          criteria,
+        },
+        round === 0,
+      );
+      if (round === 0) costly = r.costly;
+      if (r.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
+      const cell = r.choice && r.choice !== "none" ? cells[Number(r.choice) - 1] : undefined;
+      if (!cell || r.p < PICK_AT) return { found: false, reason: "unsure" };
+      confidence = Math.min(confidence, r.p, r.present);
+      region = cell;
+    } catch (error) {
+      return fail(error);
+    }
+  }
+  // A spot is only as exact as a cell: something that can't be undone is done on an element, or not at all.
+  if (costly) return { found: false, reason: "only a spot on the image", refused: true };
+  return {
+    found: true,
+    x: Math.round(region.x + region.width / 2),
+    y: Math.round(region.y + region.height / 2),
+    ref: null,
+    confidence,
+  };
 }

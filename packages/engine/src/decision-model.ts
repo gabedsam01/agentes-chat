@@ -92,6 +92,8 @@ export interface DecisionModel {
   /** The model to call now, or null when off, missing or skipped after a refusal. */
   current(): Promise<ResolvedDecisionModel | null>;
   usable(): boolean;
+  /** Usable now and its recorded capabilities include images (ADR 0200: the only judge of pictures). */
+  seesImages(): boolean;
   report(state: DecisionState): void;
   view(): Promise<DecisionModelView>;
   save(input: SaveDecisionModelInput, userId: string): Promise<DecisionModelView>;
@@ -191,6 +193,10 @@ export function createDecisionModel(deps: {
       };
     },
     usable: () => row?.enabled === true && now() >= skipUntil,
+    seesImages: () =>
+      row?.enabled === true &&
+      now() >= skipUntil &&
+      (row.capabilities as DecisionCapabilities | null)?.inputs?.includes("image") === true,
     report(next) {
       if (next === "invalid" || next === "no_credit") {
         state = next;

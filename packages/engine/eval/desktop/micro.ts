@@ -1,6 +1,6 @@
 /**
  * Desktop computer use against the real Jev (ADR 0062), on scenes recorded from an agent's desktop (XFCE at
- * 1280×800; the helper's own screenshots, JPEG q70, and the runner's looks with their marks): Jev's Box on
+ * 1280×800; the helper's own screenshots, JPEG q70, and the runner's looks with their marks): finding a control on (choice questions only, ADR 0200)
  * the screenshot, first pass and with the close-up of small targets; targets that aren't there; the judge's
  * Choice over the accessibility tree; checks on the text and with the image. Prints each against its bar
  * and exits 1 when one is below it: run it before changing `JEV_VISION_MODEL`.

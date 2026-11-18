@@ -124,8 +124,6 @@ export interface JevCall {
   /** TypeSafe's request: `model` is TypeSafe's name (`jev-latest`), renamed for OpenRouter. */
   body: { model: string } & Record<string, unknown>;
   timeoutMs: number;
-  /** TypeSafe's own headers (`TypeSafe-Danger-Zone-Images`): OpenRouter sets what Jev needs itself. */
-  headers?: Record<string, string>;
   fetch?: typeof fetch;
   baseURL?: string;
 }
@@ -146,7 +144,7 @@ async function systemOne(apiKey: string, call: JevCall) {
   try {
     res = await (call.fetch ?? fetch)(url, {
       method: "POST",
-      headers: openRouter ? { ...auth, ...OPENROUTER_HEADERS } : { ...auth, ...call.headers },
+      headers: openRouter ? { ...auth, ...OPENROUTER_HEADERS } : auth,
       body: JSON.stringify(openRouter ? { ...call.body, model: openRouterJevModel(call.body.model) } : call.body),
       signal: AbortSignal.timeout(call.timeoutMs),
     });

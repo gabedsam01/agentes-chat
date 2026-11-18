@@ -1,5 +1,6 @@
 import type { ScreenKind } from "@agenteschat/adapters";
 import {
+  createFakeJudge,
   observeSnapshot,
   type ScreenAction,
   type ScreenActOutcome,
@@ -117,3 +118,38 @@ export function ticking() {
 
 /** Steps' actions without the pauses of waits and checks. */
 export const acted = (actions: ScreenAction[]) => actions.filter((a) => a.kind !== "pause");
+
+export type Point = { x: number; y: number };
+export const SCREEN: ScreenRegion = { x: 0, y: 0, width: 1280, height: 800 };
+
+/**
+ * A judge that answers the narrowing questions (ADR 0200): it picks the cell of `at` nearest its center.
+ * Cells are named by percentages of the image, which covers `covers()` (the last close-up, else the screen).
+ */
+type FakeAnswer = Parameters<typeof createFakeJudge>[0];
+
+export function cellsAnswer(
+  at: Point,
+  o: { covers?: () => ScreenRegion; whole?: ScreenRegion; present?: number; p?: number; costly?: number } = {},
+): NonNullable<FakeAnswer> {
+  return (kind, id, _state, q) => {
+    if (kind !== "screen_locate") return undefined;
+    if (id === "costly") return o.costly ?? 0;
+    if (id === "present") return o.present ?? 0.9;
+    const criteria = (q as { criteria: Record<string, string> }).criteria;
+    const seen = o.covers?.() ?? o.whole ?? SCREEN;
+    let best = "none";
+    let bestD = Number.POSITIVE_INFINITY;
+    for (const [key, text] of Object.entries(criteria)) {
+      const m = /from (\d+)% to (\d+)% across, from (\d+)% to (\d+)% down/.exec(text);
+      if (!m) continue;
+      const cx = seen.x + ((Number(m[1]) + Number(m[2])) / 200) * seen.width;
+      const cy = seen.y + ((Number(m[3]) + Number(m[4])) / 200) * seen.height;
+      const d = Math.hypot(cx - at.x, cy - at.y);
+      if (d < bestD) [best, bestD] = [key, d];
+    }
+    return { choice: best, probabilities: { [best]: o.p ?? 0.9 } };
+  };
+}
+
+export const cells = (at: Point, o: Parameters<typeof cellsAnswer>[1] = {}) => createFakeJudge(cellsAnswer(at, o));

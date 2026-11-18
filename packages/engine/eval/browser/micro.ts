@@ -1,7 +1,7 @@
 /**
  * Browser microbenchmarks (ADR 0054) against a real Chrome and the real Jev: what one action
  * costs on the runner (action, settling, look), targets in words (time and whether the right
- * element was found), Jev's Box on a screenshot, checks, `find`, and a whole sign-in plan on
+ * element was found), finding a control on a screenshot with choice questions (ADR 0200), checks, `find`, and a whole sign-in plan on
  * protocol 12 against 17.
  *
  *   bun run eval:browser:micro
@@ -119,7 +119,7 @@ try {
     cases: targets,
   };
 
-  // ── Jev's Box on a screenshot: the gear icon without a name ──
+  // ── Finding the control on a screenshot (marks, then narrowing cells): the gear icon without a name ──
   await cli(["open", `${site.url}/dashboard.html`]);
   const shot = await capture();
   if (shot) {

@@ -12,7 +12,7 @@ import {
 /**
  * Gemini's Decisions API (ADR 0195): POST /v1beta/decisions with gemini-decision-1. Shared input is multimodal (text,
  * pictures, audio, video and PDF), questions are a map by id and answers come back in a map. Its noul criteria name
- * the two sides true_description and false_description. No box/spatial grounding.
+ * the two sides true_description and false_description.
  * https://ai.google.dev/api/decisions
  */
 
@@ -22,7 +22,6 @@ const textOf = (q: DecisionQuestion) =>
   typeof q.instructions === "string" ? q.instructions : JSON.stringify(q.instructions);
 
 function questionOf(q: DecisionQuestion): Record<string, unknown> {
-  if (q.type === "box") throw new DecisionError("box questions need Jev", "unchecked");
   if (q.type === "choice") return { type: "choice", instructions: textOf(q), criteria: q.criteria };
   if (q.type === "score") return { type: "score", instructions: textOf(q), criteria: q.criteria };
   return {

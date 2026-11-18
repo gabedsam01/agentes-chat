@@ -1,6 +1,6 @@
 /**
  * The typed-question wire a decision model answers (ADR 0195). The shapes are the ones the judge and the router
- * already speak (noul, choice, score, box); each provider adapter translates them to its own API and back, so the
+ * already speak (noul, choice, score); each provider adapter translates them to its own API and back, so the
  * engine never learns a provider's field names.
  */
 
@@ -10,20 +10,11 @@ export type DecisionProviderId = "openai" | "gemini" | "local";
 /** What a provider's decision endpoint is. */
 export type DecisionWire = "openai" | "gemini" | "systemone";
 
-/** A yes/no, a fixed choice, an ordered level, or a box in an image. */
+/** A yes/no, a fixed choice or an ordered level. */
 export type DecisionQuestion =
   | { type: "noul"; instructions: string | Record<string, unknown>; criteria?: { true: string; false: string } }
   | { type: "choice"; instructions: string | Record<string, unknown>; criteria: Record<string, string> }
-  | { type: "score"; instructions: string | Record<string, unknown>; criteria: string[] }
-  | { type: "box"; instructions: string | Record<string, unknown> };
-
-/** A region of an image: fractions of its width and height, from the top left. */
-export interface DecisionBox {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
+  | { type: "score"; instructions: string | Record<string, unknown>; criteria: string[] };
 
 /** One normalized answer. Missing fields mean the provider said nothing about that question. */
 export interface DecisionAnswer {
@@ -32,7 +23,6 @@ export interface DecisionAnswer {
   probabilities?: Record<string, number>;
   score?: number;
   confidence?: number;
-  box?: DecisionBox;
 }
 
 /** A picture, a recording, a video or a document the questions look at. Base64, no data: prefix. */
