@@ -4,8 +4,8 @@
  * its first surface; desktop computer use reuses it as is.
  */
 export * from "./checks";
+export * from "./goal";
 export * from "./observation";
 export * from "./plan";
 export * from "./report";
 export * from "./targets";
-export * from "./goal";

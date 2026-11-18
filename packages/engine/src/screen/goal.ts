@@ -38,7 +38,7 @@ export const GOAL_STEP_PROPERTIES = {
   values: {
     type: "object",
     description:
-      "`goal`: the texts it may type or choose, by name (`{ \"email\": \"ana@example.com\" }`). It types nothing else. Never passwords: use `type_secret` steps for them.",
+      '`goal`: the texts it may type or choose, by name (`{ "email": "ana@example.com" }`). It types nothing else. Never passwords: use `type_secret` steps for them.',
     additionalProperties: { type: "string", maxLength: MAX_VALUE_TEXT },
   },
   steps: {
@@ -84,7 +84,8 @@ const OPERATIONS: Record<Operation, string> = {
   scroll_up: "Scroll up: what the goal needs isn't in view.",
   wait: "Wait: the screen is still loading or changing.",
   done: "Nothing is left to do: the goal is reached.",
-  blocked: "The goal can't be done from here (an error, a missing permission, something that must be done by a person).",
+  blocked:
+    "The goal can't be done from here (an error, a missing permission, something that must be done by a person).",
 };
 
 const noneOption = "None of these elements fits.";
@@ -194,7 +195,8 @@ export async function runGoal(deps: PlanDeps, step: ScreenStep): Promise<GoalRes
       if (deps.signal?.aborted) throw new GoalStop("stopped");
       const held = await deps.hold?.();
       if (held) throw new GoalStop(held);
-      const o: ScreenObservation = n === 0 && screen ? screen : (screen = await deps.surface.observe());
+      const o: ScreenObservation = n === 0 && screen ? screen : await deps.surface.observe();
+      screen = o;
       const t0 = now();
 
       const controls = o.elements.filter((e) => CONTROLS.has(e.role));

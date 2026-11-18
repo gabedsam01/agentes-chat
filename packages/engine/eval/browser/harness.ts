@@ -7,7 +7,6 @@ import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { BrowserLink, BrowserReply } from "../../src/browser/surface";
 import {
   DECISION_MODELS,
   type DecisionProviderId,
@@ -15,6 +14,7 @@ import {
   decisionCostNanoUsd,
   isDecisionProvider,
 } from "@agenteschat/providers";
+import type { BrowserLink, BrowserReply } from "../../src/browser/surface";
 import { createJevJudge, type Judge, judgeSeesImages } from "../../src/judge";
 import type { ScreenImage } from "../../src/screen";
 
@@ -282,7 +282,11 @@ export function decisionJudge(log: JudgeLog): Judge {
             )
           : undefined;
         const result = await decide(
-          { provider: provider as DecisionProviderId, apiKey, timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000) },
+          {
+            provider: provider as DecisionProviderId,
+            apiKey,
+            timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000),
+          },
           { model, state: request.state, questions: request.questions, ...(images ? { assets: images } : {}) },
         );
         log.usage.push({

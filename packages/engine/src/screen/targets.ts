@@ -529,9 +529,9 @@ export async function locateOnImage(input: {
       // Only an image that says where it sits maps back; without one the cells are read on the image we have.
       const taken = await input.zoom(region).catch(() => null);
       const close = taken?.origin ? await asCloseUp(taken).catch(() => null) : null;
-      if (close) {
+      if (close?.origin) {
         image = close;
-        shown = { ...close.origin!, ...close.viewport };
+        shown = { ...close.origin, ...close.viewport };
       }
     }
     const cells = cellsOf(region);

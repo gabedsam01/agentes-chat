@@ -120,16 +120,16 @@ describe("the goal step", () => {
 
   test("stops when no judge can answer", async () => {
     const judge = { name: "none", ask: () => Promise.reject(new Error("no judge")) };
-    const out = await runGoal(
-      { judge, orgId: "o", surface: surfaceShowing(), scope: "s" },
-      goalOf(),
-    );
+    const out = await runGoal({ judge, orgId: "o", surface: surfaceShowing(), scope: "s" }, goalOf());
     expect(out.stop?.reason).toContain("no judge");
   });
 
   test("its actions are steps of the plan's report", async () => {
     const surface = surfaceShowing(DONE);
-    const judge = scripted([{ op: "click", target: "e5" }, { op: "done", reached: 1 }]);
+    const judge = scripted([
+      { op: "click", target: "e5" },
+      { op: "done", reached: 1 },
+    ]);
     const report = await runPlan({ judge, orgId: "o", surface, scope: "s" }, [goalOf()]);
     expect(report.stopped).toBeUndefined();
     expect(report.steps[0]?.goal?.actions).toHaveLength(1);
