@@ -1,0 +1,125 @@
+import { deflateSync, inflateSync } from "node:zlib";
+
+/**
+ * Cropping an image (ADR 0200). Bun.Image resizes and re-encodes but has no crop, so the image
+ * is read as PNG pixels, a region is copied out into a PNG of its own, and Bun.Image draws that
+ * at the size asked.
+ */
+
+export interface Pixels {
+  width: number;
+  height: number;
+  /** RGB, three bytes a pixel, rows top to bottom. */
+  rgb: Uint8Array;
+}
+
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+
+/** The pixels of a PNG: 8-bit RGB or RGBA, not interlaced (what Bun.Image writes). Anything else throws. */
+export function decodePng(png: Uint8Array): Pixels {
+  const v = new DataView(png.buffer, png.byteOffset, png.byteLength);
+  if (PNG_SIGNATURE.some((b, i) => png[i] !== b)) throw new Error("crop: not a PNG");
+  let width = 0;
+  let height = 0;
+  let channels = 0;
+  const idat: Uint8Array[] = [];
+  for (let at = 8; at + 8 <= png.length; ) {
+    const size = v.getUint32(at);
+    const type = String.fromCharCode(...png.subarray(at + 4, at + 8));
+    const body = png.subarray(at + 8, at + 8 + size);
+    if (type === "IHDR") {
+      width = v.getUint32(at + 8);
+      height = v.getUint32(at + 12);
+      const [depth, color, , , interlace] = body.subarray(8, 13);
+      if (depth !== 8 || (color !== 2 && color !== 6) || interlace !== 0) {
+        throw new Error(`crop: unsupported PNG (depth ${depth}, color ${color}, interlace ${interlace})`);
+      }
+      channels = color === 2 ? 3 : 4;
+    } else if (type === "IDAT") idat.push(body);
+    at += 12 + size;
+  }
+  if (!width || !height || idat.length === 0) throw new Error("crop: broken PNG");
+
+  const stride = width * channels;
+  const raw = inflateSync(Buffer.concat(idat));
+  const px = new Uint8Array(stride * height);
+  for (let y = 0; y < height; y++) {
+    const filter = raw[y * (stride + 1)] ?? 0;
+    for (let i = 0; i < stride; i++) {
+      const x = raw[y * (stride + 1) + 1 + i] ?? 0;
+      const a = i >= channels ? (px[y * stride + i - channels] ?? 0) : 0;
+      const b = y > 0 ? (px[(y - 1) * stride + i] ?? 0) : 0;
+      const c = y > 0 && i >= channels ? (px[(y - 1) * stride + i - channels] ?? 0) : 0;
+      let p = 0;
+      if (filter === 1) p = a;
+      else if (filter === 2) p = b;
+      else if (filter === 3) p = (a + b) >> 1;
+      else if (filter === 4) {
+        const est = a + b - c;
+        const [pa, pb, pc] = [Math.abs(est - a), Math.abs(est - b), Math.abs(est - c)];
+        p = pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+      } else if (filter !== 0) throw new Error(`crop: PNG filter ${filter}`);
+      px[y * stride + i] = (x + p) & 255;
+    }
+  }
+  if (channels === 3) return { width, height, rgb: px };
+  const rgb = new Uint8Array(width * height * 3);
+  for (let n = 0; n < width * height; n++) rgb.set(px.subarray(n * 4, n * 4 + 3), n * 3);
+  return { width, height, rgb };
+}
+
+/** A PNG of the `w`×`h` pixels of `p` from (`x`, `y`) (Bun.Image reads no BMP on Linux, so the copy goes out as PNG). */
+export function pngOf(p: Pixels, x: number, y: number, w: number, h: number): Uint8Array {
+  const raw = new Uint8Array((w * 3 + 1) * h); // each row: filter byte 0, then RGB
+  for (let r = 0; r < h; r++)
+    raw.set(p.rgb.subarray(((y + r) * p.width + x) * 3, ((y + r) * p.width + x + w) * 3), r * (w * 3 + 1) + 1);
+  const chunk = (type: string, body: Uint8Array) => {
+    const out = new Uint8Array(12 + body.length);
+    const v = new DataView(out.buffer);
+    v.setUint32(0, body.length);
+    out.set(Buffer.from(type), 4);
+    out.set(body, 8);
+    v.setUint32(8 + body.length, Bun.hash.crc32(out.subarray(4, 8 + body.length)));
+    return out;
+  };
+  const ihdr = new Uint8Array(13);
+  new DataView(ihdr.buffer).setUint32(0, w);
+  new DataView(ihdr.buffer).setUint32(4, h);
+  ihdr.set([8, 2, 0, 0, 0], 8);
+  return Buffer.concat([
+    Buffer.from(PNG_SIGNATURE),
+    chunk("IHDR", ihdr),
+    chunk("IDAT", deflateSync(raw)),
+    chunk("IEND", new Uint8Array()),
+  ]);
+}
+
+export interface Region {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** An image read once, so many regions can be cut from it. */
+export async function openImage(base64: string) {
+  const png = await new Bun.Image(Buffer.from(base64, "base64")).png().bytes();
+  const pixels = decodePng(png);
+  return {
+    width: pixels.width,
+    height: pixels.height,
+    /** `region` (the image's own pixels, clamped inside it) drawn `out` big, as a base64 JPEG. */
+    async crop(region: Region, out: { width: number; height: number }): Promise<string> {
+      const x = Math.min(Math.max(0, Math.floor(region.x)), pixels.width - 1);
+      const y = Math.min(Math.max(0, Math.floor(region.y)), pixels.height - 1);
+      const w = Math.min(Math.max(1, Math.ceil(region.width)), pixels.width - x);
+      const h = Math.min(Math.max(1, Math.ceil(region.height)), pixels.height - y);
+      return new Bun.Image(pngOf(pixels, x, y, w, h)).resize(out.width, out.height).jpeg({ quality: 70 }).toBase64();
+    },
+  };
+}
+
+/** One region of an image (base64) as a base64 JPEG of the size asked. */
+export async function cropImage(base64: string, region: Region, out: { width: number; height: number }) {
+  return (await openImage(base64)).crop(region, out);
+}

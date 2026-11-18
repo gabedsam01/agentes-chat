@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { ScreenKind } from "@agenteschat/adapters";
 import type { Judge, JudgeAnswer, JudgeQuestion } from "../judge";
+import { openImage } from "./crop";
 import {
   describeElement,
   type ScreenElement,
@@ -397,19 +398,32 @@ const GRID = 3;
 const CELL = 0.4;
 /** The region is narrowed until both sides are this many screen pixels or fewer: a click at its center lands. */
 const SPOT_PX = 40;
-/** At most this many narrowing rounds (each one request): 1920x1080 ends near 49x28 px. */
+/** At most this many narrowing rounds (each nine requests at once): 1920x1080 ends near 49x28 px. */
 const MAX_ROUNDS = 4;
-/** The image of a close-up, whatever part of the screen it shows (small regions are enlarged). */
-const CLOSE_UP = { width: 480, height: 300 };
+/**
+ * Each cell goes as its own picture, drawn to fit this size, so later rounds see a close-up enlarged: every
+ * picture costs input tokens, but measured on a real desktop a judge reads no interface drawn smaller than it is.
+ */
+const CELL_PX = { width: 640, height: 400 };
+/** The whole region beside its cells, at about its own size for the same reason. */
+const WHOLE_PX = { width: 1280, height: 800 };
 
-/** `image` drawn at `CLOSE_UP`'s size (a JPEG at the runner's quality); what it shows, and where, stay the same. */
-async function asCloseUp(image: ScreenImage): Promise<ScreenImage> {
-  const data = await new Bun.Image(Buffer.from(image.data, "base64"))
-    .resize(CLOSE_UP.width, CLOSE_UP.height)
-    .jpeg({ quality: 70 })
-    .toBase64();
-  return { ...image, data, ...CLOSE_UP };
-}
+/** Two cells this close in how sure the judge is go on together, when they touch. */
+const CELL_MARGIN = 0.1;
+/** What a picture of a cell is part of, by screen. */
+const SCREEN_OF: Record<ScreenKind, string> = { browser: "a web page", desktop: "a computer's desktop" };
+const touching = (a: ScreenRegion, b: ScreenRegion) =>
+  a.x <= b.x + b.width && b.x <= a.x + a.width && a.y <= b.y + b.height && b.y <= a.y + a.height;
+const around = (a: ScreenRegion, b: ScreenRegion): ScreenRegion => {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return {
+    x,
+    y,
+    width: Math.max(a.x + a.width, b.x + b.width) - x,
+    height: Math.max(a.y + a.height, b.y + b.height) - y,
+  };
+};
 
 /** The pick of a Choice: its key, and how sure the judge is of it. */
 const pickOf = (a: JudgeAnswer | undefined) => {
@@ -418,7 +432,7 @@ const pickOf = (a: JudgeAnswer | undefined) => {
 };
 
 /** The cells a region is split in, left to right and top to bottom, in screen pixels. */
-function cellsOf(region: ScreenRegion): ScreenRegion[] {
+export function narrowCells(region: ScreenRegion): ScreenRegion[] {
   const out: ScreenRegion[] = [];
   const stride = (1 - CELL) / (GRID - 1);
   for (let r = 0; r < GRID; r++) {
@@ -438,9 +452,10 @@ function cellsOf(region: ScreenRegion): ScreenRegion[] {
  * Looks for the target on an image of the screen, with `choice` questions only (ADR 0200).
  * With marks (an annotated screenshot) one question picks a marked element, so the action stays as
  * exact as a ref. Else, or when no mark fits, the screen is narrowed cell by cell (see `GRID`): each
- * round asks which cell holds the control, then looks again at that cell (a native-resolution
- * close-up through `zoom`, else the same image with the cells named by where they sit on it) until
- * the cell is `SPOT_PX` or less. A target the judge finds can't be undone (delete, discard…) is
+ * round cuts the region into its 9 cells and asks of each, in its own request and all at once, whether
+ * it holds the control's center. The next round cuts the chosen cell from a native
+ * close-up through `zoom` when the surface gives one, else from the image we have, until the cell
+ * is `SPOT_PX` or less. A target the judge finds can't be undone (delete, discard…) is
  * never taken at a bare spot.
  */
 export async function locateOnImage(input: {
@@ -458,26 +473,39 @@ export async function locateOnImage(input: {
 }): Promise<Located> {
   const words = ON_IMAGE[input.kind ?? "browser"];
   const target = input.target.trim();
-  const ask = async (image: ScreenImage, which: JudgeQuestion, first: boolean) => {
-    const placeholder = `screen_${randomUUID()}`;
+  const ask = async (
+    images: Record<string, { data: string; format: "jpeg" }>,
+    state: Record<string, unknown>,
+    which: JudgeQuestion,
+    first: boolean,
+  ) => {
     const answers: Record<string, JudgeAnswer> = await input.judge.ask({
       orgId: input.orgId,
       agentId: input.agentId,
       runId: input.runId,
       kind: "screen_locate",
-      state: { screenshot: placeholder, address: input.url ?? null, target },
-      images: { [placeholder]: { data: image.data, format: "jpeg" } },
+      state: { ...state, address: input.url ?? null, target },
+      images,
+      // Whether it is there, and can't be undone, is asked once, on the whole screen.
       questions: {
         which,
-        present: {
-          type: "noul",
-          instructions: words.present,
-          criteria: { true: "It is visible on the screenshot.", false: words.absent },
-        },
-        ...(first ? { costly: COSTLY } : {}),
+        ...(first
+          ? {
+              present: {
+                type: "noul",
+                instructions: words.present,
+                criteria: { true: "It is visible on the screenshot.", false: words.absent },
+              },
+              costly: COSTLY,
+            }
+          : {}),
       },
     });
-    return { ...pickOf(answers.which), present: answers.present?.noul ?? 0, costly: first && costlyOf(answers) };
+    return {
+      ...pickOf(answers.which),
+      present: first ? (answers.present?.noul ?? 0) : 1,
+      costly: first && costlyOf(answers),
+    };
   };
   const fail = (error: unknown): Located => ({
     found: false,
@@ -492,8 +520,10 @@ export async function locateOnImage(input: {
     for (const m of marks) criteria[m.ref] = `${m.number}: ${m.role}${m.name ? ` "${m.name}"` : ""}`;
     criteria.none = "None of the numbered elements is it.";
     try {
+      const placeholder = `screen_${randomUUID()}`;
       const r = await ask(
-        input.image,
+        { [placeholder]: { data: input.image.data, format: "jpeg" } },
+        { screenshot: placeholder },
         {
           type: "choice",
           instructions: `${words.what} Elements are drawn with a number. Which one does what \`target\` describes?`,
@@ -518,50 +548,110 @@ export async function locateOnImage(input: {
     }
   }
 
-  // No mark fits: narrow the screen down. `region` is in screen pixels; `shown` is what the image covers.
+  // No mark fits: narrow the screen down. `region` is in screen pixels; `source` is the image the cells are cut from.
   const origin = input.image.origin ?? { x: 0, y: 0 };
   let region: ScreenRegion = { ...origin, ...input.image.viewport };
-  let image = input.image;
-  let shown: ScreenRegion = region;
+  let source = input.image;
   let confidence = 1;
   for (let round = 0; round < MAX_ROUNDS && (region.width > SPOT_PX || region.height > SPOT_PX); round++) {
-    if (round > 0 && input.zoom) {
-      // Only an image that says where it sits maps back; without one the cells are read on the image we have.
-      const taken = await input.zoom(region).catch(() => null);
-      const close = taken?.origin ? await asCloseUp(taken).catch(() => null) : null;
-      if (close?.origin) {
-        image = close;
-        shown = { ...close.origin, ...close.viewport };
-      }
-    }
-    const cells = cellsOf(region);
-    const pct = (v: number, from: number, side: number) => Math.round(((v - from) / side) * 100);
-    const criteria: Record<string, string> = {};
-    cells.forEach((c, i) => {
-      criteria[String(i + 1)] =
-        `cell ${i + 1}: from ${pct(c.x, shown.x, shown.width)}% to ${pct(c.x + c.width, shown.x, shown.width)}% across, from ${pct(c.y, shown.y, shown.height)}% to ${pct(c.y + c.height, shown.y, shown.height)}% down`;
-    });
-    criteria.none = "No cell holds it.";
     try {
-      const r = await ask(
-        image,
-        {
-          type: "choice",
-          instructions: `${words.what} Cells of overlapping parts are numbered left to right, top to bottom, and named by where they sit on the image. Which cell holds the one control that does what \`target\` describes, whole?`,
-          criteria,
-        },
-        round === 0,
+      if (round > 0 && input.zoom) {
+        // Only an image that says where it sits maps back; without one the cells are cut from the image we have.
+        const taken = await input.zoom(region).catch(() => null);
+        if (taken?.origin) source = taken;
+      }
+      const from = source.origin ?? { x: 0, y: 0 };
+      const picture = await openImage(source.data);
+      // Screen pixels to the image's own: it may be drawn at another size than what it shows.
+      const kx = picture.width / source.viewport.width;
+      const ky = picture.height / source.viewport.height;
+      const cut = (r: ScreenRegion, most: { width: number; height: number }) => {
+        const fit = Math.min(most.width / r.width, most.height / r.height);
+        return picture.crop(
+          { x: (r.x - from.x) * kx, y: (r.y - from.y) * ky, width: r.width * kx, height: r.height * ky },
+          { width: Math.max(1, Math.round(r.width * fit)), height: Math.max(1, Math.round(r.height * fit)) },
+        );
+      };
+      const cells = narrowCells(region);
+      const asked = (
+        images: Record<string, { data: string; format: "jpeg" }>,
+        questions: Record<string, JudgeQuestion>,
+      ) =>
+        input.judge.ask({
+          orgId: input.orgId,
+          agentId: input.agentId,
+          runId: input.runId,
+          kind: "screen_locate",
+          state: {
+            ...Object.fromEntries(Object.keys(images).map((k) => [k.split("_")[0], k])),
+            address: input.url ?? null,
+            target,
+          },
+          images,
+          questions,
+        });
+      // Whether it is there, and can't be undone, is asked once, on the whole screen, beside the first round.
+      const whole =
+        round === 0
+          ? cut(region, WHOLE_PX).then(async (data) => {
+              const a = await asked(
+                { [`screenshot_${randomUUID()}`]: { data, format: "jpeg" } },
+                {
+                  present: {
+                    type: "noul",
+                    instructions: words.present,
+                    criteria: { true: "It is visible on the screenshot.", false: words.absent },
+                  },
+                  costly: COSTLY,
+                },
+              );
+              return { present: a.present?.noul ?? 0, costly: costlyOf(a) };
+            })
+          : null;
+      // Its failure is the cells' failure too, read below: not one left unhandled while they are asked.
+      whole?.catch(() => {});
+      // One picture a request, all at once: measured on a real desktop, a judge told nine named pictures in one
+      // request apart badly, and one picture at a time well (the center: a wide control is whole in no cell).
+      const pictures = await Promise.all(cells.map((c) => cut(c, CELL_PX)));
+      const holds = await Promise.all(
+        pictures.map(async (data) => {
+          const a = await asked(
+            { [`picture_${randomUUID()}`]: { data, format: "jpeg" } },
+            {
+              holds: {
+                type: "noul",
+                instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}. Does it show the center of the one control that does what \`target\` describes? It may be only an icon.`,
+                criteria: {
+                  true: "Its center is in this picture.",
+                  false: "It isn't in this picture, or only an edge of it.",
+                },
+              },
+            },
+          );
+          return a.holds?.noul ?? 0;
+        }),
       );
-      if (round === 0) costly = r.costly;
-      if (r.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
-      const cell = r.choice && r.choice !== "none" ? cells[Number(r.choice) - 1] : undefined;
-      if (!cell || r.p < PICK_AT) return { found: false, reason: "unsure" };
-      confidence = Math.min(confidence, r.p, r.present);
-      region = cell;
+      if (whole) {
+        const w = await whole;
+        costly = w.costly;
+        if (w.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
+      }
+      const [best, second] = holds.map((p, i) => ({ p, cell: cells[i] as ScreenRegion })).sort((a, b) => b.p - a.p);
+      if (!best || best.p < PRESENT_AT) return { found: false, reason: "unsure" };
+      let next = best.cell;
+      // Two cells about as sure: the center may sit where neighbors overlap, so both go on; far apart, it's a guess.
+      if (second && best.p - second.p < CELL_MARGIN) {
+        if (!touching(best.cell, second.cell)) return { found: false, reason: "unsure" };
+        next = around(best.cell, second.cell);
+      }
+      confidence = Math.min(confidence, best.p);
+      region = next;
     } catch (error) {
       return fail(error);
     }
   }
+  // Still wide after the last round (two cells went on together): a click there would be a guess.
+  if (region.width > 2 * SPOT_PX || region.height > 2 * SPOT_PX) return { found: false, reason: "unsure" };
   // A spot is only as exact as a cell: something that can't be undone is done on an element, or not at all.
   if (costly) return { found: false, reason: "only a spot on the image", refused: true };
   return {

@@ -273,7 +273,7 @@ export function decisionJudge(log: JudgeLog): Judge {
   return {
     name: `decision:${provider}/${model}`,
     async ask(request) {
-      const t0 = performance.now();
+      let t0 = performance.now();
       let ok = false;
       try {
         const images = request.images
@@ -281,14 +281,27 @@ export function decisionJudge(log: JudgeLog): Judge {
               Object.entries(request.images).map(([k, i]) => [k, { mediaType: `image/${i.format}`, data: i.data }]),
             )
           : undefined;
-        const result = await decide(
-          {
-            provider: provider as DecisionProviderId,
-            apiKey,
-            timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000),
-          },
-          { model, state: request.state, questions: request.questions, ...(images ? { assets: images } : {}) },
-        );
+        const call = () =>
+          decide(
+            {
+              provider: provider as DecisionProviderId,
+              apiKey,
+              timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000),
+            },
+            { model, state: request.state, questions: request.questions, ...(images ? { assets: images } : {}) },
+          );
+        // An account's tokens a minute run out within one eval: wait as the provider says, so the wait isn't timed.
+        let result: Awaited<ReturnType<typeof decide>> | undefined;
+        for (let tries = 0; !result; tries++) {
+          try {
+            result = await call();
+          } catch (error) {
+            const e = error as { state?: string; retryAfterMs?: number };
+            if (e.state !== "rate_limited" || tries >= 3) throw error;
+            await Bun.sleep(Math.min(e.retryAfterMs ?? 30_000, 60_000));
+            t0 = performance.now();
+          }
+        }
         log.usage.push({
           inputTokens: result.usage.inputTokens,
           costNanoUsd: decisionCostNanoUsd(provider as DecisionProviderId, result.usage.inputTokens),

@@ -26,7 +26,7 @@ import {
   screenOverview,
   screenRef,
 } from "../src";
-import { cellsAnswer } from "./screen-fixtures";
+import { cellsAnswer, PIXEL } from "./screen-fixtures";
 
 const ids = { orgId: "o", agentId: "a", runId: "r" };
 
@@ -734,7 +734,7 @@ describe("plans", () => {
     const withImage = {
       ...surface,
       capture: async (): Promise<ScreenImage> => ({
-        data: "AAAA",
+        data: PIXEL,
         width: 1000,
         height: 500,
         viewport: { width: 1000, height: 500 },

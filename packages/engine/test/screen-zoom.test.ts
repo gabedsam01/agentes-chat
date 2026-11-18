@@ -3,10 +3,10 @@ import { createFakeJudge, formatPlanReport, locateOnImage, runPlan, type ScreenI
 import {
   acted,
   cells,
+  cellsAnswer,
   closeUpOf,
   fakeScreen,
   type Point,
-  SCREEN,
   screenImage,
   THUNAR,
   ticking,
@@ -19,7 +19,6 @@ function zoomer(make: (region: ScreenRegion) => ScreenImage | null = closeUpOf) 
   const asked: ScreenRegion[] = [];
   return {
     asked,
-    covers: () => asked.at(-1) ?? SCREEN,
     zoom: async (region: ScreenRegion) => {
       asked.push(region);
       return make(region);
@@ -34,12 +33,17 @@ const locate = (judge: ReturnType<typeof cells>, extra: Partial<Parameters<typeo
 describe("a target on the screen image", () => {
   test("without marks the screen is narrowed in rounds of close-ups until a click lands on it", async () => {
     const z = zoomer();
-    const judge = cells(MENU_ITEM, { covers: z.covers });
+    const judge = cells(MENU_ITEM);
     const spot = await locate(judge, { zoom: z.zoom });
-    // One question a round, the first one also asking whether the action can't be undone.
-    expect(judge.calls).toHaveLength(4);
-    expect(Object.keys(judge.calls[0]?.questions ?? {})).toEqual(["which", "present", "costly"]);
-    expect(Object.keys(judge.calls[1]?.questions ?? {})).toEqual(["which", "present"]);
+    // Four rounds of nine requests, one cell picture and one yes/no each; once, on the whole screen, whether
+    // it is there and whether it can't be undone.
+    expect(judge.calls).toHaveLength(1 + 4 * 9);
+    const whole = judge.calls.filter((c) => "present" in c.questions);
+    expect(whole).toHaveLength(1);
+    expect(Object.keys(whole[0]?.questions ?? {})).toEqual(["present", "costly"]);
+    expect(Object.keys(whole[0]?.images ?? {})).toEqual([whole[0]?.state.screenshot]);
+    const cell = judge.calls.find((c) => "holds" in c.questions);
+    expect(Object.keys(cell?.images ?? {})).toEqual([cell?.state.picture]);
     // Each close-up is the chosen cell, 40% of the last region.
     expect(z.asked).toHaveLength(3);
     expect(z.asked[0]?.width).toBe(Math.round(0.4 * 1280));
@@ -51,10 +55,10 @@ describe("a target on the screen image", () => {
     }
   });
 
-  test("without close-ups the cells are named on the one image and the spot is still found", async () => {
+  test("without close-ups the cells are cut from the one image and the spot is still found", async () => {
     const judge = cells(MENU_ITEM);
     const spot = await locate(judge);
-    expect(judge.calls).toHaveLength(4);
+    expect(judge.calls).toHaveLength(1 + 4 * 9);
     expect(spot.found).toBe(true);
     if (spot.found) {
       expect(Math.abs(spot.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
@@ -92,12 +96,11 @@ describe("a target on the screen image", () => {
     const image = screenImage([
       { ref: "e7", number: 7, role: "menuitem", box: { x: 0, y: 700, width: 10, height: 10 } },
     ]);
-    const judge = createFakeJudge((kind, id, _state, q) => {
+    const narrow = cellsAnswer(MENU_ITEM);
+    const judge = createFakeJudge((kind, id, state, q, request) => {
       if (kind !== "screen_locate") return undefined;
-      if (id !== "which") return id === "costly" ? 0 : 0.9;
-      const criteria = (q as { criteria: Record<string, string> }).criteria;
-      const pick = criteria.e7 ? "none" : "5";
-      return { choice: pick, probabilities: { [pick]: 0.9 } };
+      if (id === "which") return { choice: "none", probabilities: { none: 0.9 } };
+      return narrow(kind, id, state, q, request);
     });
     const spot = await locate(judge, { image });
     expect(judge.calls.length).toBeGreaterThan(1);
@@ -107,9 +110,8 @@ describe("a target on the screen image", () => {
   test("an unsure pick, or a target that isn't there, is not found", async () => {
     expect(await locate(cells(MENU_ITEM, { p: 0.3 }))).toEqual({ found: false, reason: "unsure" });
     expect(await locate(cells(MENU_ITEM, { present: 0.2 }))).toEqual({ found: false, reason: "not on the screen" });
-    const judge = createFakeJudge((kind, id) =>
-      kind !== "screen_locate" ? undefined : id === "which" ? { choice: "none", probabilities: { none: 0.9 } } : 0.9,
-    );
+    // Two cells far apart about as sure: a guess.
+    const judge = createFakeJudge((kind, id) => (kind !== "screen_locate" ? undefined : id === "holds" ? 0.8 : 0.9));
     expect(await locate(judge)).toMatchObject({ found: false, reason: "unsure" });
   });
 
@@ -129,7 +131,7 @@ describe("a target on the screen image", () => {
 describe("plans with images", () => {
   test("a surface that takes close-ups gets the zoom; one that can't (the browser) never asks for a region", async () => {
     const zooming = fakeScreen(THUNAR, { capture: (r) => (r ? closeUpOf(r) : screenImage()), regions: true });
-    const judge = cells(MENU_ITEM, { covers: () => zooming.captures.filter(Boolean).at(-1) ?? SCREEN });
+    const judge = cells(MENU_ITEM);
     const report = await runPlan({ judge, ...ids, surface: zooming, scope: "a", vision: true }, [
       { do: "click", target: "the gear icon" },
     ]);
@@ -147,7 +149,7 @@ describe("plans with images", () => {
       { do: "click", target: "the gear icon" },
     ]);
     expect(plain.captures).toEqual([undefined]);
-    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(4);
+    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(1 + 4 * 9);
     const flatClick = acted(plain.actions)[0] as { at: Point };
     expect(Math.abs(flatClick.at.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
   });

@@ -1,6 +1,7 @@
 import type { ScreenKind } from "@agenteschat/adapters";
 import {
   createFakeJudge,
+  narrowCells,
   observeSnapshot,
   type ScreenAction,
   type ScreenActOutcome,
@@ -89,9 +90,12 @@ export function fakeScreen(
   return surface;
 }
 
+/** A real one-pixel PNG: cells are cut from the images, so they must decode. */
+export const PIXEL = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGPom7XoPwAGTgLKI4t8IAAAAABJRU5ErkJggg==";
+
 /** The whole 1280×800 desktop as an image. */
 export const screenImage = (marks: ScreenImage["marks"] = []): ScreenImage => ({
-  data: "FULL",
+  data: PIXEL,
   width: 1280,
   height: 800,
   viewport: { width: 1280, height: 800 },
@@ -100,7 +104,7 @@ export const screenImage = (marks: ScreenImage["marks"] = []): ScreenImage => ({
 
 /** A close-up of `region` at the screen's native size: a real image (one pixel), since a close-up is enlarged. */
 export const closeUpOf = (region: ScreenRegion): ScreenImage => ({
-  data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGPom7XoPwAGTgLKI4t8IAAAAABJRU5ErkJggg==",
+  data: PIXEL,
   width: region.width,
   height: region.height,
   viewport: { width: region.width, height: region.height },
@@ -123,32 +127,35 @@ export type Point = { x: number; y: number };
 export const SCREEN: ScreenRegion = { x: 0, y: 0, width: 1280, height: 800 };
 
 /**
- * A judge that answers the narrowing questions (ADR 0200): it picks the cell of `at` nearest its center.
- * Cells are named by percentages of the image, which covers `covers()` (the last close-up, else the screen).
+ * A judge that answers the narrowing questions (ADR 0200): each round asks of the nine cells in order
+ * whether one holds the target's center; it says yes (`p`) for the cell of `at` nearest its center, by
+ * the same grid as `narrowCells`, then keeps that cell as the region the next round splits.
  */
 type FakeAnswer = Parameters<typeof createFakeJudge>[0];
 
 export function cellsAnswer(
   at: Point,
-  o: { covers?: () => ScreenRegion; whole?: ScreenRegion; present?: number; p?: number; costly?: number } = {},
+  o: { whole?: ScreenRegion; present?: number; p?: number; costly?: number } = {},
 ): NonNullable<FakeAnswer> {
-  return (kind, id, _state, q) => {
+  let region = o.whole ?? SCREEN;
+  let asked = 0;
+  let best = 0;
+  return (kind, id) => {
     if (kind !== "screen_locate") return undefined;
     if (id === "costly") return o.costly ?? 0;
     if (id === "present") return o.present ?? 0.9;
-    const criteria = (q as { criteria: Record<string, string> }).criteria;
-    const seen = o.covers?.() ?? o.whole ?? SCREEN;
-    let best = "none";
-    let bestD = Number.POSITIVE_INFINITY;
-    for (const [key, text] of Object.entries(criteria)) {
-      const m = /from (\d+)% to (\d+)% across, from (\d+)% to (\d+)% down/.exec(text);
-      if (!m) continue;
-      const cx = seen.x + ((Number(m[1]) + Number(m[2])) / 200) * seen.width;
-      const cy = seen.y + ((Number(m[3]) + Number(m[4])) / 200) * seen.height;
-      const d = Math.hypot(cx - at.x, cy - at.y);
-      if (d < bestD) [best, bestD] = [key, d];
+    const grid = narrowCells(region);
+    const i = asked++ % grid.length;
+    if (i === 0) {
+      let bestD = Number.POSITIVE_INFINITY;
+      grid.forEach((c, k) => {
+        const d = Math.hypot(c.x + c.width / 2 - at.x, c.y + c.height / 2 - at.y);
+        if (d < bestD) [best, bestD] = [k, d];
+      });
     }
-    return { choice: best, probabilities: { [best]: o.p ?? 0.9 } };
+    const yes = i === best ? (o.p ?? 0.9) : 0.1;
+    if (i === grid.length - 1) region = grid[best] as ScreenRegion;
+    return yes;
   };
 }
 
