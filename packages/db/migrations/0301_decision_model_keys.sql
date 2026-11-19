@@ -1,0 +1,1 @@
+ALTER TABLE "instance_decision_model" ADD COLUMN "keys" jsonb DEFAULT '{}'::jsonb NOT NULL;

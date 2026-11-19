@@ -1,15 +1,16 @@
 /**
- * Desktop computer use against the real Jev (ADR 0062), on scenes recorded from an agent's desktop (XFCE at
- * 1280×800; the helper's own screenshots, JPEG q70, and the runner's looks with their marks): Jev's Box on
- * the screenshot, first pass and with the close-up of small targets; targets that aren't there; the judge's
- * Choice over the accessibility tree; checks on the text and with the image. Prints each against its bar
- * and exits 1 when one is below it: run it before changing `JEV_VISION_MODEL`.
+ * Desktop computer use (ADR 0062) on scenes recorded from an agent's desktop (XFCE at 1280×800; the helper's own
+ * screenshots, JPEG q70, and the runner's looks with their marks). Locating a control on the screenshot is by
+ * choice over marks or tiles, never a box (ADR 0200), first pass and with the close-up of small targets; also
+ * targets that aren't there, the judge's choice over the accessibility tree, and checks on the text and with the
+ * image. Prints each against its bar and exits 1 when one is below it: run it before changing the decision model.
  *
  *   bun run eval:desktop:micro
  *
- * Needs TYPESAFE_API_KEY. The close-ups are cut from the recorded screenshots with `sips` (macOS) or
- * ImageMagick, at the runner's quality; without either, the close-up pass is skipped and said so.
- * EVAL_DESKTOP_TRIALS (default 2) repeats each image case.
+ * Needs TYPESAFE_API_KEY for the text cases (Jev) and DECISION_PROVIDER (`openai` | `gemini`) + DECISION_API_KEY
+ * (optional DECISION_MODEL) for the image cases: Jev never reads images (ADR 0200). The close-ups are cut from the
+ * recorded screenshots with `sips` (macOS) or ImageMagick, at the runner's quality; without either, the close-up
+ * pass is skipped and said so. EVAL_DESKTOP_TRIALS (default 2) repeats each image case.
  */
 import { randomUUID } from "node:crypto";
 import { readFileSync, rmSync } from "node:fs";
@@ -27,10 +28,12 @@ import {
   type ScreenRegion,
   type TargetUse,
 } from "../../src/screen";
-import { jevJudge, newJudgeLog, p50, requireKey, sum, writeReport } from "../browser/harness";
+import { decisionJudge, jevJudge, newJudgeLog, p50, requireKey, sum, writeReport } from "../browser/harness";
 
 const FIXTURES = path.join(import.meta.dir, "fixtures");
 const TRIALS = Number(process.env.EVAL_DESKTOP_TRIALS ?? 2);
+/** Only the image targets whose words match this (a regular expression), to measure a few again. */
+const ONLY = process.env.EVAL_DESKTOP_TARGETS ? new RegExp(process.env.EVAL_DESKTOP_TARGETS, "i") : null;
 const ids = { orgId: "eval", agentId: "eval-agent", runId: "eval-run" };
 
 /** Thunar in front (its icon view only on the image), the Applications menu open, a dialog that loses work. */
@@ -219,22 +222,24 @@ const checkCases: { scene: Scene; condition: string; holds: boolean }[] = [
 requireKey("TYPESAFE_API_KEY");
 const log = newJudgeLog();
 const judge = jevJudge(log);
+const vision = decisionJudge(log);
 const report: Record<string, unknown> = {
-  model: process.env.JEV_VISION_MODEL ?? "jev-preview",
+  imageJudge: vision.name,
   trials: TRIALS,
   closeUps: CUTTER ?? "none: install ImageMagick (or use macOS) to measure them",
 };
 
-// ── Box on the screenshot: first pass, then with the close-up ──
-const boxes: Record<string, unknown>[] = [];
+// ── Locating on the screenshot by choice: first pass, then with the close-up ──
+const located: Record<string, unknown>[] = [];
 const passes = CUTTER ? (["first", "closeUp"] as const) : (["first"] as const);
 for (const c of imageCases) {
+  if (ONLY && !ONLY.test(c.target)) continue;
   const image = screenshotOf(c.scene);
   for (let trial = 0; trial < TRIALS; trial++) {
     for (const pass of passes) {
       const t0 = performance.now();
       const r = await locateOnImage({
-        judge,
+        judge: vision,
         ...ids,
         target: c.target,
         image,
@@ -243,7 +248,7 @@ for (const c of imageCases) {
         ...(pass === "closeUp" ? { zoom: (region: ScreenRegion) => closeUp(c.scene, region) } : {}),
       });
       const right = c.at.length > 0 ? r.found && inside(c.at, r) : !r.found;
-      boxes.push({
+      located.push({
         scene: c.scene,
         target: c.target,
         pass,
@@ -259,14 +264,14 @@ const rate = (rows: Record<string, unknown>[]) => {
   const right = rows.filter((r) => r.right).length;
   return { right: `${right}/${rows.length}`, share: rows.length ? right / rows.length : 1 };
 };
-const of = (pass: string, size: string) => boxes.filter((b) => b.pass === pass && b.size === size);
-report.box = {
+const of = (pass: string, size: string) => located.filter((b) => b.pass === pass && b.size === size);
+report.locate = {
   small: { first: rate(of("first", "small")), closeUp: rate(of("closeUp", "small")) },
   large: { first: rate(of("first", "large")), closeUp: rate(of("closeUp", "large")) },
   absent: { first: rate(of("first", "absent")), closeUp: rate(of("closeUp", "absent")) },
   p50Ms: {
-    first: p50(boxes.filter((b) => b.pass === "first").map((b) => b.ms as number)),
-    closeUp: p50(boxes.filter((b) => b.pass === "closeUp").map((b) => b.ms as number)),
+    first: p50(located.filter((b) => b.pass === "first").map((b) => b.ms as number)),
+    closeUp: p50(located.filter((b) => b.pass === "closeUp").map((b) => b.ms as number)),
   },
   // Each target's score per pass, so a miss shows where it is.
   byTarget: Object.fromEntries(
@@ -275,12 +280,12 @@ report.box = {
       Object.fromEntries(
         passes.map((pass) => [
           pass,
-          rate(boxes.filter((b) => b.pass === pass && b.scene === c.scene && b.target === c.target)).right,
+          rate(located.filter((b) => b.pass === pass && b.scene === c.scene && b.target === c.target)).right,
         ]),
       ),
     ]),
   ),
-  cases: boxes,
+  cases: located,
 };
 
 // ── The judge's Choice over the tree ──
@@ -321,7 +326,7 @@ for (const c of checkCases) {
   const textMs = performance.now() - t0;
   const t1 = performance.now();
   const seen = await checkCondition({
-    judge,
+    judge: vision,
     ...ids,
     condition: c.condition,
     observation,
@@ -353,18 +358,18 @@ report.judge = {
 };
 
 /**
- * The bars a model must clear: a little under what `jev-1.14.0` measured here (ADR 0062: small targets with the
+ * The bars a model must clear: a little under what the earlier Jev vision measured here (ADR 0062: small targets with the
  * close-up 185/192 over three runs of 4 trials, the rest all right), so that noise alone doesn't fail a run and a
  * worse model does.
  */
-const box = report.box as Record<string, Record<string, { share: number; right: string }>>;
+const locate = report.locate as Record<string, Record<string, { share: number; right: string }>>;
 const none = { share: 0, right: "-" };
 // The desktop's own path: with the close-up, when one can be cut.
 const [desktop, via] = CUTTER ? (["closeUp", "with the close-up"] as const) : (["first", "first pass"] as const);
 const bars: [string, { share: number; right: string }, number][] = [
-  ["small targets with the close-up", box.small?.closeUp ?? none, 0.9],
-  [`large targets, ${via}`, box.large?.[desktop] ?? none, 0.9],
-  [`absent targets said absent, ${via}`, box.absent?.[desktop] ?? none, 0.9],
+  ["small targets with the close-up", locate.small?.closeUp ?? none, 0.9],
+  [`large targets, ${via}`, locate.large?.[desktop] ?? none, 0.9],
+  [`absent targets said absent, ${via}`, locate.absent?.[desktop] ?? none, 0.9],
   ["Choice over the tree", report.choice as { share: number; right: string }, 0.9],
 ];
 if (!CUTTER) bars.shift();

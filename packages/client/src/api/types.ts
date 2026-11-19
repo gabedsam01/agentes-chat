@@ -68,6 +68,8 @@ export interface DecisionModel {
   baseURL: string | null;
   runtime: DecisionRuntime | null;
   hint: string | null;
+  /** The providers whose key is kept: turning one on again takes no new key. */
+  saved: { provider: DecisionProvider; hint: string | null }[];
   state: DecisionShownState;
   capabilities: { inputs: string[] };
   timeoutMs: number;

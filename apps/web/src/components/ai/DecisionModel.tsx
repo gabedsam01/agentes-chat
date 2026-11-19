@@ -35,7 +35,8 @@ import { CHIP, JevSettings } from "./Jev";
 /**
  * Settings › AI and usage: who decides, as one list (ADR 0195). Jev is the default and keeps its key; the other three
  * replace it, and each row is the same row — a name, what it is, its state, and, once chosen, its settings under it.
- * Choosing another while one is on asks first: the current model is removed and the new one may take a while.
+ * Choosing another while one is on asks first, since the new one may take a while. Each provider's key is kept on the
+ * server: turning a provider on again takes no new key (ADR 0195 addendum).
  */
 
 /** Every provider a person can choose from, in the order the list shows them. */
@@ -75,6 +76,7 @@ export function DecisionModelSection({
     baseURL: null,
     runtime: null,
     hint: null,
+    saved: [],
     state: "off",
     capabilities: { inputs: ["text"] },
     timeoutMs: 3000,
@@ -118,6 +120,9 @@ function DecisionModelCard({
   const picked: Chosen = draft ?? chosen;
   const shown = picked === "jev" ? chosen === "jev" : picked === chosen;
   const cloud = picked === "openai" || picked === "gemini";
+  /** A provider's kept key, by its last 4 characters, or undefined when it has none. */
+  const keptHint = (provider: Chosen) => model.saved.find((s) => s.provider === provider)?.hint ?? undefined;
+  const kept = (provider: Chosen) => model.saved.some((s) => s.provider === provider);
 
   const subtitle = chosen === "jev" ? t("decision.offHint") : t("decision.onHint", { model: model.model ?? "" });
 
@@ -218,7 +223,13 @@ function DecisionModelCard({
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder={provider === "openai" ? "sk-…" : "AQ.…"}
+                placeholder={
+                  kept(provider)
+                    ? t("decision.keyKept", { hint: keptHint(provider) ?? "" })
+                    : provider === "openai"
+                      ? "sk-…"
+                      : "AQ.…"
+                }
                 autoComplete="off"
                 invalid={Boolean(error)}
               />
@@ -231,7 +242,7 @@ function DecisionModelCard({
             <Button
               variant="primary"
               onClick={() => activate(provider)}
-              disabled={save.isPending || (cloud && apiKey.trim().length === 0)}
+              disabled={save.isPending || (cloud && apiKey.trim().length === 0 && !kept(provider))}
               loading={save.isPending}
             >
               {provider === "local" ? t("decision.activateLocal") : t("decision.activate")}
@@ -365,8 +376,8 @@ function DecisionModelCard({
               // The chosen model's key is pasted now, on its own settings.
               if (!next) return;
               setDraft(next);
-              // A cloud model needs its key, which is pasted on the row that just opened.
-              if (next !== "local" && apiKey.trim() === "") return;
+              // A cloud model needs its key: the one kept, else one pasted on the row that just opened.
+              if (next !== "local" && apiKey.trim() === "" && !kept(next)) return;
               activate(next);
             }}
           >

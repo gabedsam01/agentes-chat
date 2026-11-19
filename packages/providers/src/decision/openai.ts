@@ -22,7 +22,6 @@ const textOf = (q: DecisionQuestion) =>
 
 /** One question in OpenAI's words, with Jev's true/false criteria folded into a predicate's instructions. */
 function questionOf(id: string, q: DecisionQuestion): Record<string, unknown> {
-  if (q.type === "box") throw new DecisionError("box questions need Jev", "unchecked");
   if (q.type === "choice")
     return {
       type: "choice",
@@ -41,15 +40,21 @@ function questionOf(id: string, q: DecisionQuestion): Record<string, unknown> {
   return { type: "predicate", name: id, instructions: `${textOf(q)}${criteria}` };
 }
 
-/** The pictures a call carries as data URLs. Audio, video and documents are refused by this API. */
+/**
+ * The pictures a call carries as data URLs, each after a line with its name: the state names a picture by its key,
+ * and several in one call (ADR 0200) are told apart by it. Audio, video and documents are refused by this API.
+ */
 function contentOf(call: DecisionCall) {
   const content: Record<string, unknown>[] = [
     { type: "input_text", text: typeof call.state === "string" ? call.state : JSON.stringify(call.state) },
   ];
-  for (const asset of Object.values(call.assets ?? {})) {
+  for (const [name, asset] of Object.entries(call.assets ?? {})) {
     if (!asset.mediaType.startsWith("image/"))
       throw new DecisionError("OpenAI's decisions read text and pictures only", "unchecked");
-    content.push({ type: "input_image", image_url: `data:${asset.mediaType};base64,${asset.data}` });
+    content.push(
+      { type: "input_text", text: name },
+      { type: "input_image", image_url: `data:${asset.mediaType};base64,${asset.data}` },
+    );
   }
   return content;
 }

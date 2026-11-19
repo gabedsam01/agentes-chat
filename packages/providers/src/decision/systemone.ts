@@ -2,7 +2,6 @@ import { baseOf, requestJson } from "./http";
 import {
   type DecisionAnswer,
   type DecisionAsset,
-  type DecisionBox,
   type DecisionCall,
   DecisionError,
   type DecisionResult,
@@ -17,13 +16,6 @@ import {
  */
 
 const clamp = (n: unknown) => (typeof n === "number" && Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0);
-
-function boxOf(v: unknown): DecisionBox {
-  const b = (v ?? {}) as Partial<Record<keyof DecisionBox, unknown>>;
-  const top = clamp(b.top);
-  const left = clamp(b.left);
-  return { top, left, bottom: Math.max(top, clamp(b.bottom)), right: Math.max(left, clamp(b.right)) };
-}
 
 /** The pictures a call carries, in the shape the runtime takes: images for llama.cpp, assets for the others. */
 function withAssets(
@@ -71,14 +63,11 @@ function answersOf(
       probabilities?: unknown;
       score?: unknown;
       confidence?: unknown;
-      box?: unknown;
     };
     const confidence = typeof a.confidence === "number" ? { confidence: clamp(a.confidence) } : {};
     // Only what the provider answered: a missing answer must fall through to Jev, not read as a confident no.
     if (q.type === "noul" && typeof a.noul === "number") {
       out[id] = { noul: clamp(a.noul), ...confidence };
-    } else if (q.type === "box" && a.box && typeof a.box === "object") {
-      out[id] = { box: boxOf(a.box), ...confidence };
     } else if (q.type === "score" && typeof a.score === "number" && Number.isFinite(a.score)) {
       out[id] = {
         score: Math.min(q.criteria.length - 1, Math.max(0, a.score)),

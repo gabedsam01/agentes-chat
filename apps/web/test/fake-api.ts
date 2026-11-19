@@ -1550,6 +1550,7 @@ export function createFakeHttpApi(state: FakeState): Omit<HttpApi, FakedParts> {
           baseURL: input.baseURL ?? null,
           runtime: "llamacpp",
           hint: input.apiKey ? input.apiKey.slice(-4) : (state.decisionModel?.hint ?? null),
+          saved: state.decisionModel?.saved ?? [],
           state: "ok",
           capabilities: { inputs: ["text"] },
           timeoutMs: 3000,

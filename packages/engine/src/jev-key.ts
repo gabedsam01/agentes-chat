@@ -26,12 +26,9 @@ export type JevVia = "typesafe" | "openrouter";
 /** OpenRouter's keys start with `sk-or-` (`sk-or-v1-…`); any other key is TypeSafe's. */
 export const jevViaOf = (key: string): JevVia => (key.startsWith("sk-or-") ? "openrouter" : "typesafe");
 
-/**
- * Jev's name on OpenRouter: the aliases go to `~typesafe/jev-latest`, which also answers images and boxes there
- * (OpenRouter has no preview alias); a release such as `jev-1.14` to `typesafe/jev-1.14`.
- */
+/** Jev's name on OpenRouter: the alias goes to `~typesafe/jev-latest`, a release such as `jev-1.14` to `typesafe/jev-1.14`. */
 export const openRouterJevModel = (model: string) =>
-  model === "jev-latest" || model === "jev-preview" ? "~typesafe/jev-latest" : `typesafe/${model}`;
+  model === "jev-latest" ? "~typesafe/jev-latest" : `typesafe/${model}`;
 
 const OPENROUTER_URL = "https://openrouter.ai";
 /** OpenRouter's attribution: the product, never a self-hosted server's own address (as for its models, ADR 0087 §5). */
@@ -124,8 +121,6 @@ export interface JevCall {
   /** TypeSafe's request: `model` is TypeSafe's name (`jev-latest`), renamed for OpenRouter. */
   body: { model: string } & Record<string, unknown>;
   timeoutMs: number;
-  /** TypeSafe's own headers (`TypeSafe-Danger-Zone-Images`): OpenRouter sets what Jev needs itself. */
-  headers?: Record<string, string>;
   fetch?: typeof fetch;
   baseURL?: string;
 }
@@ -146,7 +141,7 @@ async function systemOne(apiKey: string, call: JevCall) {
   try {
     res = await (call.fetch ?? fetch)(url, {
       method: "POST",
-      headers: openRouter ? { ...auth, ...OPENROUTER_HEADERS } : { ...auth, ...call.headers },
+      headers: openRouter ? { ...auth, ...OPENROUTER_HEADERS } : auth,
       body: JSON.stringify(openRouter ? { ...call.body, model: openRouterJevModel(call.body.model) } : call.body),
       signal: AbortSignal.timeout(call.timeoutMs),
     });

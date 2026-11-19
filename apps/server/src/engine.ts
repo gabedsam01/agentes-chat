@@ -287,14 +287,13 @@ export function buildEngine(o: EngineOptions) {
           key: jevKey,
           gateway,
           timeoutMs: config.JEV_TIMEOUT_MS,
-          visionModel: config.JEV_VISION_MODEL,
           fetch: o.jevFetch,
         }),
       ),
       llmJudge,
       () => jevKey.usable(),
     );
-    // The switch's model answers first; the Jev chain answers pictures it can't read, boxes and any failure.
+    // The switch's model answers first; the Jev chain answers text it fails on, and refuses pictures (ADR 0200).
     context.judge = createDecisionJudge({
       model: decisionModel,
       fallback: jevChain,
@@ -302,8 +301,8 @@ export function buildEngine(o: EngineOptions) {
       http: o.decisionFetch,
     });
   }
-  // Screenshots go only to Jev's vision model: with a fake judge (tests) nothing looks at them.
-  const vision = o.judge ? undefined : () => jevKey.usable();
+  // Screenshots go only to the decision model, and only when it reads images (ADR 0200): with a fake judge (tests) nothing looks at them.
+  const vision = o.judge ? undefined : () => decisionModel.seesImages();
   // Nothing is judged for a workspace on hold or suspended: Jev bills the server, not the workspace.
   context.judge = standingJudge(db, context.judge);
   // The agents' conversation layer: a fast reply on the org's cheap model while a task works or waits.

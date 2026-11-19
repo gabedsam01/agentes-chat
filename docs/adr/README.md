@@ -202,3 +202,4 @@ Short records of decisions that shape the backend. One file per decision, number
 | [0197](0197-local-stdio-mcp.md) | Opt-in local stdio MCP programs in the custom connector flow, encrypted settings, server/container execution, existing tool access and approvals (accepted) |
 | [0198](0198-live-model-catalog-and-effort-discovery.md) | Live model catalog (`models.dev/api.json`), Codex `app-server` `model/list` discovery, dynamic Claude/Antigravity/Grok options, and full `none..max` effort pipeline (accepted) |
 | [0199](0199-openrouter-model-selection-and-effort-checks.md) | OpenRouter model selection at key setup and effort probe for API keys (accepted) |
+| [0200](0200-production-decisions-and-screen-goals.md) | Only production decision features: Jev answers text only, images go to a decision model that reads them, targets on a screenshot found by choice over marks or tiles (no box), and the `goal` step for browser and desktop (accepted) |

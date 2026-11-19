@@ -14,26 +14,16 @@ import { jevCostOf } from "./router-jev";
  * - `choice`: one option of a fixed set, with the probability of each.
  * - `score`: a position on ordered levels (0 = the first), with the probability of each level.
  *
- * - `box`: where something is in an image (`images`), as fractions of its sides.
- *
  * TypeSafe Jev answers when the installation has its key (fast, cheap, calibrated);
  * otherwise, or when it fails, the org's small model answers through the
- * Model Gateway with structured output. Images and `box` need Jev (its vision
- * model): the small model refuses them. Never used to grant anything.
+ * Model Gateway with structured output. Neither reads images (ADR 0200: Jev's image
+ * input is a preview, not a production feature): a request with images goes to the
+ * installation's decision model (`decision-judge.ts`). Never used to grant anything.
  */
 export type JudgeQuestion =
   | { type: "noul"; instructions: string | Record<string, unknown>; criteria: { true: string; false: string } }
   | { type: "choice"; instructions: string | Record<string, unknown>; criteria: Record<string, string> }
-  | { type: "score"; instructions: string | Record<string, unknown>; criteria: string[] }
-  | { type: "box"; instructions: string | Record<string, unknown> };
-
-/** A region of an image: each edge a fraction (0..1) of its width or height, from the top left. */
-export interface JudgeBox {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
+  | { type: "score"; instructions: string | Record<string, unknown>; criteria: string[] };
 
 /** A still image for a judgment: its placeholder (the `images` key) goes where it belongs in `state`. */
 export interface JudgeImage {
@@ -51,10 +41,8 @@ export interface JudgeAnswer {
   probabilities?: Record<string, number>;
   /** `score`: the expected level (each level times its probability), 0..levels-1. */
   score?: number;
-  /** `choice` and `box` (Jev): how concentrated the answer is, 0..1. */
+  /** `choice` and `score`: how concentrated the answer is, 0..1. */
   confidence?: number;
-  /** `box`: where the target is (always given, even when it isn't there: ask a `noul` too). */
-  box?: JudgeBox;
 }
 
 export interface JudgeRequest {
@@ -76,7 +64,7 @@ export interface JudgeRequest {
   calibrated?: boolean;
   /**
    * Images the questions look at, by placeholder: the placeholder string stands in `state`
-   * (or an instruction) where the image belongs, and every one must be used. Jev only.
+   * (or an instruction) where the image belongs, and every one must be used. The decision model only (ADR 0200).
    */
   images?: Record<string, JudgeImage>;
   /** Its own wait for Jev (ms), when the caller can wait longer or must wait less than the judge's default. */
@@ -116,16 +104,8 @@ function refuseConfidential(request: Pick<JudgeRequest, "runId" | "kind">) {
 
 const clamp = (n: unknown) => (typeof n === "number" && Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0);
 
-/** Whether a request needs a model that sees images (an image in it, or a `box` question). */
-export const judgeSeesImages = (request: Pick<JudgeRequest, "images" | "questions">) =>
-  Object.keys(request.images ?? {}).length > 0 || Object.values(request.questions).some((q) => q.type === "box");
-
-function boxOf(v: unknown): JudgeBox {
-  const b = (v ?? {}) as Partial<Record<keyof JudgeBox, unknown>>;
-  const top = clamp(b.top);
-  const left = clamp(b.left);
-  return { top, left, bottom: Math.max(top, clamp(b.bottom)), right: Math.max(left, clamp(b.right)) };
-}
+/** Whether a request carries an image, so it needs a model that sees images. */
+export const judgeSeesImages = (request: Pick<JudgeRequest, "images">) => Object.keys(request.images ?? {}).length > 0;
 
 /**
  * TypeSafe Jev (`POST /v1/systemone`, or OpenRouter's Decisions route with an OpenRouter key): one request, all
@@ -138,24 +118,16 @@ export function createJevJudge(options: {
   baseURL?: string;
   model?: string;
   timeoutMs?: number;
-  /** For images and `box` (`jev-preview` by default: images are a preview feature there). */
-  visionModel?: string;
-  /** Images make a request bigger and slower: its own timeout (default 6 s). */
-  visionTimeoutMs?: number;
   fetch?: typeof fetch;
 }): Judge {
   return {
     name: "jev",
     async ask(request) {
       refuseConfidential(request);
-      const vision = judgeSeesImages(request);
-      const model = vision ? (options.visionModel ?? "jev-preview") : (options.model ?? "jev-latest");
-      const assets = Object.fromEntries(
-        Object.entries(request.images ?? {}).map(([key, image]) => [
-          key,
-          { data_base64: image.data, format: image.format },
-        ]),
-      );
+      const model = options.model ?? "jev-latest";
+      // ADR 0200: Jev's image input is a preview feature, never used by the product.
+      if (judgeSeesImages(request))
+        throw withJudgeCall(new Error("judge: Jev answers no images (ADR 0200)"), model, "typesafe");
       const body = await callJev<{
         model?: string;
         answers?: Record<string, JudgeAnswer>;
@@ -163,17 +135,8 @@ export function createJevJudge(options: {
       }>(options.key, {
         fetch: options.fetch,
         baseURL: options.baseURL,
-        // Images and Box questions are off unless asked for on each request.
-        headers: vision ? { "TypeSafe-Danger-Zone-Images": "true" } : undefined,
-        body: {
-          state: request.state,
-          model,
-          questions: request.questions,
-          ...(Object.keys(assets).length > 0 ? { assets } : {}),
-        },
-        timeoutMs: vision
-          ? (options.visionTimeoutMs ?? Math.max(6000, options.timeoutMs ?? 0))
-          : (request.timeoutMs ?? options.timeoutMs ?? 2000),
+        body: { state: request.state, model, questions: request.questions },
+        timeoutMs: request.timeoutMs ?? options.timeoutMs ?? 2000,
       }).catch((error: unknown) => {
         throw withJudgeCall(error, model, "typesafe");
       });
@@ -196,7 +159,6 @@ export function createJevJudge(options: {
         const a = body.answers?.[id];
         const confidence = typeof a?.confidence === "number" ? { confidence: clamp(a.confidence) } : {};
         if (q.type === "noul") out[id] = { noul: clamp(a?.noul) };
-        else if (q.type === "box") out[id] = { box: boxOf(a?.box), ...confidence };
         else if (q.type === "score") {
           out[id] = {
             score: typeof a?.score === "number" ? Math.min(q.criteria.length - 1, Math.max(0, a.score)) : 0,
@@ -234,7 +196,7 @@ export function createLlmJudge(deps: {
     async ask(request) {
       refuseConfidential(request);
       if (request.calibrated) throw new Error("judge: a calibrated judge is required (no Jev)");
-      if (judgeSeesImages(request)) throw new Error("judge: images and boxes need Jev");
+      if (judgeSeesImages(request)) throw new Error("judge: images need the decision model (ADR 0200)");
       const model = await deps.resolveModel(request.orgId);
       if (!model) throw new Error("judge: no small model on this workspace's keys");
       const ids = Object.keys(request.questions);
@@ -556,8 +518,8 @@ export async function everyoneShape(
 
 /**
  * For tests: answers from `answer(kind, questionId, state, question)` (default: every
- * Noul 0, no Choice picked, level 0, a box at the top left). A whole `JudgeAnswer` is passed
- * through (spread probabilities, a box) when it fits the question. Never calls a model. An agent's @mention needs
+ * Noul 0, no Choice picked, level 0). A whole `JudgeAnswer` is passed
+ * through (spread probabilities) when it fits the question. Never calls a model. An agent's @mention needs
  * nothing from the agent it names unless `answer` says otherwise (`mention_needs_nothing`
  * 1), so a canned reply that names an agent wakes nobody by accident.
  */
@@ -582,10 +544,9 @@ export function createFakeJudge(
         const a =
           answer?.(request.kind, id, request.state, q, request) ??
           (request.kind === "mention_needs_nothing" ? 1 : undefined);
-        // A whole answer of another type (a Choice's, a Box's) says nothing to a Noul: it gets the default.
+        // A whole answer of another type (a Choice's) says nothing to a Noul: it gets the default.
         if (a !== null && typeof a === "object" && (q.type !== "noul" || "noul" in a)) out[id] = a;
         else if (q.type === "noul") out[id] = { noul: clamp(typeof a === "number" ? a : 0) };
-        else if (q.type === "box") out[id] = { box: { top: 0, bottom: 0, left: 0, right: 0 }, confidence: 0 };
         else if (q.type === "score") {
           const score = typeof a === "number" ? a : 0;
           out[id] = { score, probabilities: { [String(Math.round(score))]: 1 } };

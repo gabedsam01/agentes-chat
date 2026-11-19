@@ -84,7 +84,11 @@ describe("OpenAI Decisions", () => {
       { apiKey: "sk-test", http },
       call("gpt-6-luna", { assets: { shot: { mediaType: "image/png", data: "AAAA" } } }),
     );
-    expect(body.input[0].content[1]).toEqual({ type: "input_image", image_url: "data:image/png;base64,AAAA" });
+    // Each picture follows a line with its name, so the state's key tells several apart.
+    expect(body.input[0].content.slice(1)).toEqual([
+      { type: "input_text", text: "shot" },
+      { type: "input_image", image_url: "data:image/png;base64,AAAA" },
+    ]);
     const refused = (async () =>
       Response.json({ error: { message: "bad key" } }, { status: 401 })) as unknown as typeof fetch;
     await expect(openAIDecision({ apiKey: "sk-test", http: refused }, call("gpt-6-luna"))).rejects.toMatchObject({
@@ -117,8 +121,16 @@ describe("Gemini Decisions", () => {
     expect(seen?.url).toBe("https://generativelanguage.googleapis.com/v1beta/decisions");
     expect(seen?.key).toBe("AQ.test");
     expect(seen?.body.questions.yes.criteria).toEqual({ true_description: "A greeting", false_description: "Not one" });
-    expect(seen?.body.input.map((b: { type: string }) => b.type)).toEqual(["text", "image", "document"]);
-    expect(seen?.body.input[2]).toMatchObject({ type: "document", mime_type: "application/pdf" });
+    expect(seen?.body.input.map((b: { type: string }) => b.type)).toEqual([
+      "text",
+      "text",
+      "image",
+      "text",
+      "document",
+    ]);
+    expect(seen?.body.input[1]).toEqual({ type: "text", text: "shot" });
+    expect(seen?.body.input[3]).toEqual({ type: "text", text: "claim" });
+    expect(seen?.body.input[4]).toMatchObject({ type: "document", mime_type: "application/pdf" });
     expect(result.answers.yes).toEqual({ noul: 0.99, confidence: 0.9 });
     expect(result.usage).toEqual({ inputTokens: 120, outputTokens: 0 });
   });
@@ -138,7 +150,7 @@ describe("Gemini Decisions", () => {
 });
 
 describe("System One", () => {
-  test("assets for a Jev-compatible runtime, images for llama.cpp, box and float scores", async () => {
+  test("assets for a Jev-compatible runtime, images for llama.cpp and float scores", async () => {
     // biome-ignore lint/suspicious/noExplicitAny: the fake transport's request body is JSON, read field by field.
     let body: any = null;
     const http = (async (_url: string, init: RequestInit) => {
@@ -147,7 +159,6 @@ describe("System One", () => {
         model: "laya",
         answers: {
           yes: { type: "noul", noul: 0.7 },
-          where: { type: "box", box: { top: 0.1, bottom: 0.5, left: 0.2, right: 0.6 }, confidence: 0.8 },
           level: { type: "score", score: 1.6 },
         },
         usage: { input_tokens: 30, output_tokens: 0 },
@@ -160,7 +171,6 @@ describe("System One", () => {
         state: { shot: "the screen" },
         questions: {
           yes: { type: "noul", instructions: "ok?" },
-          where: { type: "box", instructions: "where?" },
           level: { type: "score", instructions: "how?", criteria: ["a", "b", "c"] },
         },
         assets: { shot: { mediaType: "image/png", data: "DDDD" } },
@@ -168,7 +178,6 @@ describe("System One", () => {
     );
     expect(body.assets.shot).toEqual({ data_base64: "DDDD", format: "png" });
     expect(result.answers.yes?.noul).toBe(0.7);
-    expect(result.answers.where?.box).toEqual({ top: 0.1, left: 0.2, bottom: 0.5, right: 0.6 });
     expect(result.answers.level?.score).toBe(1.6);
 
     await systemOneCall(

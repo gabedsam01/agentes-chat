@@ -19,7 +19,7 @@ import {
   type ScreenObservation,
   type ScreenStep,
 } from "../../src/screen";
-import { cli, cliLink, jevJudge, newJudgeLog, newMeter, requireKey, servePages, sum, writeReport } from "./harness";
+import { cli, cliLink, imageJudge, newJudgeLog, newMeter, requireKey, servePages, sum, writeReport } from "./harness";
 
 const MODEL = process.env.EVAL_LLM_MODEL ?? "claude-sonnet-5-5";
 const RUNS = Number(process.env.EVAL_BROWSER_RUNS ?? 2);
@@ -307,7 +307,7 @@ async function runOnce(variant: Variant, scenario: Scenario, url: string): Promi
   await cli(["open", "about:blank"]);
   const meter = newMeter();
   const log = newJudgeLog();
-  const judge = jevJudge(log);
+  const judge = imageJudge(log);
   const link = cliLink({ rttMs: RTT_MS, fast: variant === "new", meter, vision: variant === "new" });
   const cache = createTargetCache();
   let seen: ScreenObservation | null = null;
