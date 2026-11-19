@@ -294,6 +294,8 @@ export interface BrowserToolDeps {
    * screenshot. Asked on each call, since the installation's Jev key can come and go.
    */
   vision?: () => boolean;
+  /** False: on a screenshot only among the listed elements, never at a bare spot (ADR 0200). */
+  spots?: () => boolean;
   /** Tests: the memory of targets per site (default: one per source, in memory). */
   targets?: TargetCache;
   now?: () => number;
@@ -1244,6 +1246,7 @@ export function createBrowserToolSource(deps: BrowserToolDeps): ToolSource & { r
         last: seen.within(key, FRESH_LOOK_MS),
         before: seen.within(key, KNOWN_LOOK_MS),
         vision: deps.vision?.() === true && linked.status.protocol >= BROWSER_FAST_PROTOCOL,
+        spots: deps.spots?.() !== false,
         now,
       },
       steps,

@@ -33,6 +33,7 @@ export const DECISION_MODELS: readonly DecisionModelInfo[] = [
     id: "gpt-6-luna",
     label: "GPT-6 Luna",
     inputs: ["text", "image"],
+    spots: false,
     site: "https://developers.openai.com/api/docs/guides/decisions",
   },
   {
@@ -112,6 +113,10 @@ export function capabilitiesOf(provider: DecisionProviderId, model: string): Dec
   if (provider === "gemini") return { inputs: ["text", "image", "audio", "video", "file"] };
   return { inputs: ["text"] };
 }
+
+/** Whether a target is looked for at a bare spot of a screenshot with this model (ADR 0200). */
+export const findsSpots = (provider: DecisionProviderId, model: string) =>
+  DECISION_MODELS.find((m) => m.provider === provider && m.id === model)?.spots !== false;
 
 /** The model's label, or its id when this build doesn't know it. */
 export const decisionModelLabel = (provider: DecisionProviderId, model: string) =>

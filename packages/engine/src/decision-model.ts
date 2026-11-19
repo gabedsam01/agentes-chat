@@ -9,6 +9,7 @@ import {
   type DecisionRuntime,
   type DecisionState,
   detectRuntime,
+  findsSpots,
   gbOf,
   recommendLocalModel,
 } from "@agenteschat/providers";
@@ -94,6 +95,8 @@ export interface DecisionModel {
   usable(): boolean;
   /** Usable now and its recorded capabilities include images (ADR 0200: the only judge of pictures). */
   seesImages(): boolean;
+  /** Sees images, and finds a target at a bare spot of one, not only among its listed elements (ADR 0200). */
+  findsSpots(): boolean;
   report(state: DecisionState): void;
   view(): Promise<DecisionModelView>;
   save(input: SaveDecisionModelInput, userId: string): Promise<DecisionModelView>;
@@ -197,6 +200,11 @@ export function createDecisionModel(deps: {
       row?.enabled === true &&
       now() >= skipUntil &&
       (row.capabilities as DecisionCapabilities | null)?.inputs?.includes("image") === true,
+    findsSpots: () =>
+      row?.enabled === true &&
+      now() >= skipUntil &&
+      (row.capabilities as DecisionCapabilities | null)?.inputs?.includes("image") === true &&
+      findsSpots(row.provider as DecisionProviderId, row.model),
     report(next) {
       if (next === "invalid" || next === "no_credit") {
         state = next;

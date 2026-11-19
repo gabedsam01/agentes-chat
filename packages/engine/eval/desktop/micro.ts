@@ -32,6 +32,10 @@ import { decisionJudge, jevJudge, newJudgeLog, p50, requireKey, sum, writeReport
 
 const FIXTURES = path.join(import.meta.dir, "fixtures");
 const TRIALS = Number(process.env.EVAL_DESKTOP_TRIALS ?? 2);
+/** Only the image targets whose words match this (a regular expression), to measure a few again. */
+const ONLY = process.env.EVAL_DESKTOP_TARGETS ? new RegExp(process.env.EVAL_DESKTOP_TARGETS, "i") : null;
+/** `off`: the model is kept to the marks, as the server keeps one whose `spots` is false (GPT-6 Luna, ADR 0200). */
+const SPOTS = process.env.EVAL_SPOTS !== "off";
 const ids = { orgId: "eval", agentId: "eval-agent", runId: "eval-run" };
 
 /** Thunar in front (its icon view only on the image), the Applications menu open, a dialog that loses work. */
@@ -231,6 +235,7 @@ const report: Record<string, unknown> = {
 const located: Record<string, unknown>[] = [];
 const passes = CUTTER ? (["first", "closeUp"] as const) : (["first"] as const);
 for (const c of imageCases) {
+  if (ONLY && !ONLY.test(c.target)) continue;
   const image = screenshotOf(c.scene);
   for (let trial = 0; trial < TRIALS; trial++) {
     for (const pass of passes) {
@@ -242,6 +247,7 @@ for (const c of imageCases) {
         image,
         url: lookOf(c.scene).address,
         kind: "desktop",
+        spots: SPOTS,
         ...(pass === "closeUp" ? { zoom: (region: ScreenRegion) => closeUp(c.scene, region) } : {}),
       });
       const right = c.at.length > 0 ? r.found && inside(c.at, r) : !r.found;

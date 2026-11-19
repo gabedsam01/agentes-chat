@@ -60,6 +60,8 @@ export interface DesktopToolDeps {
    * screenshot. Asked on each call, since the installation's Jev key can come and go.
    */
   vision?: () => boolean;
+  /** False: on a screenshot only among the listed elements, never at a bare spot (ADR 0200). */
+  spots?: () => boolean;
   /** Tests: the memory of targets per app (default: one per source, in memory). */
   targets?: TargetCache;
   now?: () => number;
@@ -392,6 +394,7 @@ export function createDesktopToolSource(deps: DesktopToolDeps): ToolSource {
         last: seen.within(key, FRESH_LOOK_MS),
         before: seen.within(key, KNOWN_LOOK_MS),
         vision: deps.vision?.() === true,
+        spots: deps.spots?.() !== false,
         // What covers a target on a desktop is usually a real dialog ("Save changes?"): never closed on a guess.
         dismiss: false,
         now,

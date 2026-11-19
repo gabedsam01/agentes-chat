@@ -375,15 +375,18 @@ export type Located =
     };
 
 /** How the judge is asked about each kind of screen. */
+// What `target` describes, never only "a control that does it": a field, a picture or a text is a target too.
 const ON_IMAGE: Record<ScreenKind, { what: string; present: string; absent: string }> = {
   browser: {
-    what: "`screenshot` is a web page. The control may be only an icon: a gear for settings, a trash can for delete, a pencil for edit, a magnifier for search, × for close.",
-    present: "Does `screenshot` show a control that does what `target` describes (maybe only as an icon)?",
+    what: "`screenshot` is a web page. A control may be only an icon: a gear for settings, a trash can for delete, a pencil for edit, a magnifier for search, × for close.",
+    present:
+      "Does `screenshot` show what `target` describes (a control, a field, a picture or text; maybe only an icon)?",
     absent: "It isn't on the screenshot (hidden, scrolled away or not on this page).",
   },
   desktop: {
-    what: "`screenshot` is a computer's desktop: windows, menus, a panel. The control may be only an icon: a gear for settings, a trash can for delete, a magnifier for search, x for close.",
-    present: "Does `screenshot` show a control that does what `target` describes?",
+    what: "`screenshot` is a computer's desktop: windows, menus, a panel. A control may be only an icon: a gear for settings, a trash can for delete, a magnifier for search, x for close.",
+    present:
+      "Does `screenshot` show what `target` describes (a control, a field, a picture or text; maybe only an icon)?",
     absent: "It isn't on the screenshot.",
   },
 };
@@ -417,6 +420,8 @@ const CLEAR_MARGIN = 0.25;
 const JOIN_MARGIN = 0.25;
 /** How far beside the aim the check also looks, in screen pixels: half a small control. */
 const NUDGE_PX = 8;
+/** A named mark picked this surely is taken without a check (every right pick of both models was, measured). */
+const NAMED_AT = 0.75;
 /** Spots this close are one spot: it is checked once. */
 const SAME_PX = 4;
 /** A cell this sure counts toward where to click, beside the surest one it touches. */
@@ -483,9 +488,14 @@ export async function locateOnImage(input: {
   kind?: ScreenKind;
   /** A close-up of a region of the screen, at its native size, or null when it can't be taken. */
   zoom?: (region: ScreenRegion) => Promise<ScreenImage | null>;
+  /** False: only among the marks, never at a bare spot (a model that said yes beside small controls). */
+  spots?: boolean;
 }): Promise<Located> {
   const words = ON_IMAGE[input.kind ?? "browser"];
   const target = input.target.trim();
+  // A page's address helps; a desktop's (`desktop://thunar/main`) made GPT say a browser on that screen had no
+  // address bar: the screen holds more than the window in front (measured).
+  const address = input.kind === "desktop" ? {} : { address: input.url ?? null };
   const ask = async (
     images: Record<string, { data: string; format: "jpeg" }>,
     state: Record<string, unknown>,
@@ -497,7 +507,7 @@ export async function locateOnImage(input: {
       agentId: input.agentId,
       runId: input.runId,
       kind: "screen_locate",
-      state: { ...state, address: input.url ?? null, target },
+      state: { ...state, ...address, target },
       images,
       // Whether it is there, and can't be undone, is asked once, on the whole screen.
       questions: {
@@ -525,9 +535,8 @@ export async function locateOnImage(input: {
     reason: error instanceof Error ? error.message : String(error),
   });
 
-  // A spot found on the cells is checked before it is given: a cross drawn on it in a close-up, and one yes/no on
-  // whether it sits on the control. A cell's yes says where the control is; this says a click there lands on it. A
-  // named mark's pick is not checked: measured, the check said no to right picks of small panel and dialog buttons.
+  // A spot is checked before it is given: a cross drawn on it in a close-up, and one yes/no on whether it sits on
+  // what the target is. A cell's yes, or a mark's pick, says where it is; this says a click there lands on it.
   const check = async (img: ScreenImage, spot: { x: number; y: number }, area: { width: number; height: number }) => {
     const from = img.origin ?? { x: 0, y: 0 };
     const picture = await openImage(img.data);
@@ -558,14 +567,14 @@ export async function locateOnImage(input: {
       agentId: input.agentId,
       runId: input.runId,
       kind: "screen_locate",
-      state: { picture: shot, address: input.url ?? null, target },
+      state: { picture: shot, ...address, target },
       images: { [shot]: { data, format: "jpeg" } },
       questions: {
         on: {
           type: "noul",
-          instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}, with a red crosshair drawn on it: four arms around an empty middle. Is the point in that middle on the one control that does what \`target\` describes, so a click there would use it?`,
+          instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}, with a red crosshair drawn on it: four arms around an empty middle. Is the point in that middle on what \`target\` describes, so a click there would reach it?`,
           criteria: {
-            true: "The crosshair's middle is on that control.",
+            true: "The crosshair's middle is on it.",
             false: "The middle is beside it, or on something else.",
           },
         },
@@ -577,10 +586,18 @@ export async function locateOnImage(input: {
   // Marks: one question over their numbers (the most a Choice takes, plus "none").
   const marks = (input.image.marks ?? []).slice(0, MAX_OPTIONS);
   let costly = true;
+  // Asked once: beside the marks' choice, or else beside the cells' first round. Asked twice, GPT said once that a
+  // target the marks' question had seen wasn't there (measured).
+  let askedWhole = false;
   if (marks.length > 0) {
     const criteria: Record<string, string> = {};
-    for (const m of marks) criteria[m.ref] = `${m.number}: ${m.role}${m.name ? ` "${m.name}"` : ""}`;
-    criteria.none = "None of the numbered elements is it.";
+    // Where each is, in the picture's pixels: a desktop's screenshot has no numbers drawn on it, and GPT took the
+    // Edit menu for a search button known only by role and name (measured).
+    const o = input.image.origin ?? { x: 0, y: 0 };
+    for (const m of marks)
+      criteria[m.ref] =
+        `${m.number}: ${m.role}${m.name ? ` "${m.name}"` : ""}, its center at ${Math.round(m.box.x - o.x + m.box.width / 2)},${Math.round(m.box.y - o.y + m.box.height / 2)}`;
+    criteria.none = "None of the listed elements is it.";
     try {
       const placeholder = `screen_${randomUUID()}`;
       const r = await ask(
@@ -588,25 +605,33 @@ export async function locateOnImage(input: {
         { screenshot: placeholder },
         {
           type: "choice",
-          instructions: `${words.what} Elements are drawn with a number. Which one does what \`target\` describes?`,
+          instructions: `${words.what} The screen's elements are listed with their center, in pixels from the top left of the ${input.image.viewport.width}×${input.image.viewport.height} screenshot (on a web page each is also drawn with its number). Which one is what \`target\` describes?`,
           criteria,
         },
         true,
       );
-      if (r.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
       costly = r.costly;
+      askedWhole = true;
       const m = r.choice && r.choice !== "none" ? marks.find((e) => e.ref === r.choice) : undefined;
-      if (m && r.p >= PICK_AT) {
-        const spot = { x: Math.round(m.box.x + m.box.width / 2), y: Math.round(m.box.y + m.box.height / 2) };
-        // A mark without a name is picked by its looks alone, and a control the marks leave out (a window's title
-        // bar) went to one (measured): its spot is checked, and a no goes on to the cells.
-        const on = m.name ? 1 : await check(input.image, spot, m.box);
+      const spot = m && { x: Math.round(m.box.x + m.box.width / 2), y: Math.round(m.box.y + m.box.height / 2) };
+      // A named mark picked surely is taken as it is, even when the same answer says the target isn't there: GPT
+      // picked the Settings submenu at 0.99 and said 0.01 that it was on the screen, and the cross's check said no
+      // to Gemini's right picks of menu items (measured).
+      if (m && spot && m.name && r.p >= NAMED_AT) return { found: true, ...spot, ref: m.ref, confidence: r.p };
+      if (r.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
+      // Any other pick is checked, and a no goes on to the cells: a mark without a name is picked by its looks
+      // alone, a control the marks leave out (a window's title bar) went to one, and GPT took a terminal's panel
+      // button for its text area at 0.62 (measured).
+      if (m && spot && r.p >= PICK_AT) {
+        const on = await check(input.image, spot, m.box);
         if (on >= PRESENT_AT) return { found: true, ...spot, ref: m.ref, confidence: Math.min(r.p, r.present, on) };
       }
     } catch (error) {
       return fail(error);
     }
   }
+
+  if (input.spots === false) return { found: false, reason: "not among the screen's elements" };
 
   // No mark fits: narrow the screen down. `region` is in screen pixels; `source` is the image the cells are cut from.
   const origin = input.image.origin ?? { x: 0, y: 0 };
@@ -653,15 +678,15 @@ export async function locateOnImage(input: {
           kind: "screen_locate",
           state: {
             ...Object.fromEntries(Object.keys(images).map((k) => [k.split("_")[0], k])),
-            address: input.url ?? null,
+            ...address,
             target,
           },
           images,
           questions,
         });
-      // Whether it is there, and can't be undone, is asked once, on the whole screen, beside the first round.
+      // Whether it is there, and can't be undone, is asked once, on the whole screen.
       const whole =
-        round === 0
+        round === 0 && !askedWhole
           ? cut(region, WHOLE_PX).then(async (data) => {
               const a = await asked(
                 { [`screenshot_${randomUUID()}`]: { data, format: "jpeg" } },
@@ -691,7 +716,7 @@ export async function locateOnImage(input: {
             {
               holds: {
                 type: "noul",
-                instructions: `\`picture\` is ${round === 0 ? "" : "part of "}${SCREEN_OF[input.kind ?? "browser"]}, with a red rectangle drawn on it. Is the center of the one control that does what \`target\` describes inside the red rectangle? It may be only an icon.`,
+                instructions: `\`picture\` is ${round === 0 ? "" : "part of "}${SCREEN_OF[input.kind ?? "browser"]}, with a red rectangle drawn on it. Is the center of what \`target\` describes inside the red rectangle? It may be only an icon.`,
                 criteria: {
                   true: "Its center is inside the red rectangle.",
                   false: "It is outside the rectangle, or only an edge of it is inside.",

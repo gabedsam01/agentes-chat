@@ -131,6 +131,12 @@ describe("a target on the screen image", () => {
     expect(await locate(cells(MENU_ITEM, { on: 0.2 }))).toEqual({ found: false, reason: "unsure" });
   });
 
+  test("a model kept to the marks never narrows the screen to a bare spot", async () => {
+    const judge = cells(MENU_ITEM);
+    expect(await locate(judge, { spots: false })).toEqual({ found: false, reason: "not among the screen's elements" });
+    expect(judge.calls).toHaveLength(0);
+  });
+
   test("a target that can't be undone is never taken at a bare spot", async () => {
     const judge = cells(MENU_ITEM, { costly: 0.95 });
     expect(await locate(judge)).toEqual({ found: false, reason: "only a spot on the image", refused: true });
