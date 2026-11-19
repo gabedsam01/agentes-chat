@@ -3,18 +3,21 @@ import { setupDom } from "@agenteschat/ui/testing/dom";
 
 setupDom();
 
-import { accentPalette, accentSky, ditherUrl } from "@agenteschat/ui";
+import { accentPalette, accentSky } from "@agenteschat/ui";
 import { gradientOf } from "@agenteschat/ui/agent/engine";
 import { act, cleanup, fireEvent, render, within } from "@testing-library/react";
 import { ThemeProvider, useTheme, useWorkspaceAccent } from "@/lib/theme";
 import { createFakeApi, type FakeState, ORG_ID, seedState } from "./fake-api";
 import { renderApp, screen, settle } from "./render";
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
 
 const OTHER_ID = "00000000-0000-4000-8000-0000000000aa";
 const PURPLE = "#7c3aed";
-const DEFAULT_SKY: [string, string] = ["#8cc3ff", "#0063d1"];
+const DEFAULT_SKY: [string, string] = ["#e07b39", "#b34d00"];
 const accentAttr = () => document.documentElement.getAttribute("data-accent");
 const agentVar = () => document.documentElement.style.getPropertyValue("--agent");
 const vars = () =>
@@ -41,8 +44,8 @@ describe("the workspace shell paints its accent", () => {
     const state = twoWorkspaces();
     const r = await renderApp(`/org/${ORG_ID}/home`, { api: createFakeApi(state) });
     await settle(6);
-    const light = accentPalette(PURPLE).light;
-    expect(vars()).toEqual([light.agent, light.agent2, light.agentSoft, light.onAgent]);
+    const dark = accentPalette(PURPLE).dark;
+    expect(vars()).toEqual([dark.agent, dark.agent2, dark.agentSoft, dark.onAgent]);
     // Agents with no color of their own and the sky art: the accent's pair; canvases told to repaint.
     expect(gradientOf("sky")).toEqual(accentSky(PURPLE));
     expect(accentAttr()).toBe(PURPLE);
@@ -55,7 +58,7 @@ describe("the workspace shell paints its accent", () => {
 
     await act(() => r.router.navigate({ to: "/org/$orgId/home", params: { orgId: ORG_ID } }));
     await settle(8);
-    expect(agentVar()).toBe(light.agent);
+    expect(agentVar()).toBe(dark.agent);
 
     // Once the workspace's shell is gone (the account's own pages, sign-in): the design system's own colors.
     cleanup();
@@ -64,7 +67,7 @@ describe("the workspace shell paints its accent", () => {
     expect(accentAttr()).toBeNull();
   });
 
-  test("in the workspace menu, every other workspace's mark is in its own accent, or the default blue", async () => {
+  test("in the workspace menu, every other workspace's mark is in its own accent, or the default accent", async () => {
     const state = twoWorkspaces();
     state.me?.organizations.push({
       id: "00000000-0000-4000-8000-0000000000bb",
@@ -75,14 +78,13 @@ describe("the workspace shell paints its accent", () => {
     await renderApp(`/org/${ORG_ID}/home`, { api: createFakeApi(state) });
     await settle(6);
     await click(screen().getByRole("button", { name: "Menu do workspace Acme" }));
-    const dither = (name: string) =>
+    const markFill = (name: string) =>
       screen()
         .getByRole("menuitem", { name: new RegExp(name) })
-        .querySelector(".ac-logo__dither")
-        ?.getAttribute("href");
-    expect(dither("Acme")).toBe(ditherUrl(accentSky(PURPLE), 12));
-    expect(dither("Globex")).toBe(ditherUrl(DEFAULT_SKY, 12));
-    expect(dither("Initech")).toBe(ditherUrl(accentSky("#f97316"), 12));
+        .querySelector<SVGElement>(".ac-logo__agent")?.style.fill;
+    expect(markFill("Acme")).toBe(accentSky(PURPLE)[1]);
+    expect(markFill("Globex")).toBe(DEFAULT_SKY[1]);
+    expect(markFill("Initech")).toBe(accentSky("#f97316")[1]);
   });
 
   test("it follows the theme as it switches", async () => {
@@ -145,14 +147,14 @@ describe("Configurações › Workspace › Cor de destaque", () => {
 
     await click(within(popover()).getByRole("button", { name: "Violeta" }));
     const sample = popover().querySelector<HTMLElement>("[data-testid=accent-sample]");
-    expect(sample?.style.getPropertyValue("--agent")).toBe(accentPalette("#6e45d1").light.agent);
+    expect(sample?.style.getPropertyValue("--agent")).toBe(accentPalette("#6e45d1").dark.agent);
     expect(sample?.textContent).toContain("@Agente");
     expect(agentVar()).toBe("");
 
     await click(save());
     expect(state.calls).toContainEqual({ method: "orgs.setAccent", args: [ORG_ID, "#6e45d1"] });
     expect(document.body.textContent).toContain("Cor de destaque atualizada.");
-    expect(agentVar()).toBe(accentPalette("#6e45d1").light.agent);
+    expect(agentVar()).toBe(accentPalette("#6e45d1").dark.agent);
     expect(screen().getByRole("button", { name: "Usar a padrão" })).toBeTruthy();
   });
 
@@ -175,7 +177,7 @@ describe("Configurações › Workspace › Cor de destaque", () => {
     await act(async () => release());
     await settle(6);
     expect(state.calls).toContainEqual({ method: "orgs.setAccent", args: [ORG_ID, "#f97316"] });
-    expect(agentVar()).toBe(accentPalette("#f97316").light.agent);
+    expect(agentVar()).toBe(accentPalette("#f97316").dark.agent);
 
     state.setAccentGate = undefined;
     await click(screen().getByRole("button", { name: "Usar a padrão" }));

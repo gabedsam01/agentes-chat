@@ -8,9 +8,9 @@ import type { LocaleStrings } from "./plurals";
  */
 export const ptBR = {
   app: {
-    name: "agentes",
+    name: "squadchat",
     /** The browser tab's title on every screen that doesn't set its own. */
-    tabTitle: "agentes.chat · Seu time e seus agentes, na mesma conversa",
+    tabTitle: "squadchat · Seu time e seus agentes, na mesma conversa",
   },
   common: {
     close: "Fechar",
@@ -41,7 +41,7 @@ export const ptBR = {
     /** A server error (a 5xx of its own): nothing the person did, and nothing they can fix. */
     ourSide: "Algo deu errado do nosso lado. Tente de novo daqui a pouco.",
     signedOut: "Sua sessão terminou. Entre de novo para continuar.",
-    newVersion: "Tem uma versão nova do agentes.chat.",
+    newVersion: "Tem uma versão nova do squadchat.",
     reload: "Recarregar",
     copy: "Copiar",
     copied: "Copiado",
@@ -66,7 +66,7 @@ export const ptBR = {
     tooMany: "Muitas tentativas. Tente de novo mais tarde.",
     /** A request with no answer at all (`errorText`): the browser offline, or the server out of reach. */
     offline: "Você está sem internet. Confira a conexão e tente de novo.",
-    unreachable: "Sem conexão com o agentes.chat agora. Tente de novo em instantes.",
+    unreachable: "Sem conexão com o squadchat agora. Tente de novo em instantes.",
   },
   roles: {
     owner: "Dono",
@@ -577,8 +577,8 @@ export const ptBR = {
       continue: "Continuar no meu servidor",
       address: "Endereço do servidor",
       connect: "Conectar",
-      invalid: "Isso não é um endereço. Escreva como no navegador, por exemplo agentes.example.com.",
-      unreachable: "Não achamos o agentes.chat em {{host}}. Confira o endereço e se o servidor está ligado.",
+      invalid: "Isso não é um endereço. Escreva como no navegador, por exemplo squadchat.example.com.",
+      unreachable: "Não achamos o squadchat em {{host}}. Confira o endereço e se o servidor está ligado.",
       none: "Ainda não tem um?",
       noneLink: "Veja como ter o seu, grátis",
     },
@@ -640,7 +640,7 @@ export const ptBR = {
     termsMiddle: " e a ",
     privacy: "Política de privacidade",
     termsAfter: ".",
-    poweredBy: "Feito com agentes.chat",
+    poweredBy: "Feito com squadchat",
     signOut: "Sair",
     earlyAccess: {
       otherEmail: "Este convite é para outro endereço. Cadastre-se com o endereço que recebeu o convite.",
@@ -689,13 +689,13 @@ export const ptBR = {
       openMail: "Abrir o {{app}}",
       ownerWaits: "Este servidor espera o seu dono.",
       ownerWaitsLead: "Abra o link de dono deste servidor (termina em /owner#claim=…), neste computador ou no celular.",
-      noPassword: "Esta conta entra pelo app do agentes.chat.",
+      noPassword: "Esta conta entra pelo app do squadchat.",
       noPasswordLead:
         "No computador onde este servidor roda, abra o app e escolha Adicionar uma senha em Configurações\u00a0›\u00a0Sua conta.",
       backToSignIn: "Voltar para entrar",
       /** Under the sign-in opened by "Add account": back to the account still signed in. */
       backToAccount: "Voltar para {{name}}",
-      toAuthorizeApp: "Para conectar um app ao agentes.chat.",
+      toAuthorizeApp: "Para conectar um app ao squadchat.",
     },
     desktop: {
       browser: "Continue no navegador",
@@ -706,7 +706,7 @@ export const ptBR = {
       otherServer: "Usar outro servidor",
       opening: "Abrindo {{provider}}…",
       confirm: "É o seu app?",
-      confirmLead: "Este código tem que ser o mesmo que aparece no app agentes.chat no seu computador.",
+      confirmLead: "Este código tem que ser o mesmo que aparece no app squadchat no seu computador.",
       confirmYes: "Sim, entrar no app",
       confirmNo: "Não fui eu",
       done: "Tudo certo.",
@@ -732,14 +732,14 @@ export const ptBR = {
     },
     desktopOwner: {
       continue: "Continuar neste {{device}}",
-      text: "Você instalou o agentes.chat neste {{device}}: não precisa de senha.",
+      text: "Você instalou o squadchat neste {{device}}: não precisa de senha.",
       gone: "O dono deste servidor apagou a conta, então Continuar neste {{device}} não consegue entrar com ninguém. Entre com o seu próprio e-mail.",
-      none: "Não sobrou nenhuma conta no agentes.chat deste {{device}}. Crie o novo dono na janela que abriu.",
+      none: "Não sobrou nenhuma conta no squadchat deste {{device}}. Crie o novo dono na janela que abriu.",
     },
     /** The line over the sign-in in the desktop app: which server it signs in to (ADR 0158). */
     server: {
       into: "Entrando em <b>{{server}}</b>",
-      intoHere: "Entrando no agentes.chat <b>deste {{device}}</b>",
+      intoHere: "Entrando no squadchat <b>deste {{device}}</b>",
       intoCloud: "Entrando no <b>agentes.chat Cloud</b>",
       /** Trocar's name for screen readers: the e-mail's Trocar sits on the same screen. */
       change: "Trocar de servidor",
@@ -747,7 +747,7 @@ export const ptBR = {
     /** "Forgot password" on a server that sends no email (ADR 0158). */
     forgotHere: {
       ownerTitle: "Aqui você não precisa de senha.",
-      ownerLead: "Você instalou o agentes.chat neste {{device}}. Entre por aqui e crie uma senha nova em seguida.",
+      ownerLead: "Você instalou o squadchat neste {{device}}. Entre por aqui e crie uma senha nova em seguida.",
       notOwner: "Não é a conta de quem instalou? Peça a um dono do seu workspace um link de senha nova.",
       title: "Este servidor não manda e-mail.",
       lead: "Peça a um dono do seu workspace um link de senha nova. Ele gera em Membros, e o link vale por 1 hora.",
@@ -1011,7 +1011,7 @@ export const ptBR = {
         edit: "Editar avatar",
         upload: "Enviar uma foto",
         area: "Você cuida de quê?",
-        areaHint: "Opcional. Só para a gente entender quem usa o agentes.chat.",
+        areaHint: "Opcional. Só para a gente entender quem usa o squadchat.",
       },
       area: {
         options: {
@@ -1090,7 +1090,7 @@ export const ptBR = {
         asleep: "Dormindo até o plano",
         price: "<b>Plano {{name}}</b> · {{price}} por mês",
         name: "<b>Plano {{name}}</b>",
-        generic: "Um plano do agentes.chat",
+        generic: "Um plano do squadchat",
         cancel: "Cancele quando quiser",
         cta: "Ligar o time",
         all: "Ver todos os planos",
@@ -1153,7 +1153,7 @@ export const ptBR = {
     },
     yourCompany: "sua empresa",
     purpose: {
-      title: "Para que você vai usar o agentes.chat?",
+      title: "Para que você vai usar o squadchat?",
       lead: "Dá para mudar depois, nada se perde.",
       personal: "Para mim",
       personalText: "Agentes que cuidam do seu dia.",
@@ -1230,7 +1230,7 @@ export const ptBR = {
         howTo: "Como conectar, app por app",
         paste: "Cole este pedido no app:",
         prompt:
-          "Use o servidor MCP do agentes.chat que você acabou de conectar ({{url}}) para trazer o que você tem para o agentes.chat. Primeiro chame import_summary para ver o que já existe lá e não duplicar nada. Depois, para cada agente, instrução, skill e rotina que você tem, crie o equivalente com create_agent, create_skill e create_routine, e guarde o que cada agente deve lembrar com add_memory.",
+          "Use o servidor MCP do squadchat que você acabou de conectar ({{url}}) para trazer o que você tem para o squadchat. Primeiro chame import_summary para ver o que já existe lá e não duplicar nada. Depois, para cada agente, instrução, skill e rotina que você tem, crie o equivalente com create_agent, create_skill e create_routine, e guarde o que cada agente deve lembrar com add_memory.",
         promptLabel: "Pedido para o seu app de IA",
         copy: "Copiar o pedido",
         copied: "Agora é só colar no seu app de IA.",
@@ -1355,7 +1355,7 @@ export const ptBR = {
         see: "Ver o que chegou",
       },
       otherName: "Outro app",
-      agenteschatName: "agentes.chat",
+      agenteschatName: "squadchat",
       where: {
         openbotrun:
           "Solte o openbot-import.json (do Migrator by OpenBot) ou o openbot-transfer.json (da transferência da instância), ou o .zip em que ele veio.",
@@ -1723,9 +1723,9 @@ export const ptBR = {
     keyStep: {
       title: "Qual IA eles vão usar?",
       lead: "Entre com o seu plano de IA: sem\u00a0chave\u00a0de\u00a0API.",
-      paid: "Seu plano do agentes.chat está ativo. O computador deles está a caminho.",
+      paid: "Seu plano do squadchat está ativo. O computador deles está a caminho.",
       /** Back from paying, for a minute at most, until the billing service lifts the workspace's hold (ADR 0079). */
-      confirming: "Confirmando o pagamento do plano do agentes.chat deste workspace.",
+      confirming: "Confirmando o pagamento do plano do squadchat deste workspace.",
       leadNoComputer:
         "Os agentes pensam com uma chave\u00a0de\u00a0API, ou com o seu plano de IA num computador que você conectar.",
     },
@@ -1738,7 +1738,7 @@ export const ptBR = {
       label: "Limite mensal por agente, em dólares",
       perMonth: "/mês",
       noteKey:
-        "Vale só para o uso da API, cobrado pelo provedor da chave, não pelo agentes.chat. Quando um agente chega no limite, ele para e te avisa. Planos não contam aqui.",
+        "Vale só para o uso da API, cobrado pelo provedor da chave, não pelo squadchat. Quando um agente chega no limite, ele para e te avisa. Planos não contam aqui.",
       notePlatform: "Vale só para o uso da API. Quando um agente chega no limite, ele para e te avisa.",
     },
     keySite: "Crie a chave em {{site}}.",
@@ -1797,7 +1797,7 @@ export const ptBR = {
     },
     team: {
       title: "Quem mais trabalha com você?",
-      payment: "Você convida a equipe depois de escolher o plano do agentes.chat.",
+      payment: "Você convida a equipe depois de escolher o plano do squadchat.",
       lead: "Convide por e-mail ou compartilhe o link.",
       leadLink: "Compartilhe o link de convite com eles.",
       emails: "E-mails",
@@ -1913,7 +1913,7 @@ export const ptBR = {
     reload: "Recarregar",
     search: "Buscar ou perguntar…",
     look: "Clique direito",
-    lookOurs: "agentes.chat",
+    lookOurs: "squadchat",
     lookSystem: "Do sistema",
     markRead: "Marcar como lida",
     muteChannel: "Silenciar canal",
@@ -1939,8 +1939,8 @@ export const ptBR = {
     copied: "Copiado. Cole no terminal.",
     mac: {
       why: "<b>O app está em beta.</b> Por isso, na primeira vez, o Mac pede uma confirmação:",
-      drag: "Arraste o agentes.chat para Aplicativos.",
-      dragLong: "Abra o arquivo baixado e arraste o agentes.chat para Aplicativos.",
+      drag: "Arraste o squadchat para Aplicativos.",
+      dragLong: "Abra o arquivo baixado e arraste o squadchat para Aplicativos.",
       blocked: "Abra o app e clique em Concluído.",
       blockedSub: "Não clique em Mover para o Lixo.",
       settings: "Em Ajustes\u00a0›\u00a0Privacidade e Segurança, clique em Abrir Mesmo Assim.",
@@ -1969,18 +1969,18 @@ export const ptBR = {
       why: "Para Ubuntu, Debian e derivados (x64). O Linux não pede confirmação extra:",
       apt: "Instale o .deb com dois cliques, ou pelo terminal.",
       aptLong: "Clique duas vezes no arquivo baixado e em Instalar, ou cole no terminal:",
-      open: "Abra o agentes.chat nos aplicativos.",
+      open: "Abra o squadchat nos aplicativos.",
       otherTitle: "Usa Arch, Fedora ou outro sistema que não aceita .deb?",
       otherText:
         "Baixe o AppImage: ele roda em qualquer distribuição e se atualiza sozinho. Depois cole isto no terminal, na pasta onde você salvou:",
       appImage: "Baixar o AppImage",
     },
     page: {
-      docTitle: "Baixar o app · agentes.chat",
-      title: "Baixe o app do agentes.chat",
+      docTitle: "Baixar o app · squadchat",
+      title: "Baixe o app do squadchat",
       beta: "Beta",
       text: "O seu workspace numa janela própria, com os avisos do sistema. Com um clique, os agentes trabalham neste computador, em pastas só deles.",
-      open: "Abrir o agentes.chat",
+      open: "Abrir o squadchat",
       version: "Versão {{version}}",
       versionSize: "Versão {{version}} · {{size}}",
       soon: "Ainda não há versão para {{system}}.",
@@ -1991,7 +1991,7 @@ export const ptBR = {
       system: "Sistema",
       whyTitle: "Por que o sistema pede uma confirmação?",
       whyText:
-        "O agentes.chat está em beta: a versão para Mac ainda não é notarizada pela Apple, e o instalador do Windows ainda não tem o certificado da Microsoft. Sem esses selos, o sistema pergunta uma vez antes de abrir um app baixado da internet. Depois disso, ele abre direto e se atualiza sozinho. Antes de sair do beta, esse passo deixa de existir.",
+        "O squadchat está em beta: a versão para Mac ainda não é notarizada pela Apple, e o instalador do Windows ainda não tem o certificado da Microsoft. Sem esses selos, o sistema pergunta uma vez antes de abrir um app baixado da internet. Depois disso, ele abre direto e se atualiza sozinho. Antes de sair do beta, esse passo deixa de existir.",
       openSource: "Código aberto",
       onlyHere: "Publicado só aqui e nas releases do projeto",
       signedUpdates: "Atualizações assinadas",
@@ -2043,7 +2043,7 @@ export const ptBR = {
       runAnyway: "Executar assim mesmo",
       activities: "Atividades",
       readingLists: "Lendo listas de pacotes... Pronto",
-      settingUp: "Configurando agentes-chat ({{version}}) ...",
+      settingUp: "Configurando squadchat ({{version}}) ...",
     },
   },
   /** The icon a person picks for the app on this device (ADR 0179): Settings › Account › This device, and the phone's You. */
@@ -2291,7 +2291,7 @@ export const ptBR = {
     addAccountHint: "Entrar com outra conta sem sair desta",
     yourServer: "Seu servidor",
     /** A server's line in "Your workspaces" in the desktop app: the one on this computer, and its state (ADR 0158). */
-    serverHere: "O agentes.chat neste {{device}}",
+    serverHere: "O squadchat neste {{device}}",
     serverStopped: "parado",
     serverOffline: "fora do ar desde {{time}}",
     serverSignedOut: "sem login",
@@ -2460,14 +2460,14 @@ export const ptBR = {
     failed: "Não deu para gerar o código.",
     localOnly: "Este servidor só abre no computador onde ele roda, então o celular não chega a ele.",
     localOnlyHow:
-      "No app do agentes.chat desse computador, ligue Acessar pelo celular e pela equipe em Preferências › Servidores. Depois volte aqui.",
+      "No app do squadchat desse computador, ligue Acessar pelo celular e pela equipe em Preferências › Servidores. Depois volte aqui.",
     localOnlyHere: "Ligue Acessar pelo celular e pela equipe. Depois volte aqui.",
   },
   surface: {
     link: {
       /** A recorded consent: keep the meaning, and "parar" as the word the service recognises. */
       consent:
-        "{{assistant}} do agentes.chat pode mandar mensagens no {{surface}} sobre seus workspaces, e ligar só quando for urgente e você permitir. Escreva parar para desativar.",
+        "{{assistant}} do squadchat pode mandar mensagens no {{surface}} sobre seus workspaces, e ligar só quando for urgente e você permitir. Escreva parar para desativar.",
       title: "Fale com {{assistant}} no {{surface}}",
       qr: "QR code que abre o {{surface}} com o seu código digitado",
       making: "Gerando seu código",
@@ -3016,9 +3016,9 @@ export const ptBR = {
       lead: "Crio os agentes, conecto os apps e convido as pessoas. Nada muda sem você pedir, e eu faço só o que você pode fazer.",
       leadPersonal: "Crio os seus agentes e conecto os seus apps. Nada muda sem você pedir.",
       heldLead:
-        "Escolha o que a sua empresa faz e o time aparece aqui. Os agentes começam a trabalhar quando o workspace tiver um plano do agentes.chat.",
+        "Escolha o que a sua empresa faz e o time aparece aqui. Os agentes começam a trabalhar quando o workspace tiver um plano do squadchat.",
       heldLeadPersonal:
-        "Escolha com o que você quer ajuda e os seus agentes aparecem aqui. Eles começam a trabalhar quando você tiver um plano do agentes.chat.",
+        "Escolha com o que você quer ajuda e os seus agentes aparecem aqui. Eles começam a trabalhar quando você tiver um plano do squadchat.",
       connect: {
         title: "Conectar uma IA para o time",
         titlePersonal: "Conectar uma IA para os seus agentes",
@@ -3555,7 +3555,7 @@ export const ptBR = {
       runner_outdated:
         "{{name}} não consegue responder agora: o programa no computador do plano precisa ser atualizado.",
       plan_tools:
-        "{{name}} parou antes de responder: a IA do plano naquele computador não ficou só nas ferramentas do agentes.chat.",
+        "{{name}} parou antes de responder: a IA do plano naquele computador não ficou só nas ferramentas do squadchat.",
       /** `model`: the model whose own limit it is (not the plan's); the plan's other models still work. */
       model_limit:
         "{{name}} não consegue responder agora: o {{model}} chegou ao limite dele no plano. Os outros modelos do plano continuam funcionando.",
@@ -3575,16 +3575,16 @@ export const ptBR = {
     kept: {
       title: "Guardei a sua mensagem",
       wait: {
-        payment: "Respondo aqui quando o workspace tiver um plano do agentes.chat.",
-        unpaid: "Respondo aqui quando o pagamento do plano do agentes.chat passar.",
-        ended: "Respondo aqui quando o workspace assinar o agentes.chat de novo.",
+        payment: "Respondo aqui quando o workspace tiver um plano do squadchat.",
+        unpaid: "Respondo aqui quando o pagamento do plano do squadchat passar.",
+        ended: "Respondo aqui quando o workspace assinar o squadchat de novo.",
       },
-      askAdmin: "Respondo aqui quando um admin resolver o plano do agentes.chat.",
+      askAdmin: "Respondo aqui quando um admin resolver o plano do squadchat.",
       plan: "O plano traz o computador dos agentes, sempre ligado. A IA é a que você já paga: Claude, ChatGPT e outras, ou uma chave de API.",
       activeTitle: "Plano ativo",
       activeLine: "Conecte uma IA e {{name}} responde aqui.",
       receipt: "Guardada",
-      channel: "Guardada. Os agentes respondem quando o workspace tiver um plano do agentes.chat.",
+      channel: "Guardada. Os agentes respondem quando o workspace tiver um plano do squadchat.",
     },
     receipt: "Ninguém vai responder: falta uma IA",
     /** Under a person's message when every plan here serves only someone else (`plans_not_yours`). */
@@ -3621,7 +3621,7 @@ export const ptBR = {
       getGit: "Baixar o Git for Windows",
       /** It is there and its own check of its version fails: `message` is its error. */
       cantStart: "O {{program}} está no {{computer}}, mas não abre: {{message}}",
-      outdated: "Atualize o app do agentes.chat no {{computer}} para instalar daqui.",
+      outdated: "Atualize o app do squadchat no {{computer}} para instalar daqui.",
       asked: "Pedido enviado. {{name}} recebe um botão para instalar.",
     },
     titleFor: "Conectar uma IA para o {{name}}",
@@ -3723,7 +3723,7 @@ export const ptBR = {
         unshare: "Só para mim",
       },
     },
-    billing: "Um plano entra no computador do workspace, e o computador vem com um plano ativo do agentes.chat.",
+    billing: "Um plano entra no computador do workspace, e o computador vem com um plano ativo do squadchat.",
     billingWeb: "Escolha um na web, em agentes.chat.",
     orPayGo: "Ou pague pelo uso",
     /** The two ways to pay, on a control the width of a phone: keep them short. */
@@ -3775,7 +3775,7 @@ export const ptBR = {
       testModels: "Testar modelos",
       savedUnchecked:
         "Salva, mas {{provider}} não respondeu e a chave não pôde ser testada. Se ela falhar, a conversa diz o motivo.",
-      closed: "As chaves de API abrem com o plano do agentes.chat do workspace.",
+      closed: "As chaves de API abrem com o plano do squadchat do workspace.",
       notPlan: "A chave de um plano de código vai na opção dele, acima.",
       billing: "Ative o faturamento no projeto da chave. Sem faturamento, o Google pode usar o que os agentes enviam.",
       privacy:
@@ -4541,7 +4541,7 @@ export const ptBR = {
     clearsAt: "Some às {{time}}",
     clearsOn: "Some {{when}}",
     help: {
-      auto: "Online enquanto o agentes.chat estiver aberto.",
+      auto: "Online enquanto o squadchat estiver aberto.",
       away: "Fora por um tempo: as pessoas sabem que a resposta pode demorar.",
       busy: "Todo mundo vê que é melhor não interromper agora.",
       out: "Longe do trabalho (férias, folga): todo mundo vê até o seu status sumir.",
@@ -5088,7 +5088,7 @@ export const ptBR = {
       removeText_other: "Os {{count}} itens saem do Cofre e seus agentes param de usar. Nada muda no {{name}}.",
       removed: "{{name}} desconectado",
       listOf: "Conexões com {{name}}",
-      note: "Seus agentes leem o que está lá quando precisam. Nada é copiado para o agentes.chat além de nomes e endereços.",
+      note: "Seus agentes leem o que está lá quando precisam. Nada é copiado para o squadchat além de nomes e endereços.",
       error: {
         auth_failed: "Acesso recusado",
         locked: "Senha errada",
@@ -5893,7 +5893,7 @@ export const ptBR = {
       eyebrow: "Pedido de aprovação",
       close: "Fechar",
       exact: "A ação exata",
-      builtIn: "Ferramenta do agentes.chat",
+      builtIn: "Ferramenta do squadchat",
       orgConnector: "Conector do workspace",
       bound: "Só para estes valores: qualquer mudança precisa de nova aprovação.",
       why: "Por que",
@@ -6421,7 +6421,7 @@ export const ptBR = {
       steps: {
         title: "Falta 1 passo, no próprio {{computer}}",
         waiting: "Esperando",
-        one: "Clique no ícone do agentes.chat perto do relógio",
+        one: "Clique no ícone do squadchat perto do relógio",
         two: "Preferências",
         three: "Ligue o Navegador",
         done: "Pronto. Esta página percebe sozinha, não precisa recarregar.",
@@ -7182,10 +7182,10 @@ export const ptBR = {
       afterPlanNext: "É o passo seguinte ao plano.",
       plan: {
         todo: "Ligue o time.",
-        todoDesc: "Com um plano do agentes.chat, os agentes começam a trabalhar.",
+        todoDesc: "Com um plano do squadchat, os agentes começam a trabalhar.",
         action: "Ver planos",
         todoPersonal: "Ligue os seus agentes.",
-        todoDescPersonal: "Com um plano do agentes.chat, os seus agentes começam a trabalhar.",
+        todoDescPersonal: "Com um plano do squadchat, os seus agentes começam a trabalhar.",
       },
       about: {
         /** A personal workspace's row 1, its button (ADR 0159). */
@@ -8360,7 +8360,7 @@ export const ptBR = {
     crashText: "Recarregue a página para continuar.",
     crashCode: "Se pedir ajuda, informe o código {{id}}.",
     /** A request that got no answer, or only the proxy's: the page opens again by itself (ErrorScreen). */
-    unreachableTitle: "Sem conexão com o agentes.chat",
+    unreachableTitle: "Sem conexão com o squadchat",
     unreachableText: "Ele pode estar reiniciando. Esta página abre sozinha assim que ele voltar.",
     offlineTitle: "Você está sem internet",
     offlineText: "Esta página abre sozinha quando a internet voltar.",
@@ -9972,7 +9972,7 @@ export const ptBR = {
       title: "Arquivos da missão",
       folder: "pasta",
       tabs: "Arquivo",
-      missionSub: "Plano e regras · atualizado pelo agentes.chat",
+      missionSub: "Plano e regras · atualizado pelo squadchat",
       decisionsSub: "Decisões aprovadas",
       notesSub: "Anotações do {{executor}}",
       notesSub_female: "Anotações da {{executor}}",
@@ -10046,7 +10046,7 @@ export const ptBR = {
       title: "Nova missão",
       text: "Um projeto longo para um agente. Ele propõe um plano, trabalha no computador dele e pede decisões e revisões na thread.",
       goal: "Objetivo",
-      goalPlaceholder: "Ex.: construir o app mobile do agentes.chat em Expo, com base no web atual.",
+      goalPlaceholder: "Ex.: construir o app mobile do squadchat em Expo, com base no web atual.",
       agent: "Agente",
       computer: "Computador",
       noMachine: "Nenhum conectado",
@@ -10968,7 +10968,7 @@ export const ptBR = {
   jev: {
     title: "Jev",
     about:
-      "Um modelo rápido da TypeSafe, feito para decisões rápidas. O agentes.chat faz perguntas pequenas a ele, como quem deve responder. Você paga direto à TypeSafe ou pelo OpenRouter, pelo mesmo preço.",
+      "Um modelo rápido da TypeSafe, feito para decisões rápidas. O squadchat faz perguntas pequenas a ele, como quem deve responder. Você paga direto à TypeSafe ou pelo OpenRouter, pelo mesmo preço.",
     lead: "Ajuda os agentes a trabalhar em equipe.",
     how: "Como o Jev funciona",
     why: {
@@ -11143,7 +11143,7 @@ export const ptBR = {
         installing: "O {{program}} está sendo instalado no {{computer}}. Isto muda sozinho quando terminar.",
         updating: "O {{program}} está sendo atualizado no {{computer}}. Isto muda sozinho quando terminar.",
         runnerOld:
-          "O programa do agentes.chat no {{computer}} está desatualizado e a atualização já está a caminho. Isto muda sozinho quando ela terminar.",
+          "O programa do squadchat no {{computer}} está desatualizado e a atualização já está a caminho. Isto muda sozinho quando ela terminar.",
         execOff: "O {{computer}} ainda não consegue rodar o {{program}}. Já estamos cuidando, e isto muda sozinho.",
         toolOff:
           "O {{program}} ainda não está liberado no {{computer}}. Isso é do nosso lado: tente de novo mais tarde.",
@@ -11159,7 +11159,7 @@ export const ptBR = {
     },
     page: {
       title: "Seus planos",
-      hint: "Cada plano fica no computador onde foi conectado, e quem administra esse computador pode acessá-lo. O agentes.chat guarda só o nome, o email e o uso.",
+      hint: "Cada plano fica no computador onde foi conectado, e quem administra esse computador pode acessá-lo. O squadchat guarda só o nome, o email e o uso.",
       emptyTitle: "Use o plano de IA que você já paga",
       emptyViewer: "Quem cuida das IAs do workspace conecta um plano, e ele aparece aqui.",
       connect: "Conectar uma IA",
@@ -12475,7 +12475,7 @@ export const ptBR = {
     reasons: {
       no_computer: "Escolha um computador conectado em Computador para usar.",
       exec_off: "O computador foi conectado sem permissão para rodar programas.",
-      runner_old: "Atualize o programa do agentes.chat no computador para usar.",
+      runner_old: "Atualize o programa do squadchat no computador para usar.",
       /** The button that turns it on follows. */
       tool_offOne: "O {{program}} está desligado no {{computer}}.",
       not_installed: "O {{program}} não está instalado no {{computer}}.",
@@ -13011,7 +13011,7 @@ export const ptBR = {
   storage: {
     title: "Armazenamento",
     options: "Onde guardar os arquivos",
-    agentes: "Armazenamento do agentes.chat",
+    agentes: "Armazenamento do squadchat",
     agentesText: "Seus arquivos ficam no nosso armazenamento, separados por workspace.",
     server: "Este servidor",
     serverText: {
@@ -13023,7 +13023,7 @@ export const ptBR = {
     showFolder: "Mostrar a pasta",
     // `{{place}}` in the lines below: each is built so no preposition has to merge with it ("neste", "no").
     place: {
-      agentes: "o armazenamento do agentes.chat",
+      agentes: "o armazenamento do squadchat",
       server: "este servidor",
     },
     s3: "Seu próprio armazenamento",
@@ -13138,7 +13138,7 @@ export const ptBR = {
       step: {
         bucketTitle: "Crie um bucket",
         keyTitle: "Crie a chave de acesso",
-        userTitle: "Crie um usuário só para o agentes.chat",
+        userTitle: "Crie um usuário só para o squadchat",
         r2Bucket: "No painel do Cloudflare, abra o <b>R2</b> e clique em <b>Create bucket</b>. Qualquer nome serve.",
         r2Key:
           "Na página do R2, em <b>API Tokens</b>, clique em <b>Manage</b> e depois em <b>Create API Token</b>. Escolha a permissão <b>Object Read & Write</b> e o seu bucket. No fim, o Cloudflare mostra os três valores abaixo uma única vez.",
@@ -13224,13 +13224,13 @@ export const ptBR = {
   },
   githubApp: {
     title: "Repositórios do GitHub",
-    text: "Onde o app agentes.chat está instalado, os agentes abrem pull requests, issues, comentários e commits como o app, com o nome do agente e de quem pediu.",
-    install: "Instalar o app agentes.chat",
+    text: "Onde o app squadchat está instalado, os agentes abrem pull requests, issues, comentários e commits como o app, com o nome do agente e de quem pediu.",
+    install: "Instalar o app squadchat",
     installMore: "Instalar em outra conta",
     none: "Nenhuma conta do GitHub ainda.",
     /** Nada instalado ainda, e os agentes usam a conta do GitHub do workspace: como eles aparecem hoje. */
     usingAccount:
-      "Hoje os agentes aparecem no GitHub como {{account}}. Instale o app para eles aparecerem como o app agentes.chat.",
+      "Hoje os agentes aparecem no GitHub como {{account}}. Instale o app para eles aparecerem como o app squadchat.",
     allRepos: "Todos os repositórios",
     someRepos: "Repositórios escolhidos",
     suspended: "Suspenso no GitHub",
@@ -13241,7 +13241,7 @@ export const ptBR = {
     removeName: "Remover {{account}}",
     removeTitle: "Remover o app de {{account}}?",
     removeText:
-      "O app agentes.chat é desinstalado de {{account}} no GitHub, e os agentes deixam de usar os repositórios dessa conta por ele.",
+      "O app squadchat é desinstalado de {{account}} no GitHub, e os agentes deixam de usar os repositórios dessa conta por ele.",
     /** Depois de removeText quando é a última conta do app e nenhuma conta do GitHub está conectada. */
     removeLast: "É a última, então os agentes ficam sem GitHub até alguém instalar o app ou conectar uma conta.",
     removed: "App removido de {{account}} e desinstalado no GitHub.",
@@ -13249,7 +13249,7 @@ export const ptBR = {
     notUninstalled: "App removido daqui, mas o GitHub não confirmou a desinstalação de {{account}}. Desinstale lá.",
     /** O botão desse aviso, curto para deixar espaço às palavras ao lado dele no celular. */
     openPage: "Abrir",
-    installed: "App agentes.chat instalado.",
+    installed: "App squadchat instalado.",
     /**
      * Someone without rights on that GitHub account asked its owner to install (`github_app_error=requested`).
      * Approving it on GitHub never links it here: the owner installs it from agentes.chat.
@@ -13260,7 +13260,7 @@ export const ptBR = {
     otherWorkspace: "Essa conta do GitHub já está ligada a outro workspace. Remova o app de lá antes de instalar aqui.",
     /** O app foi instalado no próprio GitHub, não pelo agentes.chat (`github_app_error=installed_outside`). */
     installedOutside:
-      "O app foi instalado nessa conta do GitHub fora do agentes.chat. Remova o app no GitHub e instale de novo em Conectores › GitHub.",
+      "O app foi instalado nessa conta do GitHub fora do squadchat. Remova o app no GitHub e instale de novo em Conectores › GitHub.",
     /**
      * O GitHub se recusou a dizer se a pessoa é dona da organização (`github_app_error=owner_unknown`, um 403): o mais
      * provável é que o app do GitHub deste servidor tenha sido criado sem a permissão de organização Members, que só
@@ -13279,14 +13279,14 @@ export const ptBR = {
     /** Para os admins que não são o dono do servidor, num servidor sem o app (nunca no agentes.chat). */
     ownerHint: "O dono deste servidor pode criar o app do GitHub aqui em Conectores.",
     /** A linha de um GitHub conectado só pelo app: as contas onde ele está instalado. */
-    viaApp: "Pelo app agentes.chat em {{accounts}}",
-    disconnectApp: "O app agentes.chat também é desinstalado de {{accounts}} no GitHub.",
-    disconnectKeepsApp: "Os agentes continuam no GitHub pelo app agentes.chat em {{accounts}}.",
-    keptApp: "Conta do GitHub desconectada. Os agentes continuam no GitHub pelo app agentes.chat.",
+    viaApp: "Pelo app squadchat em {{accounts}}",
+    disconnectApp: "O app squadchat também é desinstalado de {{accounts}} no GitHub.",
+    disconnectKeepsApp: "Os agentes continuam no GitHub pelo app squadchat em {{accounts}}.",
+    keptApp: "Conta do GitHub desconectada. Os agentes continuam no GitHub pelo app squadchat.",
     /** A linha no fim do que um agente escreve no GitHub (pull requests, issues, comentários). */
     signature: {
-      forPerson: "{{agent}}, agente de {{person}} no agentes.chat",
-      alone: "{{agent}}, agente no agentes.chat",
+      forPerson: "{{agent}}, agente de {{person}} no squadchat",
+      alone: "{{agent}}, agente no squadchat",
     },
     /** A página do servidor que leva o dono ao GitHub para criar o app (ela segue sozinha). */
     manifestPage: {
@@ -14720,7 +14720,7 @@ export const ptBR = {
       transport: "Transporte MCP",
       tab: "Local · stdio",
       where:
-        "Executa onde o agentes.chat está instalado: no seu computador na instalação desktop, dentro do contêiner no Docker. Um computador ligado a outro servidor não é usado aqui.",
+        "Executa onde o squadchat está instalado: no seu computador na instalação desktop, dentro do contêiner no Docker. Um computador ligado a outro servidor não é usado aqui.",
       checking: "Verificando se programas MCP locais são suportados…",
       checkFailed: "Não foi possível verificar o suporte a MCP local. Reabra esta janela para tentar novamente.",
       disabled:
@@ -14741,7 +14741,7 @@ export const ptBR = {
       invalid:
         "Informe um executável, uma lista JSON de argumentos de texto e um objeto JSON com os valores de ambiente em texto.",
       failed:
-        "Não foi possível conectar o MCP local. Confira o executável e os caminhos na máquina onde o agentes.chat roda, e se o programa fala MCP por stdio.",
+        "Não foi possível conectar o MCP local. Confira o executável e os caminhos na máquina onde o squadchat roda, e se o programa fala MCP por stdio.",
       permissions:
         "Executa como o usuário do sistema do servidor. O acesso às ferramentas e as aprovações são definidos nas próximas etapas.",
     },
@@ -14761,7 +14761,7 @@ export const ptBR = {
     /** Conectar o GitHub onde o servidor tem o app agentes.chat: o app primeiro, uma conta depois. */
     github: {
       how: "Como os agentes entram no GitHub",
-      app: "O app agentes.chat",
+      app: "O app squadchat",
       recommended: "Recomendado",
       appText: "Os agentes aparecem como o app, e você escolhe os repositórios no GitHub.",
       account: "Uma conta do GitHub",
@@ -14787,7 +14787,7 @@ export const ptBR = {
     withKey: "Conectar com uma chave de API",
     needsKey: "Este servidor não aceita OAuth. Conecte com uma chave de API.",
     notApproved:
-      "{{name}} só deixa entrar apps que aprovou, e o agentes.chat ainda não foi aprovado. Se ele te der uma chave de API, dá para conectar com ela.",
+      "{{name}} só deixa entrar apps que aprovou, e o squadchat ainda não foi aprovado. Se ele te der uma chave de API, dá para conectar com ela.",
     serverSaid: "O servidor respondeu: {{detail}}",
     headers: {
       title: "Cabeçalhos da requisição",
@@ -15368,8 +15368,7 @@ export const ptBR = {
       noWorkspace: "Você não está mais neste workspace. Escolha outro workspace para vincular.",
       linkGone:
         "Este vínculo não está mais esperando: expirou depois de 10 minutos ou foi cancelado. Gere um novo código para começar de novo.",
-      taken:
-        "Esse remetente está vinculado a outra conta do agentes.chat. Desvincule lá e depois envie um novo código.",
+      taken: "Esse remetente está vinculado a outra conta do squadchat. Desvincule lá e depois envie um novo código.",
       undoGone: "Este link de desfazer já foi usado ou expirou. Desvincule nas suas configurações de notificações.",
       codeGone:
         "Este código está errado, já foi usado ou expirou depois de 10 minutos. Gere um novo código e envie de novo.",
@@ -15426,7 +15425,7 @@ export const ptBR = {
       generalKept: "O #general não pode ser apagado.",
       generalStays: "Todo mundo fica no #general.",
       mcpUnreachable: "Não foi possível conectar ao servidor MCP. Confira o endereço e tente de novo.",
-      notApproved: "Este serviço ainda não aprovou o agentes.chat.",
+      notApproved: "Este serviço ainda não aprovou o squadchat.",
       alreadyInvited: "Essa pessoa já tem um convite.",
       alreadyAsked: "Alguém já pediu por essa pessoa.",
       mailboxConnected: "Esta caixa de e-mail já está conectada.",
@@ -15604,7 +15603,7 @@ export const ptBR = {
       computerOffline: "O computador do agente está offline.",
       execDisabled: "Os comandos estão desligados nesse computador.",
       runnerOutdated:
-        "O programa no computador é antigo demais para missões: atualize o app do agentes.chat nele, ou rode de novo o comando de instalação.",
+        "O programa no computador é antigo demais para missões: atualize o app do squadchat nele, ou rode de novo o comando de instalação.",
       exists: "Esta thread já tem uma missão.",
       closed: "Esta missão está fechada.",
       wrongStatus: "A missão não está num estado que permita isso.",
@@ -15714,7 +15713,7 @@ export const ptBR = {
       /** "Pedir a um admin" from someone who may do it themselves. */
       adminAskSelf: "Você mesmo pode fazer isso aqui.",
       accountMethodUnsupported:
-        "Este computador ainda não conecta o Claude desse jeito. Atualize o programa do agentes.chat nele, ou use uma chave de API.",
+        "Este computador ainda não conecta o Claude desse jeito. Atualize o programa do squadchat nele, ou use uma chave de API.",
       offline: "{{name}} está fora do ar agora. Tente de novo quando ele voltar.",
       paused: "{{name}} está pausado: nada novo começa nele até ele ser retomado.",
       timeout: "O computador não respondeu a tempo. Tente de novo.",
@@ -15879,7 +15878,7 @@ export const ptBR = {
       ask: "Pedir a {{name}}",
       asked: "Pedido enviado. {{name}} recebe um botão para ligar.",
       done: "Ligado no {{machine}}.",
-      outdated: "Atualize o app do agentes.chat no {{machine}} para ligar daqui.",
+      outdated: "Atualize o app do squadchat no {{machine}} para ligar daqui.",
       /** Its computer is offline: the button turns it on once the computer is back, and waits until then. */
       offline: "O {{machine}} está offline. Assim que ele voltar, o botão liga {{tool}}.",
     },
@@ -15894,7 +15893,7 @@ export const ptBR = {
       byYouUntil: "Pausado por você até {{time}}.",
       byName: "Pausado por {{name}}.",
       byNameUntil: "Pausado por {{name}} até {{time}}.",
-      outdated: "Atualize o app agentes.chat neste computador para pausá-lo daqui.",
+      outdated: "Atualize o app squadchat neste computador para pausá-lo daqui.",
       paused: "{{name}} está pausado",
       resumed: "{{name}} voltou a trabalhar",
     },
@@ -15947,9 +15946,9 @@ export const ptBR = {
     // The server's own computer (`HOST_COMPUTER_TOKEN`): the machine agentes.chat is installed on.
     host: {
       label: "Computador deste servidor",
-      desc: "Onde o agentes.chat está instalado.",
-      descUsers: "Onde o agentes.chat está instalado, um usuário por agente.",
-      descShared: "O computador onde o agentes.chat está instalado. Os agentes trabalham como a pessoa que o instalou.",
+      desc: "Onde o squadchat está instalado.",
+      descUsers: "Onde o squadchat está instalado, um usuário por agente.",
+      descShared: "O computador onde o squadchat está instalado. Os agentes trabalham como a pessoa que o instalou.",
       stop: "Parar de usar neste workspace",
       stopTitle: "Parar de usar o computador deste servidor?",
       stopText: "Os agentes deste workspace deixam de usar este computador agora. Dá para voltar a usar quando quiser.",
@@ -15960,7 +15959,7 @@ export const ptBR = {
     },
     download: {
       title: "Conectar outro computador",
-      text: "Instale o app do agentes.chat no computador.",
+      text: "Instale o app do squadchat no computador.",
       mac: "Baixar o app para {{system}}",
       version: "Versão {{version}}",
       versionSize: "Versão {{version}} · {{size}}",
@@ -15971,7 +15970,7 @@ export const ptBR = {
       unavailable: "O app ainda não está disponível.",
       unavailableCommand: "O app ainda não está disponível. Por enquanto, use o comando abaixo.",
       firstTime: "Na primeira vez",
-      step1: "Abra o arquivo baixado e arraste o agentes.chat para Aplicativos.",
+      step1: "Abra o arquivo baixado e arraste o squadchat para Aplicativos.",
       step1Install: "Abra o arquivo baixado para instalar.",
       otherText: "Rode no terminal do computador e confirme o código que ele mostrar.",
       waiting: "Esperando o computador conectar…",
@@ -16000,7 +15999,7 @@ export const ptBR = {
       ownFolder: "Pasta de cada agente",
       ownFolderText: "Sempre. Um agente não vê a do outro.",
       noFolders: "Nenhuma pasta a mais. Cada agente usa só a própria pasta.",
-      noReport: "Este computador ainda não informou o que libera. Atualize o agentes.chat nele.",
+      noReport: "Este computador ainda não informou o que libera. Atualize o squadchat nele.",
       hidden: "Só admins e quem conectou veem as pastas e as ferramentas deste computador.",
       nobody: "Nenhum agente usa ainda",
       usedBy: "Quem usa {{folder}}",
@@ -16047,7 +16046,7 @@ export const ptBR = {
         "Os agentes deixam de usar {{tool}} neste computador. Para ligar de novo: no próprio computador, ou aqui por quem o conectou.",
       disabled: "{{tool}} desligado.",
       grantTitle: "Para liberar mais",
-      grantText: "Liberar é no próprio computador: abra o app do agentes.chat nele (Preferências → Pastas).",
+      grantText: "Liberar é no próprio computador: abra o app do squadchat nele (Preferências → Pastas).",
       grantTextTerminal: "Liberar é no próprio computador, no Terminal dele:",
       grantTextAdmin: "Liberar é no próprio computador, no Terminal dele, como administrador:",
       grantTerminal: "Sem o app? No terminal do computador:",
@@ -16145,7 +16144,7 @@ export const ptBR = {
       forbidden: "Você não pode ver esta tela",
       forbiddenText: "O dono escolhe quem pode usar {{name}}.",
       outdated: "O app em {{host}} é antigo demais para isso",
-      outdatedText: "Atualize o agentes.chat em {{host}} e tente de novo.",
+      outdatedText: "Atualize o squadchat em {{host}} e tente de novo.",
       unavailable: "Esta tela não pode ser mostrada",
       unavailableText: "Confira se {{host}} tem o adb ou o Xcode instalado e tente de novo.",
       needsHelper: "Termine a configuração do iPhone no Mac para ter o assistente de testes que ele precisa.",
@@ -16302,7 +16301,7 @@ export const ptBR = {
       thisMac: "Este Mac",
       thisPc: "Este PC",
       thisComputer: "Este computador",
-      thisLine: "Pelo app agentes.chat",
+      thisLine: "Pelo app squadchat",
       openApp: "Abrir o app",
       server: "Um servidor ou VPS",
       serverLine: "Uma linha para colar no terminal dele",
@@ -16317,7 +16316,7 @@ export const ptBR = {
     },
     computer: {
       title: "Conectar outro computador",
-      step1: "Instale o app do agentes.chat nele:",
+      step1: "Instale o app do squadchat nele:",
       step2: "Abra e entre com a sua conta.",
       step3: "Clique em Permitir quando ele perguntar se os agentes de {{org}} podem usá-lo.",
       shows: "Ele aparece aqui sozinho, só para você até você compartilhar.",
@@ -16327,12 +16326,12 @@ export const ptBR = {
       noApp: "Não dá para instalar o app nele? Use uma linha no terminal",
     },
     thisApp: {
-      text: "O app do agentes.chat conecta com um clique, e pergunta a você antes.",
-      open: "Abrir o app do agentes.chat",
+      text: "O app do squadchat conecta com um clique, e pergunta a você antes.",
+      open: "Abrir o app do squadchat",
       browserAsks: "O navegador pergunta se pode abrir: escolha Abrir, e Sempre permitir se ele oferecer.",
       noApp: "Não tem o app?",
       afterInstall:
-        "Depois de instalar, clique de novo em Abrir o app do agentes.chat. O link funciona uma vez, por 10 minutos.",
+        "Depois de instalar, clique de novo em Abrir o app do squadchat. O link funciona uma vez, por 10 minutos.",
       waiting: "Esperando o app neste computador…",
       expired: "Este link expirou.",
       again: "Criar um novo link",
@@ -16411,7 +16410,7 @@ export const ptBR = {
       },
       qrLabel: "QR code que abre estes passos no celular",
       qrLine: "Faça pelo celular",
-      qrCaption: "Escaneie para abrir estes passos no app agentes.chat, com botões para cada configuração.",
+      qrCaption: "Escaneie para abrir estes passos no app squadchat, com botões para cada configuração.",
       buildNumber: "Número da versão",
       buildNumberSub: "BP2A.250605.031",
       usbRow: "Depuração USB",
@@ -16459,29 +16458,28 @@ export const ptBR = {
         mdns_off:
           "{{computer}} não consegue procurar celulares no Wi-Fi. Atualize o Android platform-tools nele, ou use um cabo.",
         mdns_offMac:
-          "{{computer}} não consegue procurar celulares no Wi-Fi. Nesse Mac, ligue o agentes.chat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local e tente de novo.",
+          "{{computer}} não consegue procurar celulares no Wi-Fi. Nesse Mac, ligue o squadchat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local e tente de novo.",
         same_wifi:
           "Não deu para alcançar o celular. Ele não está na mesma rede que {{computer}}. Coloque-o no mesmo Wi-Fi e tente de novo.",
         same_wifiMac:
-          "Não deu para alcançar o celular. Coloque-o no mesmo Wi-Fi que {{computer}}. Nesse Mac, ligue também o agentes.chat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local.",
+          "Não deu para alcançar o celular. Coloque-o no mesmo Wi-Fi que {{computer}}. Nesse Mac, ligue também o squadchat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local.",
         refused: "O celular parou o pareamento. Deixe a tela de pareamento aberta e tente de novo.",
         refusedCode: "O celular não aceitou esse código. Confira o código e o endereço, e pareie de novo.",
         timed_out:
           "Nenhum celular pareou em 2 minutos. Se a câmera escaneou o código ou o celular saiu do Wi-Fi, coloque-o no mesmo Wi-Fi que {{computer}} e escaneie pela Depuração por Wi-Fi.",
         timed_outMac:
-          "Nenhum celular pareou em 2 minutos. Se a câmera escaneou o código ou o celular saiu do Wi-Fi, coloque-o no mesmo Wi-Fi que {{computer}} e escaneie pela Depuração por Wi-Fi. Nesse Mac, ligue também o agentes.chat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local.",
+          "Nenhum celular pareou em 2 minutos. Se a câmera escaneou o código ou o celular saiu do Wi-Fi, coloque-o no mesmo Wi-Fi que {{computer}} e escaneie pela Depuração por Wi-Fi. Nesse Mac, ligue também o squadchat em Ajustes do Sistema\u00a0›\u00a0Privacidade e Segurança\u00a0›\u00a0Rede Local.",
         outdated:
           "O pareamento por Wi-Fi precisa do Android 14 ou mais novo com a atualização de segurança de maio de 2026. Atualize o celular, ou use um cabo.",
         adb_missing: "{{computer}} não tem o Android platform-tools. Instale o Android Studio nele e tente de novo.",
-        update:
-          "O pareamento por Wi-Fi precisa de um agentes.chat mais novo em {{computer}}. Atualize e tente de novo.",
+        update: "O pareamento por Wi-Fi precisa de um squadchat mais novo em {{computer}}. Atualize e tente de novo.",
         canceled: "O pareamento parou. Tente de novo.",
         failed: "O pareamento não deu certo. Tente de novo, ou use um cabo.",
       },
     },
     iphone: {
       title: "Conectar um iPhone",
-      lead: "iPhones se conectam por um Mac, onde o app agentes.chat faz a configuração.",
+      lead: "iPhones se conectam por um Mac, onde o app squadchat faz a configuração.",
       mac: "Mac",
       noMac: "Os agentes só usam um iPhone por um Mac, e nenhum está conectado ainda.",
       noMacNote: "Sem Mac? Peça a alguém do time para conectar o seu.",
@@ -16525,9 +16523,9 @@ export const ptBR = {
         stillLicense:
           "A correção terminou, mas o Xcode em {{mac}} ainda espera você aceitar a licença. Tente de novo ou rode isto no Terminal, ele pede a senha do Mac.",
         outdated:
-          "Atualize o app agentes.chat em {{mac}} para corrigir com um clique. Ou rode isto no Terminal dele, ele pede a senha do Mac.",
+          "Atualize o app squadchat em {{mac}} para corrigir com um clique. Ou rode isto no Terminal dele, ele pede a senha do Mac.",
         follows: "Esta janela segue sozinha quando o Mac terminar.",
-        window: "O agentes.chat quer colocar o Xcode em uso para conectar iPhones.",
+        window: "O squadchat quer colocar o Xcode em uso para conectar iPhones.",
         ok: "OK",
       },
       getXcode: "Baixar o Xcode",
@@ -16556,7 +16554,7 @@ export const ptBR = {
         opened: "O Xcode abriu em {{mac}}. Veja de novo nos Ajustes do iPhone e feche o Xcode depois.",
         unlock: "Já ativou e o iPhone reiniciou? Desbloqueie. O aviso com Ativar só aparece depois disso.",
         outdated:
-          "O app agentes.chat em {{mac}} está desatualizado. Atualize o app, ou rode isto no Terminal se instalou por lá.",
+          "O app squadchat em {{mac}} está desatualizado. Atualize o app, ou rode isto no Terminal se instalou por lá.",
       },
       uiAutomationText: "Em Ajustes\u00a0›\u00a0Desenvolvedor, depois de reiniciar.",
       helperText: "Criado e renovado pelo Mac a cada 7 dias. Uma Conta Apple gratuita no Xcode basta.",
@@ -16893,7 +16891,7 @@ export const ptBR = {
         step1:
           "Abra Personalizar\u00a0›\u00a0Conectores (Customize\u00a0›\u00a0Connectors) no claude.ai ou no Claude Desktop.",
         step2:
-          "Clique em + Adicionar e em Adicionar conector personalizado (Add custom connector), dê o nome agentes.chat, cole o endereço e clique em Continuar.",
+          "Clique em + Adicionar e em Adicionar conector personalizado (Add custom connector), dê o nome squadchat, cole o endereço e clique em Continuar.",
         step3: "Escolha Entrar agora (Sign in now), clique em Adicionar e autorize na página que abrir.",
         phone: "Ele aparece no celular depois de adicionado no computador.",
         team: "Em planos Team e Enterprise, o dono da organização no Claude adiciona o conector em Configurações da organização\u00a0›\u00a0Conectores. Depois cada pessoa clica em Conectar em Personalizar\u00a0›\u00a0Conectores.",
@@ -16928,9 +16926,9 @@ export const ptBR = {
         open: "Abra {{place}}.",
         click: "Clique em {{button}}.",
         clickThen: "Clique em {{button}} e depois em {{next}}.",
-        name: "Dê o nome agentes.chat e cole o endereço.",
-        nameDescribe: "Dê o nome agentes.chat e escreva uma descrição.",
-        nameConnect: "Dê o nome agentes.chat e clique em {{button}}.",
+        name: "Dê o nome squadchat e cole o endereço.",
+        nameDescribe: "Dê o nome squadchat e escreva uma descrição.",
+        nameConnect: "Dê o nome squadchat e clique em {{button}}.",
         paste: "Cole o endereço.",
         pasteIn: "Cole o endereço em {{field}}.",
         choosePaste: "Escolha {{option}} e cole o endereço.",
@@ -16951,8 +16949,8 @@ export const ptBR = {
         reload: "Depois digite <code>{{command}}</code> na conversa.",
         loginRun: "Para entrar, rode <code>{{command}}</code>.",
         loginType: "Para entrar, digite <code>{{command}}</code> no app.",
-        signIn: "Entre com sua conta do agentes.chat na página que abrir.",
-        signInManage: "Entre com sua conta do agentes.chat na página que abrir e escolha {{access}}.",
+        signIn: "Entre com sua conta do squadchat na página que abrir.",
+        signInManage: "Entre com sua conta do squadchat na página que abrir e escolha {{access}}.",
         mention: "Na conversa, digite <code>@</code> e escolha <code>{{name}}</code>.",
         signInFirst: "O app pede para você entrar na primeira vez que usar.",
         token: "Crie um token pessoal e coloque no lugar de {{placeholder}}.",
@@ -17008,7 +17006,7 @@ export const ptBR = {
       canRead: "Ler as respostas e o que os agentes estão fazendo.",
       canManage: "Criar e editar agentes, rotinas e skills como você. Você recebe um aviso do que ele criar.",
       never: "Nunca",
-      neverApprove: "Aprovar ações dos agentes. Aprovações ficam com pessoas no agentes.chat.",
+      neverApprove: "Aprovar ações dos agentes. Aprovações ficam com pessoas no squadchat.",
       neverSettings: "Mudar configurações, membros ou permissões.",
       neverHidden: "Ver o que você não vê.",
       loopbackWarning:
@@ -17023,7 +17021,7 @@ export const ptBR = {
       done: "Pode voltar ao {{app}}.",
       cancelledTitle: "Conexão cancelada",
       cancelled: "Nada foi compartilhado.",
-      goHome: "Ir para o agentes.chat",
+      goHome: "Ir para o squadchat",
       language: "Idioma",
       error: {
         app_desconhecido: "Não reconhecemos este app",
@@ -17101,7 +17099,7 @@ export const ptBR = {
       sentence: "{{who}} leu {{what}}",
       who: {
         server: "Quem cuida deste servidor",
-        cloud: "O suporte do agentes.chat",
+        cloud: "O suporte do squadchat",
       },
       what: {
         message: "uma mensagem",
@@ -17297,7 +17295,7 @@ export const ptBR = {
     section: {
       account: "Sua conta",
       notifications: "Notificações",
-      download: "Apps do agentes.chat",
+      download: "Apps do squadchat",
       general: "Geral",
       right_hand: "Braço direito",
       members: "Membros",
@@ -17318,7 +17316,7 @@ export const ptBR = {
       voice: "Voz",
       apps: "Apps de IA",
       approvals: "Aprovações",
-      about: "Sobre o agentes.chat",
+      about: "Sobre o squadchat",
       generalPersonal: "Sobre você",
       keysPersonal: "IA e apps",
       membersPersonal: "Pessoas",
@@ -17510,12 +17508,12 @@ export const ptBR = {
     },
     telemetry: {
       title: "Estatísticas de uso",
-      label: "Enviar estatísticas de uso anônimas ao agentes.chat",
+      label: "Enviar estatísticas de uso anônimas ao squadchat",
       help: "Contagens como pessoas, agentes, tamanho das máquinas, tokens de IA usados e o volume de dados que os navegadores dos agentes enviam e recebem. Nunca mensagens, arquivos, nomes ou sites.",
       envOff: "Desligado nas configurações deste servidor (TELEMETRY=off).",
       envOffDesktop:
-        "Desligado no app do agentes.chat no computador deste servidor (Preferências\u00a0›\u00a0Servidores).",
-      envOffHere: "Desligado no app do agentes.chat deste computador.",
+        "Desligado no app do squadchat no computador deste servidor (Preferências\u00a0›\u00a0Servidores).",
+      envOffHere: "Desligado no app do squadchat deste computador.",
       see: "Ver o que é enviado",
       dialogTitle: "O que é enviado",
       dialogText: "Uma vez por dia. Este é o próximo envio, exatamente.",
@@ -18237,7 +18235,7 @@ export const ptBR = {
         commentIssue: "{{who}} comentou na issue #{{number}} ({{repo}}) no GitHub",
         commentDiscussion: "{{who}} comentou na discussão #{{number}} ({{repo}}) no GitHub",
         /** Um PR, issue ou discussão novo que menciona o app. */
-        opened: "{{who}} chamou o app agentes.chat em #{{number}} ({{repo}}) no GitHub",
+        opened: "{{who}} chamou o app squadchat em #{{number}} ({{repo}}) no GitHub",
         reviewed: "{{who}} revisou o PR #{{number}} ({{repo}}) no GitHub",
         approved: "{{who}} aprovou o PR #{{number}} ({{repo}}) no GitHub",
         changes: "{{who}} pediu mudanças no PR #{{number}} ({{repo}}) no GitHub",
@@ -18710,7 +18708,7 @@ export const ptBR = {
       no_ai_runner_outdated:
         "Agora não consigo responder: o programa no computador do meu plano precisa ser atualizado.",
       no_ai_plan_tools:
-        "Parei antes de responder: a IA do meu plano naquele computador não ficou só nas ferramentas do agentes.chat.",
+        "Parei antes de responder: a IA do meu plano naquele computador não ficou só nas ferramentas do squadchat.",
       no_ai_model_limit: "Agora não consigo responder: o {{model}} chegou ao limite dele no meu plano.",
       no_ai_model_region:
         "Não consigo responder: o {{model}} precisa da região Global ligada no OpenCode (Settings\u00a0›\u00a0Privacy).",
@@ -18721,7 +18719,7 @@ export const ptBR = {
       no_ai_commands_off: "Agora não consigo responder: os comandos estão desligados no computador do meu plano.",
       no_ai_cli_missing: "Ainda não consigo responder: o programa da minha IA não está instalado no meu computador.",
       no_ai_plan_hold:
-        "Guardei a sua mensagem. Eu respondo aqui quando o workspace tiver um plano do agentes.chat e uma IA conectada.",
+        "Guardei a sua mensagem. Eu respondo aqui quando o workspace tiver um plano do squadchat e uma IA conectada.",
       no_ai_no_computer: "Ainda não consigo responder: minha IA precisa de um computador e não tenho nenhum.",
       redacted: "[removido: parecia um login ou uma chave]",
       action_connect_ai: "Conectar uma IA",
@@ -19242,7 +19240,7 @@ export const ptBR = {
     machine: {
       ready: "Pronto",
       off: "Desligado",
-      offHelp: "Quem conectou o computador liga aqui ou no app do agentes.chat nele: Preferências → Ferramentas.",
+      offHelp: "Quem conectou o computador liga aqui ou no app do squadchat nele: Preferências → Ferramentas.",
       needsCommand: "Precisa de um comando",
       notReady: "Ainda não pronto",
       turnOff: "Desligar",
@@ -19521,7 +19519,7 @@ export const ptBR = {
     suspended: "Este workspace está indisponível por enquanto.",
     createRefused: "Você não pode criar um workspace agora.",
     createUnpaid:
-      "Você já tem um workspace esperando um plano do agentes.chat. Escolha o plano dele antes de criar outro.",
+      "Você já tem um workspace esperando um plano do squadchat. Escolha o plano dele antes de criar outro.",
     /** The button under it: into the workspace they already have. */
     createUnpaidOpen: "Abrir {{name}}",
     /** The same refusal with no call to pay, for the phone app: the stores allow paying only in their own flow. */
@@ -19547,29 +19545,28 @@ export const ptBR = {
       agentHold: "{{name}} está em pausa",
       /** A hold the billing service set (ADR 0079): its code, never shown as it comes. */
       billing: {
-        payment: "O workspace precisa de um plano do agentes.chat",
-        unpaid: "O pagamento do plano do agentes.chat não passou",
-        ended: "O plano do agentes.chat do workspace terminou",
+        payment: "O workspace precisa de um plano do squadchat",
+        unpaid: "O pagamento do plano do squadchat não passou",
+        ended: "O plano do squadchat do workspace terminou",
       },
     },
     /** A hold the billing service set (ADR 0079), said in place of its code. */
     billing: {
-      payment:
-        "Este workspace ainda não tem um plano do agentes.chat. Os agentes começam a trabalhar quando ele tiver.",
-      unpaid: "O pagamento do plano do agentes.chat deste workspace não passou, e os agentes pararam.",
+      payment: "Este workspace ainda não tem um plano do squadchat. Os agentes começam a trabalhar quando ele tiver.",
+      unpaid: "O pagamento do plano do squadchat deste workspace não passou, e os agentes pararam.",
       ended:
-        "O plano do agentes.chat deste workspace terminou, e os agentes pararam. As conversas e os arquivos continuam aqui para ler e baixar.",
-      sub: "Dá para ler e escrever aqui. Os agentes voltam quando o plano do agentes.chat estiver em dia.",
+        "O plano do squadchat deste workspace terminou, e os agentes pararam. As conversas e os arquivos continuam aqui para ler e baixar.",
+      sub: "Dá para ler e escrever aqui. Os agentes voltam quando o plano do squadchat estiver em dia.",
       cta: {
-        payment: "Ver planos do agentes.chat",
+        payment: "Ver planos do squadchat",
         unpaid: "Atualizar o pagamento",
         ended: "Assinar de novo",
       },
       askAdmin: "Quem administra o workspace pode resolver isso.",
       /** In place of the hold's words, back from paying until the billing service lifts it. */
-      paid: "Pagamento recebido. O plano do agentes.chat começa em instantes.",
-      teamReady: "Seu time está pronto. Falta um plano do agentes.chat para ele começar.",
-      invites: "Os convites abrem com o plano do agentes.chat.",
+      paid: "Pagamento recebido. O plano do squadchat começa em instantes.",
+      teamReady: "Seu time está pronto. Falta um plano do squadchat para ele começar.",
+      invites: "Os convites abrem com o plano do squadchat.",
     },
     /** agentes.chat Cloud only: what the restriction is, the Terms section and how to contest it (`restrictionLine`). */
     cloud: {
@@ -19741,7 +19738,7 @@ export const ptBR = {
     open: "Abrir plano e cobrança",
     opening: "Abrindo…",
     failed: "Não deu para abrir agora. Tente de novo em instantes.",
-    adminsOnly: "Só quem é dono ou admin do workspace cuida do plano do agentes.chat.",
+    adminsOnly: "Só quem é dono ou admin do workspace cuida do plano do squadchat.",
     seeOptions: "Ver opções",
     people: "Pessoas",
     files: "Arquivos",
@@ -19762,8 +19759,8 @@ export const ptBR = {
   limits: {
     members: {
       full: "Este workspace está com {{members}} de {{limit}} pessoas.",
-      fullOne: "No plano do agentes.chat deste workspace cabe 1 pessoa.",
-      fullAdmin: "Para chamar mais gente, veja as opções do plano do agentes.chat.",
+      fullOne: "No plano do squadchat deste workspace cabe 1 pessoa.",
+      fullAdmin: "Para chamar mais gente, veja as opções do plano do squadchat.",
       fullMember: "Peça a quem administra o workspace para abrir espaço.",
       /** To whoever manages billing, below the plan's top. "Plano e cobrança" is the section in Settings. */
       fullAddSeat: "Todas as vagas pagas estão ocupadas. Adicione uma vaga em Plano e cobrança.",
@@ -19786,7 +19783,7 @@ export const ptBR = {
       meter: "Vocês usaram {{used}} de {{limit}}.",
       near: "Vocês usaram {{used}} de {{limit}}. Os envios pausam no limite, e nada é apagado.",
       full: "Os envios pausaram em {{limit}}. Nada foi apagado.",
-      fullAdmin: "Mude o plano do agentes.chat, apague arquivos que não usam mais ou conecte o seu próprio bucket.",
+      fullAdmin: "Mude o plano do squadchat, apague arquivos que não usam mais ou conecte o seu próprio bucket.",
       dailyFull: "Os envios de hoje chegaram a {{limit}}. Dá para enviar de novo em algumas horas.",
       connectBucket: "Conectar um bucket",
     },
@@ -21073,7 +21070,7 @@ export const ptBR = {
     },
     action: {
       signIn: "Entrar",
-      open: "Abrir o agentes.chat",
+      open: "Abrir o squadchat",
       latest: "Abrir a versão mais recente",
       file: "Abrir o arquivo",
       retry: "Tentar de novo",
@@ -21314,7 +21311,7 @@ export const ptBR = {
     beta: {
       word: "BETA",
       title: "Você chegou cedo. Que bom.",
-      text: "O agentes.chat está em beta: já dá para trabalhar de verdade com ele, e ainda estamos lapidando.",
+      text: "O squadchat está em beta: já dá para trabalhar de verdade com ele, e ainda estamos lapidando.",
       weekly: {
         title: "Melhora toda semana",
         text: "Novidades e correções saem o tempo todo.",
@@ -21351,7 +21348,7 @@ export const ptBR = {
     mark: "Beta",
     open: "Enviar feedback",
     ask: "O que faltou, quebrou ou incomodou?",
-    goesCloud: "O que você escrever vai por e-mail para o time do agentes.chat.",
+    goesCloud: "O que você escrever vai por e-mail para o time do squadchat.",
     goesServer: "O que você escrever vai por e-mail para quem administra este servidor.",
     placeholder: "Escreva do seu jeito",
     report: "Reportar um problema aqui",
@@ -21377,14 +21374,14 @@ export const ptBR = {
     offer: {
       group: "Relato sobre o app",
       ready: "<b>Relato pronto</b>: {{summary}}",
-      goesCloud: "Vai no seu nome para o time do agentes.chat",
+      goesCloud: "Vai no seu nome para o time do squadchat",
       goesServer: "Vai no seu nome para quem administra este servidor",
       see: "Ver o relato",
       hide: "Fechar o relato",
       send: "Enviar",
       notNow: "Agora não",
       answer: "A resposta chega no seu e-mail.",
-      sentCloud: "<b>Relato enviado</b> para o time do agentes.chat",
+      sentCloud: "<b>Relato enviado</b> para o time do squadchat",
       sentServer: "<b>Relato enviado</b> para quem administra este servidor",
       sentAuto: "<b>Relato enviado sem perguntar</b>: {{summary}}",
       view: "Ver",

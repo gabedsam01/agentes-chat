@@ -94,75 +94,8 @@ describe("Configurações do workspace", () => {
     expect(state.calls.findLast((c) => c.method === "orgs.updateSettings")?.args[1]).toEqual({ actionCheck: false });
   });
 
-  test("usage statistics: the installation's owner gets the switch and sees exactly what is sent", async () => {
-    const { state } = await go(
-      seedState({ telemetry: { enabled: true, envOff: false, report: { report: 1, people: { total: 3 } } } }),
-    );
-    const card = screen().getByRole("region", { name: "Estatísticas de uso" });
-    const toggle = within(card).getByRole("switch", { name: "Enviar estatísticas de uso anônimas ao agentes.chat" });
-    expect(toggle.getAttribute("aria-checked")).toBe("true");
-    // What is counted is the ⓘ's; no line under the switch while it can be changed.
-    expect(describedBy(toggle)).toEqual([
-      "Contagens como pessoas, agentes, tamanho das máquinas, tokens de IA usados e o volume de dados que os navegadores dos agentes enviam e recebem. Nunca mensagens, arquivos, nomes ou sites.",
-    ]);
-    expect(card.querySelector(".settings-row__status")).toBeNull();
-    await click(toggle);
-    await settle(4);
-    expect(state.calls.findLast((c) => c.method === "system.setTelemetry")?.args).toEqual([false]);
-    expect(toggle.getAttribute("aria-checked")).toBe("false");
-    await click(within(card).getByRole("button", { name: "Ver o que é enviado" }));
-    const dialog = screen().getByRole("dialog", { name: "O que é enviado" });
-    expect(dialog.textContent).toContain('"total": 3');
-  });
-
-  test("usage statistics: with TELEMETRY=off the switch is off and the card says why; others never see it", async () => {
-    await go(seedState({ telemetry: { enabled: true, envOff: true, report: { report: 1 } } }));
-    const card = screen().getByRole("region", { name: "Estatísticas de uso" });
-    const toggle = within(card).getByRole("switch", { name: "Enviar estatísticas de uso anônimas ao agentes.chat" });
-    expect(toggle.getAttribute("aria-checked")).toBe("false");
-    expect(toggle.hasAttribute("disabled")).toBe(true);
-    // Locked: one line says where it was turned off.
-    expect(card.querySelector(".settings-row__status")?.textContent).toBe(
-      "Desligado nas configurações deste servidor (TELEMETRY=off).",
-    );
-    expect(describedBy(toggle)).toEqual([
-      "Contagens como pessoas, agentes, tamanho das máquinas, tokens de IA usados e o volume de dados que os navegadores dos agentes enviam e recebem. Nunca mensagens, arquivos, nomes ou sites.",
-      "Desligado nas configurações deste servidor (TELEMETRY=off).",
-    ]);
-    cleanup();
-    // Run by the desktop app on its own computer: the switch that turned it off is in the app.
-    await go(seedState({ telemetry: { enabled: true, envOff: true, report: { report: 1, install: "desktop" } } }));
-    const desktop = screen().getByRole("region", { name: "Estatísticas de uso" });
-    expect(desktop.querySelector(".settings-row__status")?.textContent).toBe(
-      "Desligado no app do agentes.chat no computador deste servidor (Preferências\u00a0›\u00a0Servidores).",
-    );
-    expect(desktop.textContent).not.toContain("TELEMETRY=off");
-    cleanup();
-    // In that app, on that very computer: the line says so and the button opens its Preferences › Servers.
-    const win = window as { __agentesDesktop?: unknown; __TAURI_INTERNALS__?: unknown };
-    const asked: Record<string, unknown>[] = [];
-    win.__agentesDesktop = { version: "0.8.6" };
-    win.__TAURI_INTERNALS__ = {
-      invoke: async (cmd: string, args: { request?: Record<string, unknown> }) => {
-        if (cmd !== "this_mac" || !args.request) return {};
-        asked.push(args.request);
-        return args.request.kind === "status" ? { orgs: [], agentsHere: true, local: true } : {};
-      },
-    };
-    try {
-      await go(seedState({ telemetry: { enabled: true, envOff: true, report: { report: 1, install: "desktop" } } }));
-      const here = screen().getByRole("region", { name: "Estatísticas de uso" });
-      expect(here.querySelector(".settings-row__status")?.textContent).toBe(
-        "Desligado no app do agentes.chat deste computador.Abrir Servidores",
-      );
-      await click(within(here).getByRole("button", { name: "Abrir Servidores" }));
-      expect(asked).toContainEqual({ kind: "prefs", tab: "servers" });
-    } finally {
-      delete win.__agentesDesktop;
-      delete win.__TAURI_INTERNALS__;
-    }
-    cleanup();
-    await go();
+  test("usage statistics card is not rendered (zero telemetry by default)", async () => {
+    await go(seedState({ telemetry: { enabled: true, envOff: false, report: { report: 1, people: { total: 3 } } } }));
     expect(screen().queryByRole("region", { name: "Estatísticas de uso" })).toBeNull();
   });
 
@@ -194,11 +127,11 @@ describe("Configurações do workspace", () => {
     );
     const github = screen().getByRole("region", { name: "Repositórios do GitHub" });
     expect(hintOf("Repositórios do GitHub", github).text).toBe(
-      "Onde o app agentes.chat está instalado, os agentes abrem pull requests, issues, comentários e commits como o app, com o nome do agente e de quem pediu.",
+      "Onde o app squadchat está instalado, os agentes abrem pull requests, issues, comentários e commits como o app, com o nome do agente e de quem pediu.",
     );
     expect(
       within(github)
-        .getAllByText(/^Onde o app agentes.chat está instalado/)
+        .getAllByText(/^Onde o app squadchat está instalado/)
         .map((el) => el.hidden),
     ).toEqual([true]);
     // A connected service is one line (its name, its pill, who uses it) that opens to its details and actions.
@@ -687,7 +620,7 @@ describe("Configurações do workspace", () => {
         .getAllByRole("link")
         .slice(4)
         .map((l) => l.lastChild?.textContent),
-    ).toEqual(["Dispositivos", "Sobre o agentes.chat"]);
+    ).toEqual(["Dispositivos", "Sobre o squadchat"]);
     // Settings opens on their account: what the agents know of the workspace is not theirs to read.
     expect(screen().queryByLabelText("O que os agentes sabem da Acme")).toBeNull();
     expect(document.body.textContent).not.toContain("Acme builds rockets");

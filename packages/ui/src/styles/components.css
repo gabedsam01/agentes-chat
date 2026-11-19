@@ -634,7 +634,7 @@ html:not([data-pointer]) .ac-link:focus-visible {
 :root:not([data-theme="dark"]),
 [data-theme="light"] {
   --field-bg: #ffffff;
-  --field-line: rgba(23, 23, 22, 0.13);
+  --field-line: rgba(14, 12, 42, 0.15);
 }
 .ac-input {
   box-sizing: border-box;
@@ -975,10 +975,10 @@ textarea.ac-input:not(:hover, :focus-visible) {
 }
 /* The agent's outline in the agents' sky (fixed, like the pixel agents), not the --agent accent token. */
 .ac-icon .ac-brain-body {
-  stroke: #0063d1;
+  stroke: #b34d00;
 }
 .ac-icon .ac-brain-eye {
-  fill: #0063d1;
+  fill: #b34d00;
   stroke: none;
 }
 [data-theme="dark"] .ac-icon .ac-brain-cc {
@@ -988,10 +988,10 @@ textarea.ac-input:not(:hover, :focus-visible) {
   stroke: #5cc3bd;
 }
 [data-theme="dark"] .ac-icon .ac-brain-body {
-  stroke: #5aa8ff;
+  stroke: #ffb46a;
 }
 [data-theme="dark"] .ac-icon .ac-brain-eye {
-  fill: #5aa8ff;
+  fill: #ffb46a;
 }
 .ac-brain-icon--off {
   opacity: 0.45;
@@ -2209,15 +2209,14 @@ html:not([data-pointer]) .ac-chip--button:focus-visible {
   white-space: nowrap;
 }
 
-/* Logo: the agent mark + the wordmark set in Onest */
+/* Logo: the squadchat speech-bubble mark + Instrument Serif wordmark */
 .ac-logo {
   display: inline-flex;
   align-items: center;
-  gap: 0.16em;
-  /* Funnel Display light (the landing's headings); the app falls back to its sans. */
-  font-family: var(--font-brand, var(--font-display, var(--font-sans)));
-  font-weight: 300;
-  letter-spacing: -0.02em;
+  gap: 0.28em;
+  font-family: var(--font-brand, "Instrument Serif", Georgia, serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
   color: var(--ink);
   line-height: 1;
   font-size: 24px;
@@ -2227,46 +2226,45 @@ html:not([data-pointer]) .ac-chip--button:focus-visible {
   height: 1.25em;
   flex: none;
 }
-.ac-logo__body {
-  fill: var(--agent);
+.ac-logo__bubble {
+  fill: var(--ink);
 }
-/* Eyes are white on every agent, in both themes. */
-.ac-logo__eyes {
-  fill: #ffffff;
+.ac-logo__person {
+  fill: var(--bg);
+}
+.ac-logo__agent {
+  fill: var(--agent);
 }
 .ac-logo__tld {
   color: var(--ink-muted);
   font-weight: 600;
 }
-.ac-logo__dither {
-  image-rendering: pixelated;
-}
-.ac-logo--mono .ac-logo__body {
+.ac-logo--mono .ac-logo__bubble {
   fill: currentColor;
 }
-.ac-logo--mono .ac-logo__dither {
-  display: none;
+.ac-logo--mono .ac-logo__person {
+  fill: var(--surface, var(--bg));
 }
-.ac-logo--mono .ac-logo__eyes {
-  fill: var(--surface);
+.ac-logo--mono .ac-logo__agent {
+  fill: currentColor;
+  opacity: 0.72;
 }
 .ac-logo__word {
   display: inline-flex;
   align-items: baseline;
 }
-/* ".chat" in dot matrix (Doto, rounded dots), smaller and quieter than the name. */
 .ac-logo__chat {
-  font-family: var(--font-dot, var(--font-mono));
-  font-variation-settings: "ROND" 100;
-  font-size: 0.62em;
-  font-weight: 600;
-  letter-spacing: 0;
-  margin-left: 0.08em;
-  color: var(--ink-muted);
+  font-family: inherit;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1em;
+  letter-spacing: inherit;
+  margin-left: 0;
+  color: var(--agent);
 }
 .ac-logo--mono .ac-logo__chat {
-  background: var(--ink);
-  color: var(--surface);
+  color: inherit;
+  background: none;
 }
 
 /* Select: our own trigger + listbox, never the native <select> */
@@ -2849,7 +2847,7 @@ html:not([data-pointer]) .ac-radio:focus-visible {
 }
 /* Dark: the check's mark takes the page color (ink is light there). */
 [data-theme="dark"] .ac-option[aria-pressed="true"]::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111110' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4L18 8.5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e0c2a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4L18 8.5'/%3E%3C/svg%3E");
 }
 html:not([data-pointer]) .ac-option:focus-visible,
 html:not([data-pointer]) .ac-option:has(:focus-visible) {
@@ -5452,35 +5450,35 @@ html:not([data-pointer]) .ac-switch:focus-visible {
 :root,
 [data-theme="light"] {
   --agent-eye: #ffffff;
-  --person-a: #e9e9e5;
-  --person-b: #d9d9d4;
-  --person-ink: #2a2a28;
+  --person-a: #e8e7f4;
+  --person-b: #d7d5eb;
+  --person-ink: #2b284d;
   --b1-light: rgba(255, 255, 255, 0.18);
   /* Cards: flat on the white page, a hairline and the cut corner, no shadow.
      Keys (the head icon) are a bare icon, no frame; the well is pressed in. */
   --card-face-top: var(--surface-raised);
-  --card-shadow: 0 0 0 1px rgba(23, 23, 22, 0.1);
-  --card-shadow-hover: 0 0 0 1px rgba(23, 23, 22, 0.18);
+  --card-shadow: 0 0 0 1px rgba(14, 12, 42, 0.1);
+  --card-shadow-hover: 0 0 0 1px rgba(14, 12, 42, 0.18);
   --card-key-bottom: var(--surface-raised);
   --card-key: none;
-  --card-well: #f6f6f3;
-  --card-well-shadow: inset 0 1px 2px rgba(23, 23, 22, 0.07), inset 0 0 0 1px rgba(23, 23, 22, 0.05), 0 1px 0 #ffffff;
+  --card-well: #efeff8;
+  --card-well-shadow: inset 0 1px 2px rgba(7, 6, 26, 0.07), inset 0 0 0 1px rgba(7, 6, 26, 0.05), 0 1px 0 #ffffff;
   /* A well in a message (code, a table's band): a tint over the row, so the row's hover plate darkens it too. */
   --msg-well: var(--plate-soft);
 }
 [data-theme="dark"] {
-  --person-a: #3a3a37;
-  --person-b: #2a2a28;
-  --person-ink: #efefec;
+  --person-a: #2d2b60;
+  --person-b: #22204f;
+  --person-ink: #eeecfa;
   --b1-light: rgba(255, 255, 255, 0.12);
   --card-face-top: var(--surface-raised);
-  --card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
-  --card-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  --card-shadow: 0 0 0 1px rgba(214, 210, 255, 0.1);
+  --card-shadow-hover: 0 0 0 1px rgba(214, 210, 255, 0.18);
   --card-key-bottom: var(--surface-raised);
   --card-key: none;
-  --card-well: #121211;
+  --card-well: #13122f;
   --card-well-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 1px 0 rgba(255, 255, 255, 0.05);
+    inset 0 1px 3px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(214, 210, 255, 0.05), 0 1px 0 rgba(214, 210, 255, 0.06);
   /* Darker than the row and than its hover plate as it is. */
   --msg-well: var(--sunken);
 }
@@ -5990,7 +5988,7 @@ html:not([data-pointer]) .ac-seg__item:focus-visible {
  * sinks below the page and the pill lifts above it.
  */
 [data-theme="dark"] .ac-seg {
-  background: color-mix(in srgb, #000 35%, var(--bg));
+  background: color-mix(in srgb, #07061a 60%, var(--bg));
   box-shadow: inset 0 0 0 1px var(--line);
 }
 [data-theme="dark"] .ac-seg__pill {
@@ -10352,8 +10350,8 @@ html:not([data-pointer]) .ac-filter__option:focus-visible {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  /* Before the first frame: the night's own blue. */
-  background: #0b1330;
+  /* Before the first frame: the dusk sky's deepest indigo. */
+  background: #07061a;
 }
 .ac-hosting__row {
   position: absolute;
@@ -10401,8 +10399,8 @@ html:not([data-pointer]) .ac-filter__option:focus-visible {
   overflow: hidden;
   width: 100%;
   height: 148px;
-  /* Before the first frame: the far side's own blue. */
-  background: #2468dc;
+  /* Before the first frame: the dusk horizon's indigo. */
+  background: #1a1747;
 }
 .ac-journey__land {
   position: absolute;
@@ -10483,13 +10481,13 @@ html:not([data-pointer]) .ac-filter__option:focus-visible {
   fill: #ffffff;
 }
 .ac-place__cloud .under {
-  fill: #cfe6ff;
+  fill: #e3dcff;
 }
 [data-theme="dark"] .ac-place__cloud .body {
-  fill: #cfe0f7;
+  fill: #ded9f7;
 }
 [data-theme="dark"] .ac-place__cloud .under {
-  fill: #8fb2e2;
+  fill: #a09dc4;
 }
 .ac-sky-burst {
   position: fixed;

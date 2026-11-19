@@ -117,7 +117,7 @@ describe("the outside chat app's row in Notificações", () => {
     expect(confirm.querySelector(".surface-sender + p")?.textContent).toBe("Vincule só se for você.");
     const consent = confirm.querySelector(".surface-link > p:last-child")?.textContent;
     expect(consent).toBe(
-      "Seu braço direito do agentes.chat pode mandar mensagens no Example Chat sobre seus workspaces, e ligar só quando for urgente e você permitir. Escreva parar para desativar.",
+      "Seu braço direito do squadchat pode mandar mensagens no Example Chat sobre seus workspaces, e ligar só quando for urgente e você permitir. Escreva parar para desativar.",
     );
     await click(within(confirm).getByRole("button", { name: "Sim, vincular" }));
     expect(calls(state, "surfaces.confirm")).toEqual([["link-1"]]);
@@ -160,7 +160,7 @@ describe("the outside chat app's row in Notificações", () => {
     await settle(6);
     await click(document.querySelector("#notice-surface-status")?.closest(".settings-row") as HTMLElement);
     const consent = dialogOf("Este é o seu Example Chat?").querySelector(".surface-link > p:last-child");
-    expect(consent?.textContent).toStartWith("Iris do agentes.chat pode mandar mensagens no Example Chat");
+    expect(consent?.textContent).toStartWith("Iris do squadchat pode mandar mensagens no Example Chat");
   });
 
   test("confirmed on another device while the code shows: the dialog says linked, and makes no other code", async () => {
@@ -224,7 +224,7 @@ describe("the outside chat app's row in Notificações", () => {
     await click(taken.row() as HTMLElement);
     await click(within(dialogOf(/Example Chat\?/)).getByRole("button", { name: "Sim, vincular" }));
     dialog = screen().getByRole("dialog");
-    expect(within(dialog).getByRole("alert").textContent).toContain("vinculado a outra conta do agentes.chat");
+    expect(within(dialog).getByRole("alert").textContent).toContain("vinculado a outra conta do squadchat");
     if (taken.state.surface) {
       taken.state.surface.confirmError = undefined;
     }

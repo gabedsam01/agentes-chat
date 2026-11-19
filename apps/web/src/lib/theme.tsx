@@ -26,10 +26,10 @@ const media = () =>
 
 function readPreference(): ThemePreference {
   const saved = storage.get(STORAGE_KEYS.theme);
-  return saved === "light" || saved === "dark" ? saved : "system";
+  return saved === "light" || saved === "dark" || saved === "system" ? saved : "dark";
 }
 
-/** Light/dark via `data-theme` on <html> (tokens.css), following the system unless the person picks one. */
+/** Light/dark via `data-theme` on <html> (tokens.css), defaulting to dark ("Turno da Noite") unless changed. */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemePreference>(readPreference);
   const [systemDark, setSystemDark] = useState(() => media()?.matches ?? false);
@@ -49,7 +49,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setPreference = useCallback((value: ThemePreference) => {
     setPreferenceState(value);
-    if (value === "system") storage.remove(STORAGE_KEYS.theme);
+    if (value === "dark") storage.remove(STORAGE_KEYS.theme);
     else storage.set(STORAGE_KEYS.theme, value);
   }, []);
 

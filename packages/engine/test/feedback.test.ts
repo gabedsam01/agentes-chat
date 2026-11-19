@@ -9,6 +9,7 @@ import {
   FEEDBACK_SENT_MS,
   FEEDBACK_UNSENT_MS,
   feedbackBlobKey,
+  feedbackDestination,
   feedbackFileByToken,
   NotFoundError,
   PermanentJobError,
@@ -29,6 +30,24 @@ const feedback = {
   text: "  The sky is too dark\nat night.  ",
   version: "1.2.3",
 };
+
+test("feedbackDestination: off by default and requires FEEDBACK_URL when relaying", () => {
+  expect(feedbackDestination({ FEEDBACK_RELAY: false, FEEDBACK_URL: undefined })).toBeUndefined();
+  expect(feedbackDestination({ FEEDBACK_RELAY: true, FEEDBACK_URL: undefined })).toBeUndefined();
+  expect(
+    feedbackDestination({ FEEDBACK_RELAY: false, FEEDBACK_URL: "https://feedback.example.com/inbox" }),
+  ).toBeUndefined();
+  expect(feedbackDestination({ FEEDBACK_RELAY: true, FEEDBACK_URL: "https://feedback.example.com/inbox" })).toBe(
+    "https://feedback.example.com/inbox",
+  );
+  expect(
+    feedbackDestination({
+      FEEDBACK_EMAIL: "ops@example.com",
+      FEEDBACK_RELAY: true,
+      FEEDBACK_URL: "https://feedback.example.com/inbox",
+    }),
+  ).toBe("ops@example.com");
+});
 
 test("a feedback email: the person's words first, then who wrote them and from where", () => {
   const mail = renderFeedback({ ...feedback, orgName: "Acme", where: "/org/x", app: "web" });

@@ -66,7 +66,7 @@ describe("agent engine: one agent everywhere", () => {
     const tones = bodyTones("teal");
     expect(light(tones[0] ?? "")).toBeLessThan(light(tones[4] ?? ""));
     expect(light(bodyTones("teal", true)[4] ?? "")).toBeLessThan(light(tones[4] ?? ""));
-    expect(spriteBody("sky")).toBe("#04203f");
+    expect(spriteBody("sky")).toBe("#2a1300");
     expect(inBody(0.5, 0.5)).toBe(true);
     expect(inBody(0.01, 0.01)).toBe(false);
     expect(inBody(0.04, 0.96)).toBe(true);
@@ -205,7 +205,7 @@ describe("a workspace's accent is its default agent color (ADR 0193)", () => {
       expect(gradientOf("sky")).toEqual(pair);
       expect(gradientOf(undefined)).toEqual(pair);
       expect(agentGradient()).toEqual(pair);
-      expect(spriteBody("sky")).not.toBe("#04203f");
+      expect(spriteBody("sky")).not.toBe("#2a1300");
       expect(mentionTone("sky").ink).not.toBe(mentionTone("rose").ink);
       // An agent's own color stays its own.
       expect(gradientOf("rose")).toEqual(rose);
@@ -214,8 +214,8 @@ describe("a workspace's accent is its default agent color (ADR 0193)", () => {
       setSkyColors(null);
     }
     expect(gradientOf("sky")).toEqual(sky);
-    expect(G.sky).toEqual(["#8cc3ff", "#0063d1"]);
-    expect(spriteBody("sky")).toBe("#04203f");
+    expect(G.sky).toEqual(["#e07b39", "#b34d00"]);
+    expect(spriteBody("sky")).toBe("#2a1300");
     // Agents' white eyes and text read on the bottom whatever was picked.
     for (const hex of ["#fdfdfd", "#050505", "#ffff00"])
       expect(contrastRatio(accentSky(hex)[1], "#ffffff")).toBeGreaterThanOrEqual(4.5);

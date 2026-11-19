@@ -18,12 +18,12 @@ import { mix, parseColor, pixelOf, TEAM_NIGHT } from "./math";
  * screen paint it.
  */
 
-const DAY = ["#2468dc", "#2b74e6", "#3f88f5", "#5a9dff", "#78b4ff", "#a6cfff", "#cfe6ff", "#eef7ff"];
-/** The day on a dark page: the same blues, deeper, so the sky doesn't glare beside dark surfaces. */
-const DAY_DARK = ["#0b2459", "#0e2d6c", "#123881", "#174496", "#1d51aa", "#2660bd", "#3170cd", "#4183dc"];
+const DAY = ["#1a1440", "#241848", "#331d4f", "#652b55", "#b44a52", "#dc6a52", "#ff9058", "#ffb46a"];
+/** The day on a dark page: deeper dusk tones so the sky stays calm beside dark surfaces. */
+const DAY_DARK = ["#07061a", "#0e0c2a", "#1a1440", "#241848", "#331d4f", "#482353", "#652b55", "#8a3754"];
 
-const STAR = pixelOf("#eaf1ff");
-const MOON = pixelOf("#f3f6ff");
+const STAR = pixelOf("#e7e4ff");
+const MOON = pixelOf("#f6ead2");
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
 const bayer = (x: number, y: number) => BAYER[((y & 3) << 2) | (x & 3)] ?? 0.5;
 const hash = (x: number, y: number) => {

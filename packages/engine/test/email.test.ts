@@ -172,7 +172,7 @@ describe("the look", () => {
     const { html } = renderEmail(verify, art);
     expect(html).toContain('<meta name="color-scheme" content="light dark">');
     expect(html).toContain(":root{color-scheme:light dark;");
-    expect(html).toContain("@media (prefers-color-scheme:dark){.bg{background:#0f0f0e!important}");
+    expect(html).toContain("@media (prefers-color-scheme:dark){.bg{background:#0e0c2a!important}");
     expect(html).toContain("[data-ogsb] .logo-ink{display:none!important}");
     expect(html).toContain('<!--[if !mso]><!--><img class="logo-bone"');
   });
@@ -182,21 +182,21 @@ describe("the look", () => {
     const lift =
       "inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.18),0 6px 14px -6px rgba(0,0,0,.45)";
     // The flat fill and the lift inline; the gradient only where a client reads the colour scheme.
-    expect(html).toContain(`background-color:#151514;border:1px solid #151514;border-radius:14px;box-shadow:${lift}`);
+    expect(html).toContain(`background-color:#12102b;border:1px solid #12102b;border-radius:14px;box-shadow:${lift}`);
     expect(html).toContain(
-      "@media (prefers-color-scheme:light){.btn{background-image:linear-gradient(180deg,#3e3e3d 0%,#151514 100%)!important}}",
+      "@media (prefers-color-scheme:light){.btn{background-image:linear-gradient(180deg,#3b3950 0%,#12102b 100%)!important}}",
     );
     expect(html).not.toMatch(/style="[^"]*background-image/);
     expect(html).toContain("font-size:15px;line-height:20px;font-weight:600;text-decoration:none;padding:13px 15px");
     // Dark: the flat bone wherever our dark applies, and the bone gradient in a block of its own after Outlook's hooks.
-    expect(html).toContain(".btn{background:#efefec!important;color:#0f0f0e!important;border-color:#efefec!important}");
+    expect(html).toContain(".btn{background:#eeecfa!important;color:#0e0c2a!important;border-color:#eeecfa!important}");
     const gradient =
-      "<style>\n@media (prefers-color-scheme:dark){.btn{background-image:linear-gradient(180deg,#c7c7c4 0%,#efefec 100%)!important}}\n</style>";
+      "<style>\n@media (prefers-color-scheme:dark){.btn{background-image:linear-gradient(180deg,#c6c4d5 0%,#eeecfa 100%)!important}}\n</style>";
     expect(html.indexOf(gradient)).toBeGreaterThan(html.lastIndexOf("[data-ogsb] "));
     // Classic Outlook: its spacers in em at the 15 px label, both labels raised alike, no exact line height on a link.
     expect(html).toContain('<i style="mso-font-width:107%;mso-text-raise:187%" hidden>&emsp;</i>');
     expect(html).toContain('<i style="mso-font-width:107%" hidden>&emsp;&#8203;</i>');
-    expect(html).toContain('<span style="mso-text-raise:93%;color:#fbfbfa">Approve</span>');
+    expect(html).toContain('<span style="mso-text-raise:93%;color:#f6f6fb">Approve</span>');
     expect(html).toContain('<span style="mso-text-raise:93%">Deny</span>');
     expect(html).not.toMatch(/<a [^>]*mso-line-height-rule:exactly/);
     // Deny 16 px after the button, as the app spaces its actions. Four spaces where the width is ignored.
@@ -297,7 +297,7 @@ describe("the look", () => {
       expect(e.subject).toBe(subject);
       expect(e.text).toContain(`\n\n${body} Acme evil.${BREAK}com.\n\n482913\n\n`);
       expect(e.html).toContain(
-        'letter-spacing:8px;font-variant-numeric:tabular-nums;color:#151514;text-align:center">482913</td>',
+        'letter-spacing:8px;font-variant-numeric:tabular-nums;color:#12102b;text-align:center">482913</td>',
       );
       expect(e.html).toContain('<table width="100%" class="well"');
       expect(e.html).not.toContain('class="btn"');
@@ -367,7 +367,7 @@ describe("the look", () => {
     expect(html("join_code.en")).toContain(`Souza Bakery ${nobr}on agentes.chat.</span></p>`);
     // A name in bold moves down with its period, still bold.
     expect(html("join_code.en")).toContain(
-      `to ask to join ${nobr}<b class="ink" style="font-weight:600;color:#151514">Souza Bakery</b>.</span></p>`,
+      `to ask to join ${nobr}<b class="ink" style="font-weight:600;color:#12102b">Souza Bakery</b>.</span></p>`,
     );
     expect(html("computer_ready-ai.pt-BR")).toContain(`dos seus agentes ${nobr}está pronto</span></h1>`);
     // Headlines and paragraphs of every kind, the fallback's words before its address (which breaks anywhere); the

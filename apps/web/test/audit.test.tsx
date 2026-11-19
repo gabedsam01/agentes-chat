@@ -239,7 +239,7 @@ describe("Configurações → Auditoria", () => {
     const { r } = await go(seedState({ audit: [asked, fault] }));
     expect(titles()).toEqual([
       "Quem cuida deste servidor leu uma etapa do trabalho de um agente",
-      "O suporte do agentes.chat leu algo em uma conversa privada",
+      "O suporte do squadchat leu algo em uma conversa privada",
     ]);
     const subs = [...section().querySelectorAll(".audit-row__sub")].map((e) => e.textContent);
     expect(subs).toEqual([
@@ -295,7 +295,7 @@ describe("Configurações → Auditoria", () => {
     );
     expect(titles()).toEqual([
       "Quem cuida deste servidor respondeu por e-mail",
-      "O suporte do agentes.chat respondeu por e-mail",
+      "O suporte do squadchat respondeu por e-mail",
       "Quem cuida deste servidor respondeu por e-mail",
     ]);
     expect([...section().querySelectorAll(".audit-row__sub")].map((e) => e.textContent)).toEqual([

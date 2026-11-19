@@ -182,7 +182,7 @@ export async function loadI18n(lng: LocaleCode): Promise<I18n> {
 }
 
 /** The product's name in the tabs' titles, where a registered host shows its own (ADR 0194). */
-const PRODUCT_NAME = "agentes.chat";
+const PRODUCT_NAME = "squadchat";
 let tabBrand: string | null = null;
 let retitle = () => {};
 const branded = (title: string) => {

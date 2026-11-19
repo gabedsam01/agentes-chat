@@ -431,7 +431,7 @@ describe("Computadores", () => {
     expect(machineFacts(t, "pt-BR", offline, NOW)).toBe("Linux · visto há 2 h");
     expect(seenText(t, "pt-BR", { online: false, lastSeenAt: null }, NOW)).toBe("ainda não conectou");
     expect(machineFacts(t, "pt-BR", machine({ id: "host", kind: "host", os: "linux" }), NOW)).toBe(
-      "Onde o agentes.chat está instalado, um usuário por agente.",
+      "Onde o squadchat está instalado, um usuário por agente.",
     );
   });
 
@@ -710,7 +710,7 @@ test("Auditoria says an operator's answer to a support request as the web does: 
   expect(auditReason(en, assisted)).toBe(`support request from ${name} · with an AI assistant`);
   // On agentes.chat's own servers, with no AI assistant, of an account that is gone since.
   const plain = replied({ template: "received", chars: 0, assistedByAi: false, cloud: true }, null);
-  expect(auditSentence(en, plain, "en").text).toBe("agentes.chat support answered by email");
+  expect(auditSentence(en, plain, "en").text).toBe("squadchat support answered by email");
   expect(auditSubLine(en, plain)).toBe("support request from Removed");
   expect(auditOutcome(en, plain)).toBeNull();
 });

@@ -93,6 +93,7 @@ afterAll(() => {
   setMermaidRenderer(null);
 });
 beforeEach(() => {
+  document.documentElement.dataset.theme = "light";
   frames.length = 0;
   setMermaidFrame(fakeFrame);
   // The real renderer, with nothing drawn yet.

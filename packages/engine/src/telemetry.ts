@@ -72,9 +72,12 @@ export function isAgentesCloud(publicUrl: string) {
   return host === "agentes.chat" || host.endsWith(".agentes.chat");
 }
 
-/** Whether the report goes out: always on agentes.chat's own servers; elsewhere unless `TELEMETRY=off` or the switch is off. */
-export function telemetrySends(config: { TELEMETRY: "on" | "off"; PUBLIC_URL: string }, enabled: boolean) {
-  return isAgentesCloud(config.PUBLIC_URL) || (config.TELEMETRY === "on" && enabled);
+/** Whether the report goes out: only when `TELEMETRY=on`, `TELEMETRY_URL` is configured, and the switch is enabled. */
+export function telemetrySends(
+  config: { TELEMETRY: "on" | "off"; TELEMETRY_URL?: string; PUBLIC_URL?: string },
+  enabled: boolean,
+) {
+  return config.TELEMETRY === "on" && Boolean(config.TELEMETRY_URL) && enabled;
 }
 
 /** The installation's row, made on first use with its random id. */

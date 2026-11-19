@@ -141,13 +141,13 @@ function open(env: Env = {}) {
 }
 
 const EN = {
-  title: "agentes.chat will be right back",
+  title: "squadchat will be right back",
   text: "The server isn't answering right now. This page opens by itself as soon as it's back.",
   paid: "If you just paid, there's no need to pay again.",
   retry: "Try now",
 };
 const PT = {
-  title: "O agentes.chat já volta",
+  title: "O squadchat já volta",
   text: "O servidor não está respondendo agora. Esta página abre sozinha assim que ele voltar.",
   paid: "Se você acabou de pagar, não precisa pagar de novo.",
   retry: "Tentar agora",
@@ -172,11 +172,11 @@ describe("the page Caddy serves while the app is down", () => {
     // Each of the twelve: picked in the app, from the cookie, from the browser.
     const ja = open({ locale: "ja", languages: ["pt-BR"] });
     expect(ja.html.lang).toBe("ja");
-    expect(ja.doc.title).toBe("agentes.chat はまもなく戻ります");
+    expect(ja.doc.title).toBe("squadchat はまもなく戻ります");
     expect(ja.text("retry")).toBe("今すぐ試す");
     const fr = open({ cookie: "theme=x; agentes_locale=fr", languages: ["pt-BR"] });
     expect(fr.html.lang).toBe("fr");
-    expect(fr.text("title")).toBe("agentes.chat revient tout de suite");
+    expect(fr.text("title")).toBe("squadchat revient tout de suite");
     expect(open({ languages: ["sv-SE", "fr-FR", "en"] }).html.lang).toBe("fr");
     expect(open({ languages: ["zh-TW"] }).html.lang).toBe("zh-Hans");
     expect(open({ languages: ["in-ID"] }).html.lang).toBe("id");
@@ -188,10 +188,11 @@ describe("the page Caddy serves while the app is down", () => {
     expect(open({ cookie: "agentes_locale=english", languages: ["pt"] }).html.lang).toBe("pt-BR");
   });
 
-  test("dark from the app's choice, else from the system", () => {
-    expect(open().html.dataset.theme).toBe("light");
+  test("dark by default, or from the app's choice and system preference", () => {
+    expect(open().html.dataset.theme).toBe("dark");
     expect(open({ theme: "dark" }).html.dataset.theme).toBe("dark");
-    expect(open({ dark: true }).html.dataset.theme).toBe("dark");
+    expect(open({ theme: "system", dark: false }).html.dataset.theme).toBe("light");
+    expect(open({ theme: "system", dark: true }).html.dataset.theme).toBe("dark");
     expect(open({ theme: "light", dark: true }).html.dataset.theme).toBe("light");
   });
 

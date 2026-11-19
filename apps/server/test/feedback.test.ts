@@ -183,11 +183,11 @@ test("feedback files: the hour's limit and the size are answered before the file
   expect((await upload(ana, PNG, "real.png")).status).toBe(429);
 });
 
-const INBOX_URL = "https://app.agentes.chat/api/feedback/inbox";
-/** A server with no address of its own, whose network reaches only the inbox: `inbox`'s own app. */
+const INBOX_URL = "https://feedback.example.com/api/feedback/inbox";
+/** A server with no address of its own, whose network reaches only the configured inbox: `inbox`'s own app. */
 async function relaying(down = false) {
   inbox = await createTestServer({
-    env: { FEEDBACK_EMAIL: "team@example.com", PUBLIC_URL: "https://app.agentes.chat" },
+    env: { FEEDBACK_EMAIL: "team@example.com", PUBLIC_URL: "https://app.agentes.chat", FEEDBACK_INBOX: "true" },
   });
   const posted: string[] = [];
   const there = inbox;
@@ -197,9 +197,17 @@ async function relaying(down = false) {
     if (down) return new Response("busy", { status: 503 });
     return there.app.request(new URL(String(url)).pathname, init);
   }) as typeof fetch;
-  t = await createTestServer({ env: { FEEDBACK_RELAY: "true" }, http });
+  t = await createTestServer({ env: { FEEDBACK_RELAY: "true", FEEDBACK_URL: INBOX_URL }, http });
   return posted;
 }
+
+test("feedback relay: FEEDBACK_RELAY=true without FEEDBACK_URL sends nothing", async () => {
+  t = await createTestServer({ env: { FEEDBACK_RELAY: "true" } });
+  const ana = browser(t);
+  expect(await (await ana("/api/app/auth-config")).json()).toMatchObject({ feedback: false, feedbackRelay: false });
+  await signUp(ana, "ana@example.com");
+  expect((await ana("/api/app/feedback", { json: { id: ID, text: "Nothing configured" } })).status).toBe(404);
+});
 
 test("feedback relay: with no address it goes to the agentes.chat team's inbox, pictures in the email", async () => {
   const posted = await relaying();

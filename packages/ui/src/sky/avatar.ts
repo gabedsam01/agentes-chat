@@ -12,7 +12,7 @@ import { bayerAt } from "./math";
 /** [top, bottom] of an agent's tile sky: light mixes its light tone into white, dark its deep tone into the dark surface. */
 export function avatarSkyTones(color: string | undefined, dark: boolean): [string, string] {
   const [light, deep] = gradientOf(color);
-  if (dark) return [mixHex(deep, "#1c1c1b", 0.78), mixHex(deep, "#1c1c1b", 0.55)];
+  if (dark) return [mixHex(deep, "#1a1940", 0.78), mixHex(deep, "#1a1940", 0.55)];
   return [mixHex(light, "#ffffff", 0.86), mixHex(light, "#ffffff", 0.62)];
 }
 

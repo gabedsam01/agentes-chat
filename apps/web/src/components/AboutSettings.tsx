@@ -1,7 +1,7 @@
 import { instanceQuery } from "@agenteschat/client";
 import { LICENSE_URL, PUBLIC_SOURCE_URL } from "@agenteschat/client/lib/about";
 import { shownAddress } from "@agenteschat/client/lib/sites";
-import { DOCS_SITE } from "@agenteschat/i18n/docs";
+import { UPSTREAM_SITE } from "@agenteschat/i18n/docs";
 import { Card, CardHeader, Icon } from "@agenteschat/ui";
 import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
@@ -35,7 +35,7 @@ export function AboutSection() {
         title={
           // One inline run: the heading lays its children out with a gap, which would part the link from its words.
           <span>
-            <Trans i18nKey="settings.about.basedOn" components={{ site: <Out href={DOCS_SITE} /> }} />
+            <Trans i18nKey="settings.about.basedOn" components={{ site: <Out href={UPSTREAM_SITE} /> }} />
           </span>
         }
         subtitle={<Trans i18nKey="settings.about.license" components={{ license: <Out href={LICENSE_URL} /> }} />}

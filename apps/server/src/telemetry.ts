@@ -109,7 +109,7 @@ export function startTelemetry(deps: TelemetryDeps) {
 
   const send = async () => {
     const state = await telemetryState(db);
-    if (!telemetrySends(config, state.enabled)) return "off";
+    if (!telemetrySends(config, state.enabled) || !config.TELEMETRY_URL) return "off";
     const report = await buildTelemetryReport(db, telemetryFacts(config), new Date(now()));
     const res = await post(config.TELEMETRY_URL, {
       method: "POST",
@@ -140,9 +140,8 @@ export function startTelemetry(deps: TelemetryDeps) {
     schedule(next);
   };
 
-  const cloud = isAgentesCloud(config.PUBLIC_URL);
-  // A development server is nobody's installation.
-  const sends = (cloud || config.TELEMETRY === "on") && config.NODE_ENV === "production";
+  // A development server is nobody's installation, and nothing is sent without TELEMETRY=on and TELEMETRY_URL.
+  const sends = config.TELEMETRY === "on" && Boolean(config.TELEMETRY_URL) && config.NODE_ENV === "production";
   const ready = (async () => {
     const kept = await markServerStarted(db, new Date(now())).catch((error: unknown) => {
       quiet(error);
@@ -158,9 +157,7 @@ export function startTelemetry(deps: TelemetryDeps) {
     schedule(due);
   })();
   if (sends) {
-    log.info(
-      `anonymous usage report: once a day to ${config.TELEMETRY_URL}${cloud ? "" : " unless turned off (TELEMETRY=off, or Settings → General)"}`,
-    );
+    log.info(`anonymous usage report: once a day to ${config.TELEMETRY_URL} unless turned off (TELEMETRY=off)`);
   }
   return {
     ready,
@@ -183,14 +180,14 @@ export async function printTelemetry(
   const state = await telemetryState(db);
   const report = await buildTelemetryReport(db, telemetryFacts(config), now);
   out.write(`${JSON.stringify(report, null, 2)}\n`);
-  const on = `On: sent once a day to ${config.TELEMETRY_URL}.`;
+  const on = config.TELEMETRY_URL ? `On: sent once a day to ${config.TELEMETRY_URL}.` : "";
   err.write(
-    isAgentesCloud(config.PUBLIC_URL)
-      ? `${on}\n`
-      : telemetrySends(config, state.enabled)
-        ? `${on} TELEMETRY=off in .env turns it off.\n`
-        : config.TELEMETRY === "off"
-          ? "Off (TELEMETRY=off): nothing is sent.\n"
+    telemetrySends(config, state.enabled)
+      ? `${on} TELEMETRY=off in .env turns it off.\n`
+      : config.TELEMETRY === "off"
+        ? "Off (TELEMETRY=off): nothing is sent.\n"
+        : !config.TELEMETRY_URL
+          ? "Off (TELEMETRY_URL unset): nothing is sent.\n"
           : "Off (turned off in Settings): nothing is sent.\n",
   );
 }

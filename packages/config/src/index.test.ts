@@ -41,6 +41,12 @@ describe("loadConfig", () => {
     expect(config.MILLIONSEND_API_URL).toBe("https://api.millionsend.com");
     // Unset: the email senders use ping@ on the host of PUBLIC_URL.
     expect(config.EMAIL_FROM).toBeUndefined();
+    expect(config.SOURCE_URL).toBe("https://github.com/gabedsam01/squad-chat");
+    expect(config.FEEDBACK_RELAY).toBe(false);
+    expect(config.FEEDBACK_INBOX).toBe(false);
+    expect(config.FEEDBACK_URL).toBeUndefined();
+    expect(config.TELEMETRY).toBe("off");
+    expect(config.TELEMETRY_URL).toBeUndefined();
   });
 
   test("FILES_DIR must be absolute; SMTP_URL must be smtp:// or smtps://", () => {
@@ -318,12 +324,15 @@ describe("loadConfig", () => {
     expect(loadConfig(on).SESSION_SCREENING).toBe(true);
   });
 
-  test("the usage report is on unless TELEMETRY says off (on/off, or any yes/no word)", () => {
-    expect(loadConfig(valid).TELEMETRY).toBe("on");
-    expect(loadConfig(valid).TELEMETRY_URL).toBe("https://telemetry.agentes.chat/v1/report");
+  test("the usage report is off by default with no URL (zero telemetry unless explicitly configured)", () => {
+    expect(loadConfig(valid).TELEMETRY).toBe("off");
+    expect(loadConfig(valid).TELEMETRY_URL).toBeUndefined();
     expect(loadConfig({ ...valid, TELEMETRY: "off" }).TELEMETRY).toBe("off");
     expect(loadConfig({ ...valid, TELEMETRY: "false" }).TELEMETRY).toBe("off");
     expect(loadConfig({ ...valid, TELEMETRY: "on" }).TELEMETRY).toBe("on");
+    expect(
+      loadConfig({ ...valid, TELEMETRY: "on", TELEMETRY_URL: "https://telemetry.example.com/v1/report" }).TELEMETRY_URL,
+    ).toBe("https://telemetry.example.com/v1/report");
     expect(() => loadConfig({ ...valid, TELEMETRY: "sometimes" })).toThrow(/TELEMETRY/);
     expect(loadConfig(valid).INSTALL_MODE).toBeUndefined();
     expect(() => loadConfig({ ...valid, INSTALL_MODE: "kubernetes" })).toThrow(/INSTALL_MODE/);

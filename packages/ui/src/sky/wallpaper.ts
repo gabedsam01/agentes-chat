@@ -11,7 +11,7 @@ type Hue = "sky" | "indigo" | "violet" | "rose" | "amber" | "green" | "teal" | "
 type Neutral = "paper" | "mist" | "sand";
 
 /** The conversation's page under a background, as the apps paint it (white, and the dark theme's page). */
-export const WALLPAPER_PAGE = { light: "#ffffff", dark: "#0f0f0e" } as const;
+export const WALLPAPER_PAGE = { light: "#ffffff", dark: "#0e0c2a" } as const;
 const pageOf = (dark: boolean) => (dark ? WALLPAPER_PAGE.dark : WALLPAPER_PAGE.light);
 
 /** The quiet colors of Drawings and Cor, light and dark. */
@@ -26,7 +26,7 @@ const isNeutral = (c: string): c is Neutral => c in WALLPAPER_NEUTRAL_TONES;
  * Over a background, someone else's bubble is lifted: white in light, a step over the page in dark, with the cards'
  * light shadow (mine keeps its color, and the shadow).
  */
-export const WALLPAPER_LIFT = { light: "#ffffff", dark: "#232322" } as const;
+export const WALLPAPER_LIFT = { light: "#ffffff", dark: "#1a1940" } as const;
 /** The styles with no bubbles (the words straight on the background) take it at this strength. */
 export const WALLPAPER_NO_BUBBLES_STRENGTH = 0.5;
 export const wallpaperStrength = (bubbles: boolean) => (bubbles ? 1 : WALLPAPER_NO_BUBBLES_STRENGTH);

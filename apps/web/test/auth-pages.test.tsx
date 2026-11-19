@@ -46,7 +46,7 @@ const ACCOUNT: SignInOptions = { account: true, password: true, providers: [], c
 const NEW: SignInOptions = { account: false, password: false, providers: [], canSignUp: true };
 
 describe("the sign-in forms when the server doesn't answer", () => {
-  const UNREACHABLE = "Sem conexão com o agentes.chat agora. Tente de novo em instantes.";
+  const UNREACHABLE = "Sem conexão com o squadchat agora. Tente de novo em instantes.";
   const alertText = () => screen().getByRole("alert").textContent;
 
   test("Continuar with no answer: why, under the field, and Continuar works again", async () => {
@@ -263,9 +263,7 @@ describe("Entrar (e-mail primeiro)", () => {
       );
       await settle(2);
       const get = screen().getByRole("dialog", { name: "Ter o seu próprio servidor" });
-      expect(within(get).getByRole("link", { name: "Baixar o app" }).getAttribute("href")).toBe(
-        "https://agentes.chat/download",
-      );
+      expect(within(get).getByRole("link", { name: "Baixar o app" }).getAttribute("href")).toBe("/download");
       expect(within(get).getByRole("link", { name: "Como funciona" }).getAttribute("href")).toBe(
         "https://agentes.chat/pt/docs/run-on-your-computer",
       );
@@ -288,7 +286,7 @@ describe("Entrar (e-mail primeiro)", () => {
       await act(async () => fireEvent.change(field, { target: { value: "nowhere.example.org" } }));
       await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Conectar" })));
       await settle(4);
-      expect(sheet.textContent).toContain("Não achamos o agentes.chat em nowhere.example.org.");
+      expect(sheet.textContent).toContain("Não achamos o squadchat em nowhere.example.org.");
       await act(async () => fireEvent.change(field, { target: { value: "agentes.example.com" } }));
       await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Conectar" })));
       await settle(4);
@@ -438,7 +436,7 @@ describe("Entrar a caminho de algum lugar: a página diz para onde", () => {
 
     // An AI app's sign-in (ADR 0119): back to its consent page.
     await renderApp(at("/autorizar?req=0192"), { api, auth: createFakeAuth().auth });
-    expect(lead()).toBe("Para conectar um app ao agentes.chat.");
+    expect(lead()).toBe("Para conectar um app ao squadchat.");
   });
 
   test("a link that no longer works, an unknown one, or anywhere else: the general line", async () => {
@@ -1570,12 +1568,11 @@ describe("Onboarding: the workspace's name", () => {
     await type("Nome", "Beta");
     await next();
     expect(screen().getByRole("heading", { name: "Como se chama o seu workspace?" })).toBeTruthy();
-    const said =
-      "Você já tem um workspace esperando um plano do agentes.chat. Escolha o plano dele antes de criar outro.";
+    const said = "Você já tem um workspace esperando um plano do squadchat. Escolha o plano dele antes de criar outro.";
     expect(screen().getByRole("alert").textContent).toBe(said);
     // Said once, in place: no toast says it again.
     expect(document.body.textContent?.split(said)).toHaveLength(2);
-    await click(button("Ver planos do agentes.chat"), 6);
+    await click(button("Ver planos do squadchat"), 6);
     expect(calls(state, "orgs.billingLink")[0]?.args).toEqual(["org-unpaid", "new_workspace"]);
     expect(left).toEqual(["https://billing.example.com/link?t=new_workspace"]);
   });

@@ -213,7 +213,7 @@ describe("a request that got no answer, or only the proxy's", () => {
       new ApiError(502, "http_502", "Bad Gateway"),
     ]) {
       await renderPage(broken(error), { api: createFakeApi() });
-      expect(screen().getByRole("heading", { name: "Sem conexão com o agentes.chat" })).toBeTruthy();
+      expect(screen().getByRole("heading", { name: "Sem conexão com o squadchat" })).toBeTruthy();
       expect(screen().getByText(UNREACHABLE)).toBeTruthy();
       expect(screen().getByRole("button", { name: "Tentar de novo" })).toBeTruthy();
       expect(document.body.textContent).not.toMatch(/código|Bad Gateway|Failed to fetch|Service Unavailable/);
@@ -238,7 +238,7 @@ describe("a request that got no answer, or only the proxy's", () => {
       expect(screen().getByRole("button", { name: "Tentar de novo" })).toBeTruthy();
       online = true;
       await act(async () => window.dispatchEvent(new Event("online")));
-      expect(screen().getByRole("heading", { name: "Sem conexão com o agentes.chat" })).toBeTruthy();
+      expect(screen().getByRole("heading", { name: "Sem conexão com o squadchat" })).toBeTruthy();
     } finally {
       if (own) Object.defineProperty(navigator, "onLine", own);
       else delete (navigator as { onLine?: boolean }).onLine;
@@ -278,7 +278,7 @@ describe("a request that got no answer, or only the proxy's", () => {
       return text;
     };
     expect(await said(new NetworkError(new TypeError("Failed to fetch")))).toBe(
-      "Sem conexão com o agentes.chat agora. Tente de novo em instantes.",
+      "Sem conexão com o squadchat agora. Tente de novo em instantes.",
     );
     expect(await said(new TypeError("Cannot read properties of undefined"))).toBe("Algo deu errado. Tente de novo.");
     const failedLoad = "Não foi possível carregar. Confira a conexão e tente de novo.";

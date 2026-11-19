@@ -9,8 +9,8 @@
   overflow: hidden;
   width: 100%;
   height: 100%;
-  /* Before the first frame, and without a canvas: the night's own blue. */
-  background: #0b1330;
+  /* Before the first frame, and without a canvas: the dusk sky's deepest indigo. */
+  background: #07061a;
 }
 .team-scene > .ac-sky {
   position: absolute;

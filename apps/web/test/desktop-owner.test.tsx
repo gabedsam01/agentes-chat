@@ -79,7 +79,7 @@ describe("Entrar no servidor que o app roda neste computador", () => {
     await act(async () => fireEvent.click(continueHere() as HTMLElement));
     await settle(2);
     expect(screen().getByRole("alert").textContent).toBe(
-      "Não sobrou nenhuma conta no agentes.chat deste Mac. Crie o novo dono na janela que abriu.",
+      "Não sobrou nenhuma conta no squadchat deste Mac. Crie o novo dono na janela que abriu.",
     );
     // The refusal says nothing against the address field.
     expect(screen().getByLabelText("E-mail").getAttribute("aria-invalid")).toBeNull();
@@ -158,7 +158,7 @@ describe("Entrar no servidor que o app roda neste computador", () => {
     await renderApp("/login", { api: signedOut() });
     await settle(6);
     const line = document.querySelector(".auth__place");
-    expect(line?.textContent).toContain("Entrando no agentes.chat deste Mac");
+    expect(line?.textContent).toContain("Entrando no squadchat deste Mac");
     await act(async () =>
       fireEvent.click(within(line as HTMLElement).getByRole("button", { name: "Trocar de servidor" })),
     );

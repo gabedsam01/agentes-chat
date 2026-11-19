@@ -53,7 +53,7 @@ const pick = (list: number[], v: number, x: number, y: number) => {
 };
 
 const DESERT_SKY = tones(["#c9703f", "#d9824a", "#e7955a", "#f0aa6a", "#f6c07e", "#f9d496", "#fbe3b0"]);
-const HOME_SKY = tones(["#2468dc", "#2b74e6", "#3f88f5", "#5a9dff", "#78b4ff", "#a6cfff", "#cfe6ff"]);
+const HOME_SKY = tones(["#1a1440", "#241848", "#331d4f", "#652b55", "#b44a52", "#ff9058", "#ffb46a"]);
 const SAND = tones(["#f4d595", "#e7bb73", "#d9a35c", "#c48946"]);
 const GRASS = tones(["#9be38a", "#66c463", "#46a352", "#337f40"]);
 const SUN = rgba("#fff3cc");

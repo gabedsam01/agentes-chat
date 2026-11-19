@@ -10,9 +10,9 @@
  * the eyes are the logo's: two narrow white pills.
  */
 
-/** Top and bottom of each agent color. Sky is the landing's blue, the same in both themes. */
+/** Top and bottom of each agent color. Sky is the squadchat ember pair, the same in both themes. */
 export const AGENT_GRADIENTS = {
-  sky: ["#8cc3ff", "#0063d1"],
+  sky: ["#e07b39", "#b34d00"],
   indigo: ["#7d8bff", "#3f4fd6"],
   violet: ["#ae8cf7", "#6e45d1"],
   rose: ["#f58aa6", "#c9406a"],
@@ -147,7 +147,7 @@ export function contrastOf(a, b) {
  */
 export function mentionTone(color, dark = false) {
   const [top, bottom] = gradientOf(color);
-  const background = dark ? mixHex("#181817", bottom, 0.34) : mixHex("#ffffff", bottom, 0.16);
+  const background = dark ? mixHex("#13122f", bottom, 0.34) : mixHex("#ffffff", bottom, 0.16);
   const base = dark ? top : bottom;
   let ink = base;
   for (let k = 0.05; k <= 1 && contrastOf(ink, background) < 4.5; k += 0.05) {
@@ -218,10 +218,10 @@ export function bodyTones(color, deep = false) {
   return [mixHex(bottom, "#000000", 0.38), bottom, mixHex(bottom, top, 0.5), top, mixHex(top, "#ffffff", 0.5)];
 }
 
-/** The small pixel agents' body: deep enough for white eyes (navy on the sky). */
+/** The small pixel agents' body: deep enough for white eyes (espresso on the dusk sky). */
 export function spriteBody(color) {
   return (!color || color === "sky") && AGENT_GRADIENTS.sky === DEFAULT_SKY
-    ? "#04203f"
+    ? "#2a1300"
     : mixHex(gradientOf(color || "sky")[1], "#000000", 0.45);
 }
 

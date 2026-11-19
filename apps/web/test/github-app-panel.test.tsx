@@ -73,7 +73,7 @@ describe("Conectores › GitHub with the agentes.chat app", () => {
     const ask = screen().getByRole("dialog", { name: "Remover o app de acme?" });
     // An account is connected too: GitHub stays, nothing about losing it.
     expect(ask.textContent).toContain(
-      "O app agentes.chat é desinstalado de acme no GitHub, e os agentes deixam de usar os repositórios dessa conta por ele.",
+      "O app squadchat é desinstalado de acme no GitHub, e os agentes deixam de usar os repositórios dessa conta por ele.",
     );
     expect(ask.textContent).not.toContain("É a última");
     await click(within(ask).getByRole("button", { name: "Remover" }));
@@ -115,9 +115,9 @@ describe("Conectores › GitHub with the agentes.chat app", () => {
     setNavigateAway((url) => left.push(url));
     const { state } = await go(seedState({ githubApp: { installable: true, installations: [] } }));
     expect(panel().textContent).toContain(
-      "Hoje os agentes aparecem no GitHub como acme. Instale o app para eles aparecerem como o app agentes.chat.",
+      "Hoje os agentes aparecem no GitHub como acme. Instale o app para eles aparecerem como o app squadchat.",
     );
-    await click(within(panel()).getByRole("button", { name: "Instalar o app agentes.chat" }));
+    await click(within(panel()).getByRole("button", { name: "Instalar o app squadchat" }));
     await settle(4);
     expect(state.calls.find((c) => c.method === "githubApp.install")?.args).toEqual([ORG_ID, CONNECTORS]);
     expect(left[0]).toStartWith("https://github.com/apps/agentes-chat/installations/new");
@@ -130,7 +130,7 @@ describe("Conectores › GitHub with the agentes.chat app", () => {
     });
     await go(state);
     const conectores = screen().getByRole("region", { name: "Conectores" });
-    expect(conectores.textContent).toContain("Pelo app agentes.chat em acme e octo-labs");
+    expect(conectores.textContent).toContain("Pelo app squadchat em acme e octo-labs");
     expect(conectores.textContent).not.toContain("Conectado como");
     const menu = await rowMenu("GitHub");
     expect(within(menu).queryByRole("menuitem", { name: "Reconectar" })).toBeNull();
@@ -157,17 +157,17 @@ describe("Conectores › GitHub with the agentes.chat app", () => {
     await go(seedState({ connections: [appOnly("acme")], githubApp: { installable: true, installations: [ACME] } }));
     await click(within(await rowMenu("GitHub")).getByRole("menuitem", { name: "Desconectar" }));
     expect(screen().getByRole("dialog", { name: "Desconectar GitHub?" }).textContent).toContain(
-      "O app agentes.chat também é desinstalado de acme no GitHub.",
+      "O app squadchat também é desinstalado de acme no GitHub.",
     );
     cleanup();
     const { state } = await go(seedState({ githubApp: { installable: true, installations: [ACME, OCTO] } }));
     await click(within(await rowMenu("GitHub")).getByRole("menuitem", { name: "Desconectar" }));
     const ask = screen().getByRole("dialog", { name: "Desconectar GitHub?" });
-    expect(ask.textContent).toContain("Os agentes continuam no GitHub pelo app agentes.chat em acme e octo-labs.");
+    expect(ask.textContent).toContain("Os agentes continuam no GitHub pelo app squadchat em acme e octo-labs.");
     await click(within(ask).getByRole("button", { name: "Desconectar" }));
     await settle(4);
     expect(state.calls.find((c) => c.method === "connectors.disconnect")?.args).toEqual([ORG_ID, "conn-gh"]);
-    expect(toasts()).toContain("Conta do GitHub desconectada. Os agentes continuam no GitHub pelo app agentes.chat.");
+    expect(toasts()).toContain("Conta do GitHub desconectada. Os agentes continuam no GitHub pelo app squadchat.");
   });
 
   test("no app on this server: an admin is told its owner makes it, a member sees nothing", async () => {
@@ -207,7 +207,7 @@ describe("Conectar GitHub: the agentes.chat app first", () => {
     const how = within(flow).getByRole("radiogroup", { name: "Como os agentes entram no GitHub" });
     const [app, account] = within(how).getAllByRole("radio");
     expect(app?.textContent).toBe(
-      "O app agentes.chatRecomendadoOs agentes aparecem como o app, e você escolhe os repositórios no GitHub.",
+      "O app squadchatRecomendadoOs agentes aparecem como o app, e você escolhe os repositórios no GitHub.",
     );
     expect(app?.getAttribute("aria-checked")).toBe("true");
     expect(account?.textContent).toBe(
@@ -216,7 +216,7 @@ describe("Conectar GitHub: the agentes.chat app first", () => {
     expect(flow.textContent).toContain("Você escolhe as contas e os repositórios no GitHub e volta para cá.");
     // The account's key is the account's other way in: not offered for the app.
     expect(within(flow).queryByText("Conectar com uma chave de API")).toBeNull();
-    await click(within(flow).getByRole("button", { name: "Instalar o app agentes.chat" }));
+    await click(within(flow).getByRole("button", { name: "Instalar o app squadchat" }));
     await settle(4);
     expect(state.calls.find((c) => c.method === "githubApp.install")?.args).toEqual([ORG_ID, CONNECTORS]);
     expect(state.calls.find((c) => c.method === "connectors.startOAuth")).toBeUndefined();
@@ -224,7 +224,7 @@ describe("Conectar GitHub: the agentes.chat app first", () => {
 
     await click(account as HTMLElement);
     expect(within(flow).getByText("Conectar com uma chave de API")).toBeTruthy();
-    expect(within(flow).queryByRole("button", { name: "Instalar o app agentes.chat" })).toBeNull();
+    expect(within(flow).queryByRole("button", { name: "Instalar o app squadchat" })).toBeNull();
     await click(within(flow).getByRole("button", { name: "Continuar no GitHub" }));
     await settle(4);
     expect(state.calls.find((c) => c.method === "connectors.startOAuth")?.args.slice(0, 2)).toEqual([ORG_ID, "github"]);

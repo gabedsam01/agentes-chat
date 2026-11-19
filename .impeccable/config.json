@@ -30,6 +30,11 @@
         "rule": "overused-font",
         "value": "doto",
         "reason": "agentes.chat product font, never replace it"
+      },
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "reason": "squadchat brand wordmark font"
       }
     ]
   }

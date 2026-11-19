@@ -360,7 +360,7 @@ test("an older runner's computer stays size unknown; a load or traffic older tha
   ]);
 });
 
-test("the instance id is made once and kept; the switch and the Cloud decide what goes out", async () => {
+test("the instance id is made once and kept; TELEMETRY=on, TELEMETRY_URL and the switch decide what goes out", async () => {
   f = await setup();
   const first = await telemetryState(f.db);
   expect(first.enabled).toBe(true);
@@ -370,12 +370,19 @@ test("the instance id is made once and kept; the switch and the Cloud decide wha
   expect(later.instanceId).toBe(first.instanceId);
   expect(later.enabled).toBe(false);
 
-  const self = { TELEMETRY: "on" as const, PUBLIC_URL: "https://chat.example.com" };
-  expect(telemetrySends(self, true)).toBe(true);
-  expect(telemetrySends(self, false)).toBe(false);
-  expect(telemetrySends({ ...self, TELEMETRY: "off" }, true)).toBe(false);
-  const cloud = { TELEMETRY: "off" as const, PUBLIC_URL: "https://agentes.chat" };
-  expect(telemetrySends(cloud, false)).toBe(true);
+  const active = {
+    TELEMETRY: "on" as const,
+    TELEMETRY_URL: "https://telemetry.example.com/v1/report",
+    PUBLIC_URL: "https://chat.example.com",
+  };
+  expect(telemetrySends(active, true)).toBe(true);
+  expect(telemetrySends(active, false)).toBe(false);
+  expect(telemetrySends({ ...active, TELEMETRY: "off" }, true)).toBe(false);
+  expect(telemetrySends({ ...active, TELEMETRY_URL: undefined }, true)).toBe(false);
+  // Zero forced telemetry even on agentes.chat domains when off or unconfigured.
+  const cloudOff = { TELEMETRY: "off" as const, TELEMETRY_URL: undefined, PUBLIC_URL: "https://agentes.chat" };
+  expect(telemetrySends(cloudOff, false)).toBe(false);
+  expect(telemetrySends(cloudOff, true)).toBe(false);
   expect(isAgentesCloud("https://www.agentes.chat")).toBe(true);
   expect(isAgentesCloud("https://agentes.chat.example.com")).toBe(false);
   expect(isAgentesCloud("https://notagentes.chat")).toBe(false);

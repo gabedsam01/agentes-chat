@@ -530,7 +530,7 @@ describe("the connect flow: conectar → conectado; Ajustar → o que faz → qu
     await click(within(flow).getByRole("button", { name: "Continuar no Linear" }));
     await settle(4);
     expect(flow.textContent).toContain(
-      "Linear só deixa entrar apps que aprovou, e o agentes.chat ainda não foi aprovado. Se ele te der uma chave de API, dá para conectar com ela.",
+      "Linear só deixa entrar apps que aprovou, e o squadchat ainda não foi aprovado. Se ele te der uma chave de API, dá para conectar com ela.",
     );
     // Under our words, the server's: which one refused and why.
     expect(flow.querySelector(".cflow__said")?.textContent).toBe(

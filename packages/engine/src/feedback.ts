@@ -53,15 +53,15 @@ export const FEEDBACK_INBOX_ALL_PER_HOUR = { limit: 60, windowMs: 60 * 60_000 } 
 const RELAY_TIMEOUT_MS = 60_000;
 
 /**
- * Where this server's feedback goes, or undefined when it takes none: its operator's address, else the agentes.chat
- * team's inbox unless the operator turned that off.
+ * Where this server's feedback goes, or undefined when it takes none: its operator's address, else the configured
+ * relay inbox when `FEEDBACK_RELAY` is enabled and `FEEDBACK_URL` is set.
  */
 export function feedbackDestination(config: {
   FEEDBACK_EMAIL?: string;
   FEEDBACK_RELAY: boolean;
-  FEEDBACK_URL: string;
+  FEEDBACK_URL?: string;
 }) {
-  return config.FEEDBACK_EMAIL ?? (config.FEEDBACK_RELAY ? config.FEEDBACK_URL : undefined);
+  return config.FEEDBACK_EMAIL ?? (config.FEEDBACK_RELAY && config.FEEDBACK_URL ? config.FEEDBACK_URL : undefined);
 }
 
 /** Whether `to` is the inbox's address (a URL) rather than an email address. */
