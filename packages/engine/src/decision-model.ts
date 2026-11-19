@@ -55,6 +55,8 @@ export interface DecisionModelView {
   baseURL: string | null;
   runtime: DecisionRuntime | null;
   hint: string | null;
+  /** The providers whose key is kept, with its last 4 characters: turning one on again takes no new key. */
+  saved: { provider: DecisionProviderId; hint: string | null }[];
   state: DecisionShownState;
   capabilities: DecisionCapabilities;
   timeoutMs: number;
@@ -164,6 +166,19 @@ export function createDecisionModel(deps: {
   const initial = refresh();
   initial.catch(() => {});
 
+  /** Every provider's kept key, the one in the row's own columns included (a row saved before `keys` has only that). */
+  const keysOf = (r: typeof instanceDecisionModel.$inferSelect) => {
+    const keys = { ...r.keys };
+    if (r.ciphertext && r.wrappedDataKey && r.kekId && !keys[r.provider])
+      keys[r.provider] = {
+        ciphertext: r.ciphertext,
+        wrappedDataKey: r.wrappedDataKey,
+        kekId: r.kekId,
+        hint: r.keyHint,
+        baseURL: r.baseURL,
+      };
+    return keys;
+  };
   const baseURLOf = (r: typeof instanceDecisionModel.$inferSelect) =>
     r.baseURL || (r.provider === "local" ? deps.localURL : undefined);
 
@@ -220,6 +235,7 @@ export function createDecisionModel(deps: {
           baseURL: null,
           runtime: null,
           hint: null,
+          saved: [],
           state: "off",
           capabilities: { inputs: ["text"] },
           timeoutMs: 3000,
@@ -234,6 +250,10 @@ export function createDecisionModel(deps: {
         baseURL: r.baseURL,
         runtime: (r.runtime as DecisionRuntime | null) ?? null,
         hint: r.keyHint,
+        saved: Object.entries(keysOf(r)).map(([provider, k]) => ({
+          provider: provider as DecisionProviderId,
+          hint: k.hint,
+        })),
         state: shown(state, r.enabled),
         capabilities: r.capabilities as DecisionCapabilities,
         timeoutMs: r.timeoutMs,
@@ -265,20 +285,26 @@ export function createDecisionModel(deps: {
       const provider = input.provider ?? (row?.provider as DecisionProviderId | undefined) ?? "local";
       if (!Object.hasOwn(DECISION_PROVIDERS, provider))
         throw new ValidationError("Unknown decision provider.", "decision_model_provider");
-      const model = input.model?.trim() || row?.model || (provider === "local" ? "laya" : "");
+      // Another provider's model and address are never this one's.
+      const same = row?.provider === provider ? row : null;
+      const model = input.model?.trim() || same?.model || (provider === "local" ? "laya" : "");
       if (!model) throw new ValidationError("Choose a model.", "decision_model_model");
-      const baseURL = input.baseURL?.trim() || row?.baseURL || (provider === "local" ? (deps.localURL ?? null) : null);
+      const baseURL = input.baseURL?.trim() || same?.baseURL || (provider === "local" ? (deps.localURL ?? null) : null);
       if (provider === "local" && !baseURL) throw badBase();
       const key = input.apiKey?.trim() || undefined;
       if (key && !KEY_SHAPE.test(key))
         throw new ValidationError("That key has characters a key can't have.", "decision_model_key_shape");
-      // The key may be kept when the same provider and address stay.
-      const keep = !key && row && row.provider === provider && (row.baseURL ?? null) === (baseURL ?? null);
+      // Each provider keeps its own key: the one in use and every one turned on before, used again without being
+      // pasted again while its address stays.
+      const keys = row ? keysOf(row) : {};
+      const stored = keys[provider];
       const sealed = key
         ? await sealSecret(deps.keyWrapper, key, AAD)
-        : keep && row?.ciphertext
-          ? { ciphertext: row.ciphertext, wrappedDataKey: row.wrappedDataKey, kekId: row.kekId }
+        : stored && stored.baseURL === (baseURL ?? null)
+          ? { ciphertext: stored.ciphertext, wrappedDataKey: stored.wrappedDataKey, kekId: stored.kekId }
           : null;
+      const hint = key ? key.slice(-4) : sealed ? (stored?.hint ?? null) : null;
+      if (sealed) keys[provider] = { ...sealed, hint, baseURL: baseURL ?? null };
       const token = crypto.randomUUID();
       const values = {
         id: ID,
@@ -291,11 +317,12 @@ export function createDecisionModel(deps: {
             ? ((await detectRuntime({ baseURL: baseURL ?? deps.localURL, http }))?.runtime ?? "llamacpp")
             : null,
         ...(sealed ?? { ciphertext: null, wrappedDataKey: null, kekId: null }),
-        keyHint: key ? key.slice(-4) : keep ? (row?.keyHint ?? null) : null,
+        keyHint: hint,
+        keys,
         capabilities: { inputs: ["text"] },
         timeoutMs: Math.min(
           30_000,
-          Math.max(500, input.timeoutMs ?? row?.timeoutMs ?? (provider === "local" ? 5000 : 3000)),
+          Math.max(500, input.timeoutMs ?? same?.timeoutMs ?? (provider === "local" ? 5000 : 3000)),
         ),
         installToken: token,
         installState: "queued",
@@ -333,7 +360,27 @@ export function createDecisionModel(deps: {
     },
     async remove(userId) {
       await refresh();
-      const [gone] = await deps.db.delete(instanceDecisionModel).where(eq(instanceDecisionModel.id, ID)).returning();
+      // The model in use and its key go; the other providers' keys stay, and with them the row, switched off.
+      const others = row ? keysOf(row) : {};
+      if (row) delete others[row.provider];
+      const [gone] = Object.keys(others).length
+        ? await deps.db
+            .update(instanceDecisionModel)
+            .set({
+              enabled: false,
+              ciphertext: null,
+              wrappedDataKey: null,
+              kekId: null,
+              keyHint: null,
+              keys: others,
+              installToken: null,
+              installState: "idle",
+              updatedBy: userId,
+              updatedAt: new Date(),
+            })
+            .where(eq(instanceDecisionModel.id, ID))
+            .returning()
+        : await deps.db.delete(instanceDecisionModel).where(eq(instanceDecisionModel.id, ID)).returning();
       if (gone)
         await deps.db.transaction((tx) =>
           auditEveryOrg(tx, NAME, { type: "person", id: userId }, "decision_model.removed", {
@@ -341,7 +388,7 @@ export function createDecisionModel(deps: {
             model: gone.model,
           }),
         );
-      row = null;
+      row = Object.keys(others).length ? (gone ?? null) : null;
       readAt = now();
       state = "off";
       return this.view();

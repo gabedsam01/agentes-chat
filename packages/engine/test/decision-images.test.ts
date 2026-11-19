@@ -103,3 +103,32 @@ describe("DecisionModel.seesImages", () => {
     expect(await read()).toBe(false);
   });
 });
+
+describe("DecisionModel keys (ADR 0195 addendum)", () => {
+  let f: Fixture;
+  afterEach(() => f?.close?.());
+  test("each provider keeps its key: turning one on again takes none, and removing one keeps the others", async () => {
+    f = await setup();
+    const wrapper = createLocalKeyWrapper(SECRET);
+    const model = createDecisionModel({ db: f.db, keyWrapper: wrapper, keyWrappers: [wrapper] });
+    await model.ready();
+    const user = f.owner.id;
+    await model.save({ enabled: true, provider: "gemini", model: "gemini-decision-1", apiKey: "AQ.gemini-1111" }, user);
+    await model.save({ enabled: true, provider: "openai", model: "gpt-6-luna", apiKey: "sk-openai-2222" }, user);
+    // Jev: the switch off, both keys kept.
+    expect((await model.save({ enabled: false }, user)).saved).toEqual([
+      { provider: "gemini", hint: "1111" },
+      { provider: "openai", hint: "2222" },
+    ]);
+    const back = await model.save({ enabled: true, provider: "gemini", model: "gemini-decision-1" }, user);
+    expect(back.hint).toBe("1111");
+    await f.db.update(schema.instanceDecisionModel).set({ enabled: true });
+    const fresh = createDecisionModel({ db: f.db, keyWrapper: wrapper, keyWrappers: [wrapper] });
+    await fresh.ready();
+    expect((await fresh.current())?.apiKey).toBe("AQ.gemini-1111");
+    const gone = await fresh.remove(user);
+    expect(gone.enabled).toBe(false);
+    expect(gone.saved).toEqual([{ provider: "openai", hint: "2222" }]);
+    expect((await fresh.save({ enabled: true, provider: "gemini", model: "gemini-decision-1" }, user)).hint).toBeNull();
+  });
+});

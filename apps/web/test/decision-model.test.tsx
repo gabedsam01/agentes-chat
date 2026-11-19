@@ -18,6 +18,7 @@ const OFF: DecisionModel = {
   baseURL: null,
   runtime: null,
   hint: null,
+  saved: [],
   state: "off",
   capabilities: { inputs: ["text"] },
   timeoutMs: 3000,
@@ -90,6 +91,16 @@ describe("who decides: one list of providers", () => {
       model: "gpt-6-luna",
       apiKey: "sk-test-123",
     });
+  });
+
+  test("a provider whose key is kept turns on again without one", async () => {
+    const { state } = await open({ ...OFF, provider: "gemini", saved: [{ provider: "gemini", hint: "wxyz" }] });
+    await click(within(card()).getAllByRole("radio")[3] as Element);
+    expect((within(card()).getByLabelText("Chave da API") as HTMLInputElement).placeholder).toContain("wxyz");
+    await click(within(card()).getByText("Ativar"));
+    const sent = calls(state, "system.saveDecisionModel")[0]?.[0];
+    expect(sent).toMatchObject({ enabled: true, provider: "gemini", model: "gemini-decision-1" });
+    expect(sent).not.toHaveProperty("apiKey");
   });
 
   test("the switch turns the model off again, back to Jev", async () => {

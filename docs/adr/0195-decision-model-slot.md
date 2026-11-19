@@ -50,3 +50,13 @@ enough for a small server.
   at it.
 - The help page and the screenshots still describe Jev as the default; this slot is documented in Settings and in
   `SELF_HOSTING.md`.
+
+## Addendum 2026-11-19: every provider keeps its key
+
+One provider decides at a time: Jev while the switch is off, else the one turned on. Its key was the row's only key,
+so turning on OpenAI after Gemini dropped Gemini's, and going back meant pasting it again. Now the row's `keys`
+(migration 0301) keeps each provider's key, sealed the same way, with its last 4 characters and the address it was
+saved for. Turning a provider on again reuses its key when no new one is pasted (the screen says "Saved key ending in
+…" and lets Turn on go without one). Jev's key was already its own and stays so. Remove forgets the model in use and
+its key only; the other providers' keys stay, the switch off. A provider's model, address and timeout are never
+carried over from another one.

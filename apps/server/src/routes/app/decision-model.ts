@@ -38,6 +38,8 @@ const DecisionModel = z
     baseURL: z.string().nullable(),
     runtime: z.enum(["ollama", "llamacpp", "lmstudio", "custom"]).nullable(),
     hint: z.string().nullable(),
+    /** The providers whose key is kept: turning one on again takes no new key. */
+    saved: z.array(z.object({ provider: z.enum(["openai", "gemini", "local"]), hint: z.string().nullable() })),
     state: z.enum(["off", "ok", "invalid", "no_credit", "unreachable"]),
     capabilities: z.object({ inputs: z.array(z.string()) }),
     timeoutMs: z.number().int(),

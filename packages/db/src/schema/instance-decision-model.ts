@@ -26,6 +26,19 @@ export const instanceDecisionModel = pgTable(
     kekId: text("kek_id"),
     /** The key's last 4 characters. The key itself never leaves the server. */
     keyHint: text("key_hint"),
+    /**
+     * Every provider's key, sealed as above, kept when another one is turned on: going back to a provider takes no
+     * new key (ADR 0195 addendum). The active provider's key is also in the columns above.
+     */
+    keys: jsonb()
+      .$type<
+        Record<
+          string,
+          { ciphertext: string; wrappedDataKey: string; kekId: string; hint: string | null; baseURL: string | null }
+        >
+      >()
+      .notNull()
+      .default({}),
     /** What the model reads, detected from its provider or runtime: text, image, audio, video, file. */
     capabilities: jsonb()
       .$type<{ inputs: string[] }>()
