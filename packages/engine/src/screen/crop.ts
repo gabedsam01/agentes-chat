@@ -108,15 +108,71 @@ export async function openImage(base64: string) {
   return {
     width: pixels.width,
     height: pixels.height,
-    /** `region` (the image's own pixels, clamped inside it) drawn `out` big, as a base64 JPEG. */
-    async crop(region: Region, out: { width: number; height: number }): Promise<string> {
+    /**
+     * `region` (the image's own pixels, clamped inside it) drawn `out` big, as a base64 JPEG. A `cross` is a red
+     * cross outlined in white centered on that point of the image, about 30 pixels wide once drawn; a `box` is a red
+     * rectangle outlined in white around that region of it.
+     */
+    async crop(
+      region: Region,
+      out: { width: number; height: number },
+      mark?: { cross?: { x: number; y: number }; box?: Region },
+    ): Promise<string> {
       const x = Math.min(Math.max(0, Math.floor(region.x)), pixels.width - 1);
       const y = Math.min(Math.max(0, Math.floor(region.y)), pixels.height - 1);
       const w = Math.min(Math.max(1, Math.ceil(region.width)), pixels.width - x);
       const h = Math.min(Math.max(1, Math.ceil(region.height)), pixels.height - y);
-      return new Bun.Image(pngOf(pixels, x, y, w, h)).resize(out.width, out.height).jpeg({ quality: 70 }).toBase64();
+      let png = pngOf(pixels, x, y, w, h);
+      if (mark?.cross || mark?.box) {
+        const part: Pixels = { width: w, height: h, rgb: decodePng(png).rgb };
+        const k = Math.max(1, w / out.width);
+        if (mark.box) drawBox(part, { ...mark.box, x: mark.box.x - x, y: mark.box.y - y }, k);
+        if (mark.cross) drawCross(part, Math.round(mark.cross.x - x), Math.round(mark.cross.y - y), k);
+        png = pngOf(part, 0, 0, w, h);
+      }
+      return new Bun.Image(png).resize(out.width, out.height).jpeg({ quality: 70 }).toBase64();
     },
   };
+}
+
+/** A cross centered on (cx, cy), `k` image pixels to a drawn one: white, then red inside it. */
+function drawCross(p: Pixels, cx: number, cy: number, k: number) {
+  const arm = Math.round(15 * k);
+  const paint = (half: number, rgb: [number, number, number]) => {
+    const t = Math.max(1, Math.round(half * k));
+    for (let d = -arm; d <= arm; d++)
+      for (let o = -t; o <= t; o++)
+        for (const [px, py] of [
+          [cx + d, cy + o],
+          [cx + o, cy + d],
+        ] as const)
+          if (px >= 0 && py >= 0 && px < p.width && py < p.height) p.rgb.set(rgb, (py * p.width + px) * 3);
+  };
+  paint(2.5, [255, 255, 255]);
+  paint(1, [230, 0, 0]);
+}
+
+/** A rectangle's outline around `r`, `k` image pixels to a drawn one: white, then red inside it. */
+function drawBox(p: Pixels, r: Region, k: number) {
+  const [x0, y0, x1, y1] = [Math.round(r.x), Math.round(r.y), Math.round(r.x + r.width), Math.round(r.y + r.height)];
+  const paint = (half: number, rgb: [number, number, number]) => {
+    const t = Math.max(1, Math.round(half * k));
+    const dot = (px: number, py: number) => {
+      if (px >= 0 && py >= 0 && px < p.width && py < p.height) p.rgb.set(rgb, (py * p.width + px) * 3);
+    };
+    for (let o = -t; o <= t; o++) {
+      for (let px = x0 - t; px <= x1 + t; px++) {
+        dot(px, y0 + o);
+        dot(px, y1 + o);
+      }
+      for (let py = y0 - t; py <= y1 + t; py++) {
+        dot(x0 + o, py);
+        dot(x1 + o, py);
+      }
+    }
+  };
+  paint(2.5, [255, 255, 255]);
+  paint(1, [230, 0, 0]);
 }
 
 /** One region of an image (base64) as a base64 JPEG of the size asked. */

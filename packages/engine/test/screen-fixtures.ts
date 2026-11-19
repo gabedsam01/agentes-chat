@@ -129,13 +129,14 @@ export const SCREEN: ScreenRegion = { x: 0, y: 0, width: 1280, height: 800 };
 /**
  * A judge that answers the narrowing questions (ADR 0200): each round asks of the nine cells in order
  * whether one holds the target's center; it says yes (`p`) for the cell of `at` nearest its center, by
- * the same grid as `narrowCells`, then keeps that cell as the region the next round splits.
+ * the same grid as `narrowCells`, then keeps that cell as the region the next round splits; the spot's
+ * check (`on`) says yes unless told otherwise.
  */
 type FakeAnswer = Parameters<typeof createFakeJudge>[0];
 
 export function cellsAnswer(
   at: Point,
-  o: { whole?: ScreenRegion; present?: number; p?: number; costly?: number } = {},
+  o: { whole?: ScreenRegion; present?: number; p?: number; costly?: number; on?: number } = {},
 ): NonNullable<FakeAnswer> {
   let region = o.whole ?? SCREEN;
   let asked = 0;
@@ -144,6 +145,7 @@ export function cellsAnswer(
     if (kind !== "screen_locate") return undefined;
     if (id === "costly") return o.costly ?? 0;
     if (id === "present") return o.present ?? 0.9;
+    if (id === "on") return o.on ?? 0.9;
     const grid = narrowCells(region);
     const i = asked++ % grid.length;
     if (i === 0) {

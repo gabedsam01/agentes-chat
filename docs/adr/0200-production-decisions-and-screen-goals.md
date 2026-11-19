@@ -23,16 +23,17 @@ Browser Use's Jev Ultrafast experiment showed the other lever. Per step, one req
 
 1. **Only release features in Jev's path.** Jev answers text questions only. Images, the Box question and the `TypeSafe-Danger-Zone-Images` header go. `JEV_VISION_MODEL` is removed. A judgment over an image goes only to the installation's decision model (ADR 0195) when that model is on and its recorded capabilities include images. Otherwise the judgment fails and its caller does without it, as for any judge that is off. The `box` question leaves the judge and the decision providers. Whether a plan may look at images is `DecisionModel.seesImages()`.
 
-2. **A target is found without a box.** `locateOnImage` (`packages/engine/src/screen/targets.ts`) asks choice and yes/no questions only.
-   - With an annotated screenshot, one choice picks among the marks' numbers and lands on that element's ref.
-   - Without marks, it splits the region into a 3×3 grid of overlapping cells, cut for real (`screen/crop.ts`, a small PNG decoder: Bun's image API crops nothing) and never drawn smaller than the screen shows them. Each cell is asked in its own request, all at once, whether it holds the control's center; the surest cell goes on, two neighbors about as sure go on together, anything else is unsure. It repeats on a close-up of that region until it is small enough to click its center, after at most 4 rounds.
+2. **A target is found without a box.** `locateOnImage` (`packages/engine/src/screen/targets.ts`) asks choice and yes/no questions only, and draws its own marks on the picture when it needs them (`screen/crop.ts`: a small PNG decoder, since Bun's image API crops and draws nothing).
+   - With an annotated screenshot, one choice picks among the marks' numbers and lands on that element's ref. A mark without a name is picked by its looks alone, so its spot is checked as below, and a no goes on to the cells.
+   - Without marks, the region is split into a 3×3 grid of overlapping cells. Each cell is asked in its own request, all at once, whether the control's center is inside a red rectangle drawn on the whole region around that cell. The surest cell goes on with the cells beside it that also say yes (a wide control says yes in several). It repeats on a close-up of that region, at most 4 rounds, until it is small enough or no narrower.
+   - The spot is then checked: a red cross drawn on it in a close-up, and one yes/no on whether the cross sits on the control. A no is unsure and goes back to the agent.
    - Whether the target is there and whether acting can't be undone are asked once, on the whole screen, beside the first round. A target whose action can't be undone is never taken at a bare point, as before (ADR 0062).
 
-   Measured with `eval:desktop:micro` against `gemini-decision-1` (one trial, the recorded scenes of ADR 0062):
-   - Nine named cells in one request were told apart badly (0 of 6 targets without marks); one cell per request, well.
-   - Pictures drawn smaller than the screen read worse: a 640×400 copy of the screen made the judge call visible folders absent.
-   - Small targets 10/16 on the first pass (Jev's Box: 22/39), large targets 2/4 (Box: 15/15), absent targets 4/4, choice over the tree 14/14 (median 187 ms), checks on the image 6/7, and no click on a wrong spot: an unsure target goes back to the agent.
-   - With marks a target takes about 0.8 s. Without them, 2–10 s (each round is nine requests at once), and a screen costs about 1,500 input tokens: an account's tokens a minute (50,000 on the measured one) bound how often it can run.
+   Measured with `eval:desktop:micro` against `gemini-decision-1` (two trials, the recorded scenes of ADR 0062):
+   - Nine named pictures in one request were told apart badly. One cell cut out per request did well on the first round and lost its way after it: a close-up alone loses what is around it. The rectangle on the whole region keeps that context.
+   - Small targets 24/32 on the first pass (Jev's Box: 22/39), large targets 7/8 (Box: 15/15), absent targets 8/8, choice over the tree 14/14 (median 190 ms), checks on the image 5/7. No click on a wrong spot: every miss was an unsure target given back to the agent. A window's 18-px close button without a mark is still not found.
+   - With marks a target takes about 0.9 s. Without them, about 7 s (each round is nine requests at once) and about 25,000 input tokens: an account's tokens a minute (50,000 on the measured one) bound how often it can run.
+   - Each provider has its own image detail setting (Gemini's `resolution`, up to `ultra_high`; OpenAI's `detail`, up to `original`). Both are left at their defaults: Gemini's is already its `high` (1,120 tokens), and a screen at `ultra_high` placed the target no better in the measure above.
 
 3. **A `goal` step.** `browser_do` and `desktop_do` take `{ do: "goal", goal, values?, steps? }` (`packages/engine/src/screen/goal.ts`). Each step is one judge request over the screen's element table. The answer holds:
    - the operation: click, type, select, scroll down, scroll up, wait, done or blocked;

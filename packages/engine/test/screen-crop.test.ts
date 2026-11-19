@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { cropImage, decodePng, pngOf } from "../src/screen/crop";
+import { cropImage, decodePng, openImage, pngOf } from "../src/screen/crop";
 
 /** A 60x40 PNG, white with a red 10x10 square at (30, 20) and a blue pixel at (0, 0). */
 function scene(): string {
@@ -41,6 +41,20 @@ describe("cropImage", () => {
     expect((await new Bun.Image(Buffer.from(out, "base64")).metadata()).width).toBe(4);
     const off = await cropImage(scene(), { x: -9, y: -9, width: 3, height: 3 }, SIZE);
     expect(off.length).toBeGreaterThan(0);
+  });
+
+  test("a cross drawn on a point: red at its center, the picture left as it was away from it", async () => {
+    const picture = await openImage(scene());
+    const crossed = await picture.crop(
+      { x: 0, y: 0, width: 20, height: 20 },
+      { width: 20, height: 20 },
+      { cross: { x: 10, y: 10 } },
+    );
+    const [r, g, b] = await middle(crossed);
+    expect(r).toBeGreaterThan(180);
+    expect(Math.max(g as number, b as number)).toBeLessThan(90);
+    const plain = await picture.crop({ x: 0, y: 0, width: 20, height: 20 }, { width: 20, height: 20 });
+    expect(Math.min(...(await middle(plain)))).toBeGreaterThan(200);
   });
 
   test("an image that is not a readable PNG throws", () => {

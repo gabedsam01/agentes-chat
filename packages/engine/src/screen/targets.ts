@@ -408,8 +408,10 @@ const CELL_PX = { width: 640, height: 400 };
 /** The whole region beside its cells, at about its own size for the same reason. */
 const WHOLE_PX = { width: 1280, height: 800 };
 
-/** Two cells this close in how sure the judge is go on together, when they touch. */
-const CELL_MARGIN = 0.1;
+/** A cell the judge says yes to this surely holds the control's center (the spot is checked after). */
+const CELL_AT = 0.5;
+/** The close-up the spot is checked on, in screen pixels: room around a small control to tell it from its neighbors. */
+const CHECK_PX = { width: 320, height: 200 };
 /** What a picture of a cell is part of, by screen. */
 const SCREEN_OF: Record<ScreenKind, string> = { browser: "a web page", desktop: "a computer's desktop" };
 const touching = (a: ScreenRegion, b: ScreenRegion) =>
@@ -512,6 +514,45 @@ export async function locateOnImage(input: {
     reason: error instanceof Error ? error.message : String(error),
   });
 
+  // A spot found on the cells is checked before it is given: a cross drawn on it in a close-up, and one yes/no on
+  // whether it sits on the control. A cell's yes says where the control is; this says a click there lands on it. A
+  // named mark's pick is not checked: measured, the check said no to right picks of small panel and dialog buttons.
+  const check = async (img: ScreenImage, spot: { x: number; y: number }, area: { width: number; height: number }) => {
+    const from = img.origin ?? { x: 0, y: 0 };
+    const picture = await openImage(img.data);
+    const kx = picture.width / img.viewport.width;
+    const ky = picture.height / img.viewport.height;
+    const near = {
+      x: Math.max(from.x, spot.x - Math.max(CHECK_PX.width, area.width) / 2),
+      y: Math.max(from.y, spot.y - Math.max(CHECK_PX.height, area.height) / 2),
+      width: Math.max(CHECK_PX.width, area.width),
+      height: Math.max(CHECK_PX.height, area.height),
+    };
+    const fit = Math.min(1, CELL_PX.width / near.width, CELL_PX.height / near.height);
+    const data = await picture.crop(
+      { x: (near.x - from.x) * kx, y: (near.y - from.y) * ky, width: near.width * kx, height: near.height * ky },
+      { width: Math.round(near.width * fit), height: Math.round(near.height * fit) },
+      { cross: { x: (spot.x - from.x) * kx, y: (spot.y - from.y) * ky } },
+    );
+    const shot = `picture_${randomUUID()}`;
+    const a = await input.judge.ask({
+      orgId: input.orgId,
+      agentId: input.agentId,
+      runId: input.runId,
+      kind: "screen_locate",
+      state: { picture: shot, address: input.url ?? null, target },
+      images: { [shot]: { data, format: "jpeg" } },
+      questions: {
+        on: {
+          type: "noul",
+          instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}, with a red cross drawn on it. Is the center of the red cross on the one control that does what \`target\` describes, so a click there would use it?`,
+          criteria: { true: "The cross is on that control.", false: "The cross is beside it, or on something else." },
+        },
+      },
+    });
+    return a.on?.noul ?? 0;
+  };
+
   // Marks: one question over their numbers (the most a Choice takes, plus "none").
   const marks = (input.image.marks ?? []).slice(0, MAX_OPTIONS);
   let costly = true;
@@ -535,13 +576,11 @@ export async function locateOnImage(input: {
       costly = r.costly;
       const m = r.choice && r.choice !== "none" ? marks.find((e) => e.ref === r.choice) : undefined;
       if (m && r.p >= PICK_AT) {
-        return {
-          found: true,
-          x: Math.round(m.box.x + m.box.width / 2),
-          y: Math.round(m.box.y + m.box.height / 2),
-          ref: m.ref,
-          confidence: Math.min(r.p, r.present),
-        };
+        const spot = { x: Math.round(m.box.x + m.box.width / 2), y: Math.round(m.box.y + m.box.height / 2) };
+        // A mark without a name is picked by its looks alone, and a control the marks leave out (a window's title
+        // bar) went to one (measured): its spot is checked, and a no goes on to the cells.
+        const on = m.name ? 1 : await check(input.image, spot, m.box);
+        if (on >= PRESENT_AT) return { found: true, ...spot, ref: m.ref, confidence: Math.min(r.p, r.present, on) };
       }
     } catch (error) {
       return fail(error);
@@ -565,11 +604,18 @@ export async function locateOnImage(input: {
       // Screen pixels to the image's own: it may be drawn at another size than what it shows.
       const kx = picture.width / source.viewport.width;
       const ky = picture.height / source.viewport.height;
-      const cut = (r: ScreenRegion, most: { width: number; height: number }) => {
+      const inImage = (r: ScreenRegion) => ({
+        x: (r.x - from.x) * kx,
+        y: (r.y - from.y) * ky,
+        width: r.width * kx,
+        height: r.height * ky,
+      });
+      const cut = (r: ScreenRegion, most: { width: number; height: number }, box?: ScreenRegion) => {
         const fit = Math.min(most.width / r.width, most.height / r.height);
         return picture.crop(
-          { x: (r.x - from.x) * kx, y: (r.y - from.y) * ky, width: r.width * kx, height: r.height * ky },
+          inImage(r),
           { width: Math.max(1, Math.round(r.width * fit)), height: Math.max(1, Math.round(r.height * fit)) },
+          box ? { box: inImage(box) } : undefined,
         );
       };
       const cells = narrowCells(region);
@@ -612,7 +658,9 @@ export async function locateOnImage(input: {
       whole?.catch(() => {});
       // One picture a request, all at once: measured on a real desktop, a judge told nine named pictures in one
       // request apart badly, and one picture at a time well (the center: a wide control is whole in no cell).
-      const pictures = await Promise.all(cells.map((c) => cut(c, CELL_PX)));
+      // Each cell is a red rectangle on the whole region, not a crop of it: measured, a crop alone loses what is
+      // around it, and past the first round the judge no longer told which control a close-up showed.
+      const pictures = await Promise.all(cells.map((c) => cut(region, round === 0 ? WHOLE_PX : CELL_PX, c)));
       const holds = await Promise.all(
         pictures.map(async (data) => {
           const a = await asked(
@@ -620,10 +668,10 @@ export async function locateOnImage(input: {
             {
               holds: {
                 type: "noul",
-                instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}. Does it show the center of the one control that does what \`target\` describes? It may be only an icon.`,
+                instructions: `\`picture\` is ${round === 0 ? "" : "part of "}${SCREEN_OF[input.kind ?? "browser"]}, with a red rectangle drawn on it. Is the center of the one control that does what \`target\` describes inside the red rectangle? It may be only an icon.`,
                 criteria: {
-                  true: "Its center is in this picture.",
-                  false: "It isn't in this picture, or only an edge of it.",
+                  true: "Its center is inside the red rectangle.",
+                  false: "It is outside the rectangle, or only an edge of it is inside.",
                 },
               },
             },
@@ -636,29 +684,30 @@ export async function locateOnImage(input: {
         costly = w.costly;
         if (w.present < PRESENT_AT) return { found: false, reason: "not on the screen" };
       }
-      const [best, second] = holds.map((p, i) => ({ p, cell: cells[i] as ScreenRegion })).sort((a, b) => b.p - a.p);
-      if (!best || best.p < PRESENT_AT) return { found: false, reason: "unsure" };
-      let next = best.cell;
-      // Two cells about as sure: the center may sit where neighbors overlap, so both go on; far apart, it's a guess.
-      if (second && best.p - second.p < CELL_MARGIN) {
-        if (!touching(best.cell, second.cell)) return { found: false, reason: "unsure" };
-        next = around(best.cell, second.cell);
-      }
+      const ranked = holds.map((p, i) => ({ p, cell: cells[i] as ScreenRegion })).sort((x, y) => y.p - x.p);
+      const best = ranked[0];
+      if (!best || best.p < CELL_AT) return { found: false, reason: "unsure" };
+      // A control wider than a cell says yes in its neighbors too (measured): they go on together.
+      const next = ranked
+        .filter((c) => c.p >= CELL_AT && touching(c.cell, best.cell))
+        .reduce((r, c) => around(r, c.cell), best.cell);
       confidence = Math.min(confidence, best.p);
+      // No narrower than before: the control fills the region, and its center is where to check.
+      if (next.width * next.height >= 0.9 * region.width * region.height) break;
       region = next;
     } catch (error) {
       return fail(error);
     }
   }
-  // Still wide after the last round (two cells went on together): a click there would be a guess.
-  if (region.width > 2 * SPOT_PX || region.height > 2 * SPOT_PX) return { found: false, reason: "unsure" };
+  const spot = { x: Math.round(region.x + region.width / 2), y: Math.round(region.y + region.height / 2) };
+  try {
+    const on = await check(source, spot, region);
+    if (on < PRESENT_AT) return { found: false, reason: "unsure" };
+    confidence = Math.min(confidence, on);
+  } catch (error) {
+    return fail(error);
+  }
   // A spot is only as exact as a cell: something that can't be undone is done on an element, or not at all.
   if (costly) return { found: false, reason: "only a spot on the image", refused: true };
-  return {
-    found: true,
-    x: Math.round(region.x + region.width / 2),
-    y: Math.round(region.y + region.height / 2),
-    ref: null,
-    confidence,
-  };
+  return { found: true, ...spot, ref: null, confidence };
 }

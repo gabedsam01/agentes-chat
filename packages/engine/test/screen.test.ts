@@ -351,7 +351,7 @@ describe("targets in words", () => {
 
   test("on an image: a pick among the marks lands on its ref", async () => {
     const image: ScreenImage = {
-      data: "AAAA",
+      data: PIXEL,
       width: 1280,
       height: 800,
       viewport: { width: 1280, height: 800 },
@@ -367,7 +367,7 @@ describe("targets in words", () => {
     const asked = judge.calls[0];
     const key = Object.keys(asked?.images ?? {})[0] as string;
     expect(asked?.state.screenshot).toBe(key);
-    expect(asked?.images?.[key]).toEqual({ data: "AAAA", format: "jpeg" });
+    expect(asked?.images?.[key]).toEqual({ data: PIXEL, format: "jpeg" });
     expect(Object.keys(asked?.questions ?? {})).toEqual(["which", "present", "costly"]);
     const none = createFakeJudge((kind, id) =>
       kind !== "screen_locate" ? undefined : id === "which" ? { choice: "none", probabilities: { none: 0.9 } } : 0.1,

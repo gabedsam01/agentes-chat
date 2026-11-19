@@ -36,8 +36,8 @@ describe("a target on the screen image", () => {
     const judge = cells(MENU_ITEM);
     const spot = await locate(judge, { zoom: z.zoom });
     // Four rounds of nine requests, one cell picture and one yes/no each; once, on the whole screen, whether
-    // it is there and whether it can't be undone.
-    expect(judge.calls).toHaveLength(1 + 4 * 9);
+    // it is there and whether it can't be undone; and the spot's check with a cross on it.
+    expect(judge.calls).toHaveLength(1 + 4 * 9 + 1);
     const whole = judge.calls.filter((c) => "present" in c.questions);
     expect(whole).toHaveLength(1);
     expect(Object.keys(whole[0]?.questions ?? {})).toEqual(["present", "costly"]);
@@ -58,7 +58,7 @@ describe("a target on the screen image", () => {
   test("without close-ups the cells are cut from the one image and the spot is still found", async () => {
     const judge = cells(MENU_ITEM);
     const spot = await locate(judge);
-    expect(judge.calls).toHaveLength(1 + 4 * 9);
+    expect(judge.calls).toHaveLength(1 + 4 * 9 + 1);
     expect(spot.found).toBe(true);
     if (spot.found) {
       expect(Math.abs(spot.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
@@ -92,6 +92,23 @@ describe("a target on the screen image", () => {
     expect(asked?.state.screenshot).toBe(key);
   });
 
+  test("a mark without a name is checked with a cross; a no narrows the screen instead", async () => {
+    const image = screenImage([
+      { ref: "e7", number: 7, role: "button", box: { x: 600, y: 700, width: 20, height: 20 } },
+    ]);
+    const narrow = cellsAnswer(MENU_ITEM);
+    let checks = 0;
+    const judge = createFakeJudge((kind, id, state, q, request) => {
+      if (kind !== "screen_locate") return undefined;
+      if (id === "which") return { choice: "e7", probabilities: { e7: 0.9 } };
+      if (id === "on") return checks++ === 0 ? 0.1 : 0.9;
+      return narrow(kind, id, state, q, request);
+    });
+    const spot = await locate(judge, { image });
+    expect(checks).toBe(2);
+    expect(spot).toMatchObject({ found: true, ref: null });
+  });
+
   test("no mark fits: the screen is narrowed instead", async () => {
     const image = screenImage([
       { ref: "e7", number: 7, role: "menuitem", box: { x: 0, y: 700, width: 10, height: 10 } },
@@ -110,9 +127,8 @@ describe("a target on the screen image", () => {
   test("an unsure pick, or a target that isn't there, is not found", async () => {
     expect(await locate(cells(MENU_ITEM, { p: 0.3 }))).toEqual({ found: false, reason: "unsure" });
     expect(await locate(cells(MENU_ITEM, { present: 0.2 }))).toEqual({ found: false, reason: "not on the screen" });
-    // Two cells far apart about as sure: a guess.
-    const judge = createFakeJudge((kind, id) => (kind !== "screen_locate" ? undefined : id === "holds" ? 0.8 : 0.9));
-    expect(await locate(judge)).toMatchObject({ found: false, reason: "unsure" });
+    // The spot found is checked with a cross drawn on it: a no there is not clicked.
+    expect(await locate(cells(MENU_ITEM, { on: 0.2 }))).toEqual({ found: false, reason: "unsure" });
   });
 
   test("a target that can't be undone is never taken at a bare spot", async () => {
@@ -149,7 +165,7 @@ describe("plans with images", () => {
       { do: "click", target: "the gear icon" },
     ]);
     expect(plain.captures).toEqual([undefined]);
-    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(1 + 4 * 9);
+    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(1 + 4 * 9 + 1);
     const flatClick = acted(plain.actions)[0] as { at: Point };
     expect(Math.abs(flatClick.at.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
   });
