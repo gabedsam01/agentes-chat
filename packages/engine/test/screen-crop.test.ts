@@ -43,18 +43,34 @@ describe("cropImage", () => {
     expect(off.length).toBeGreaterThan(0);
   });
 
-  test("a cross drawn on a point: red at its center, the picture left as it was away from it", async () => {
+  test("a crosshair drawn on a point: red on its arms, its middle left as the picture was", async () => {
     const picture = await openImage(scene());
-    const crossed = await picture.crop(
-      { x: 0, y: 0, width: 20, height: 20 },
-      { width: 20, height: 20 },
-      { cross: { x: 10, y: 10 } },
-    );
-    const [r, g, b] = await middle(crossed);
+    const cross = { cross: { x: 15, y: 10 } };
+    const size = { width: 20, height: 20 };
+    // Cut so the middle pixel is 18 px right of the point (an arm), then the point itself.
+    const [r, g, b] = await middle(await picture.crop({ x: 23, y: 0, width: 20, height: 20 }, size, cross));
     expect(r).toBeGreaterThan(180);
     expect(Math.max(g as number, b as number)).toBeLessThan(90);
-    const plain = await picture.crop({ x: 0, y: 0, width: 20, height: 20 }, { width: 20, height: 20 });
-    expect(Math.min(...(await middle(plain)))).toBeGreaterThan(200);
+    expect(
+      Math.min(...(await middle(await picture.crop({ x: 5, y: 0, width: 20, height: 20 }, size, cross)))),
+    ).toBeGreaterThan(200);
+  });
+
+  test("a box past the picture's edge is drawn inside it: its side on the edge is there", async () => {
+    const picture = await openImage(scene());
+    // The box runs past the right edge; the middle pixel of a cut of the last 20 columns' right edge is red.
+    const out = await picture.crop(
+      { x: 40, y: 10, width: 20, height: 20 },
+      { width: 20, height: 20 },
+      {
+        box: { x: 10, y: 0, width: 80, height: 40 },
+      },
+    );
+    const png = await new Bun.Image(Buffer.from(out, "base64")).png().bytes();
+    const p = decodePng(png);
+    const at = (10 * p.width + p.width - 4) * 3;
+    expect(p.rgb[at]).toBeGreaterThan(180);
+    expect(p.rgb[at + 1]).toBeLessThan(120);
   });
 
   test("an image that is not a readable PNG throws", () => {

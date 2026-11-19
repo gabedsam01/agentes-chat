@@ -410,6 +410,14 @@ const WHOLE_PX = { width: 1280, height: 800 };
 
 /** A cell the judge says yes to this surely holds the control's center (the spot is checked after). */
 const CELL_AT = 0.5;
+/** A neighbor goes on with the surest cell when its yes is at most this much less sure. */
+const JOIN_MARGIN = 0.25;
+/** How far beside the aim the check also looks, in screen pixels: half a small control. */
+const NUDGE_PX = 8;
+/** Spots this close are one spot: it is checked once. */
+const SAME_PX = 4;
+/** A cell this sure counts toward where to click, beside the surest one it touches. */
+const AIM_AT = 0.25;
 /** The close-up the spot is checked on, in screen pixels: room around a small control to tell it from its neighbors. */
 const CHECK_PX = { width: 320, height: 200 };
 /** What a picture of a cell is part of, by screen. */
@@ -522,13 +530,20 @@ export async function locateOnImage(input: {
     const picture = await openImage(img.data);
     const kx = picture.width / img.viewport.width;
     const ky = picture.height / img.viewport.height;
+    // Inside the image: a close-up past its edge came out stretched, and the check said no to a right spot in a
+    // window's corner (measured).
+    const width = Math.min(img.viewport.width, Math.max(CHECK_PX.width, area.width));
+    const height = Math.min(img.viewport.height, Math.max(CHECK_PX.height, area.height));
+    const within = (v: number, lo: number, size: number, most: number) =>
+      Math.min(Math.max(lo, v - size / 2), lo + most - size);
     const near = {
-      x: Math.max(from.x, spot.x - Math.max(CHECK_PX.width, area.width) / 2),
-      y: Math.max(from.y, spot.y - Math.max(CHECK_PX.height, area.height) / 2),
-      width: Math.max(CHECK_PX.width, area.width),
-      height: Math.max(CHECK_PX.height, area.height),
+      x: within(spot.x, from.x, width, img.viewport.width),
+      y: within(spot.y, from.y, height, img.viewport.height),
+      width,
+      height,
     };
-    const fit = Math.min(1, CELL_PX.width / near.width, CELL_PX.height / near.height);
+    // Enlarged up to twice: a small control reads better bigger (as the cells do).
+    const fit = Math.min(2, CELL_PX.width / near.width, CELL_PX.height / near.height);
     const data = await picture.crop(
       { x: (near.x - from.x) * kx, y: (near.y - from.y) * ky, width: near.width * kx, height: near.height * ky },
       { width: Math.round(near.width * fit), height: Math.round(near.height * fit) },
@@ -545,8 +560,11 @@ export async function locateOnImage(input: {
       questions: {
         on: {
           type: "noul",
-          instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}, with a red cross drawn on it. Is the center of the red cross on the one control that does what \`target\` describes, so a click there would use it?`,
-          criteria: { true: "The cross is on that control.", false: "The cross is beside it, or on something else." },
+          instructions: `\`picture\` is part of ${SCREEN_OF[input.kind ?? "browser"]}, with a red crosshair drawn on it: four arms around an empty middle. Is the point in that middle on the one control that does what \`target\` describes, so a click there would use it?`,
+          criteria: {
+            true: "The crosshair's middle is on that control.",
+            false: "The middle is beside it, or on something else.",
+          },
         },
       },
     });
@@ -592,6 +610,8 @@ export async function locateOnImage(input: {
   let region: ScreenRegion = { ...origin, ...input.image.viewport };
   let source = input.image;
   let confidence = 1;
+  let aim: { x: number; y: number } | null = null;
+  let last: { p: number; cell: ScreenRegion }[] = [];
   for (let round = 0; round < MAX_ROUNDS && (region.width > SPOT_PX || region.height > SPOT_PX); round++) {
     try {
       if (round > 0 && input.zoom) {
@@ -686,12 +706,28 @@ export async function locateOnImage(input: {
       }
       const ranked = holds.map((p, i) => ({ p, cell: cells[i] as ScreenRegion })).sort((x, y) => y.p - x.p);
       const best = ranked[0];
-      if (!best || best.p < CELL_AT) return { found: false, reason: "unsure" };
-      // A control wider than a cell says yes in its neighbors too (measured): they go on together.
+      if (!best || best.p < CELL_AT) {
+        if (round === 0) return { found: false, reason: "unsure" };
+        // Unsure only this close: the control may sit at an edge of the screen (measured: a window's close button
+        // in its corner). The surest cells of this round go to the check beside the last aim.
+        last = ranked;
+        break;
+      }
+      last = ranked;
+      // A control wider than a cell says yes in its neighbors too (measured): they go on together, when about as
+      // sure as the surest (a far less sure yes beside it widened the region past a small dialog button).
       const next = ranked
-        .filter((c) => c.p >= CELL_AT && touching(c.cell, best.cell))
+        .filter((c) => c.p >= Math.max(CELL_AT, best.p - JOIN_MARGIN) && touching(c.cell, best.cell))
         .reduce((r, c) => around(r, c.cell), best.cell);
       confidence = Math.min(confidence, best.p);
+      // Where to click is the cells' centers weighed by how sure each is: a small control where cells overlap sits
+      // between them, not at the surest one's center (measured: 4 px off an 18-px button).
+      const near = ranked.filter((c) => c.p >= AIM_AT && touching(c.cell, best.cell));
+      const weight = near.reduce((n, c) => n + c.p, 0);
+      aim = {
+        x: Math.round(near.reduce((n, c) => n + c.p * (c.cell.x + c.cell.width / 2), 0) / weight),
+        y: Math.round(near.reduce((n, c) => n + c.p * (c.cell.y + c.cell.height / 2), 0) / weight),
+      };
       // No narrower than before: the control fills the region, and its center is where to check.
       if (next.width * next.height >= 0.9 * region.width * region.height) break;
       region = next;
@@ -699,14 +735,42 @@ export async function locateOnImage(input: {
       return fail(error);
     }
   }
-  const spot = { x: Math.round(region.x + region.width / 2), y: Math.round(region.y + region.height / 2) };
+  const center = (r: ScreenRegion) => ({ x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) });
+  const first = aim ?? center(region);
+  // Around a spot too, half a small control away: a cell is only as exact as its size (measured: the aim fell
+  // between a window's maximize and close buttons, 8 px left of the close one).
+  const around4 = (p: { x: number; y: number }) =>
+    [
+      [NUDGE_PX, 0],
+      [-NUDGE_PX, 0],
+      [0, NUDGE_PX],
+      [0, -NUDGE_PX],
+    ].map(([dx, dy]) => ({ x: p.x + (dx as number), y: p.y + (dy as number) }));
+  const checked: { x: number; y: number }[] = [];
+  const fresh = (ps: { x: number; y: number }[]) =>
+    ps.filter((p) => {
+      const seen = checked.some((q) => Math.abs(q.x - p.x) <= SAME_PX && Math.abs(q.y - p.y) <= SAME_PX);
+      if (!seen) checked.push(p);
+      return !seen;
+    });
+  const best = { on: 0, spot: first };
+  const checkAll = async (ps: { x: number; y: number }[]) => {
+    const ons = await Promise.all(ps.map((p) => check(source, p, region)));
+    ons.forEach((on, i) => {
+      if (on > best.on) Object.assign(best, { on, spot: ps[i] });
+    });
+  };
   try {
-    const on = await check(source, spot, region);
-    if (on < PRESENT_AT) return { found: false, reason: "unsure" };
-    confidence = Math.min(confidence, on);
+    // The aim, the centers of the round's two surest cells and four spots beside the aim, at once; when none is a
+    // yes, once more around the surest of them.
+    await checkAll(fresh([first, ...last.slice(0, 2).map((c) => center(c.cell)), ...around4(first)]));
+    if (best.on < PRESENT_AT) await checkAll(fresh(around4(best.spot)));
   } catch (error) {
     return fail(error);
   }
+  if (best.on < PRESENT_AT) return { found: false, reason: "unsure" };
+  const spot = best.spot;
+  confidence = Math.min(confidence, best.on);
   // A spot is only as exact as a cell: something that can't be undone is done on an element, or not at all.
   if (costly) return { found: false, reason: "only a spot on the image", refused: true };
   return { found: true, ...spot, ref: null, confidence };

@@ -36,8 +36,8 @@ describe("a target on the screen image", () => {
     const judge = cells(MENU_ITEM);
     const spot = await locate(judge, { zoom: z.zoom });
     // Four rounds of nine requests, one cell picture and one yes/no each; once, on the whole screen, whether
-    // it is there and whether it can't be undone; and the spot's check with a cross on it.
-    expect(judge.calls).toHaveLength(1 + 4 * 9 + 1);
+    // it is there and whether it can't be undone; and the checks of the spot, the second surest cell and four spots beside it.
+    expect(judge.calls).toHaveLength(1 + 4 * 9 + 6);
     const whole = judge.calls.filter((c) => "present" in c.questions);
     expect(whole).toHaveLength(1);
     expect(Object.keys(whole[0]?.questions ?? {})).toEqual(["present", "costly"]);
@@ -58,7 +58,7 @@ describe("a target on the screen image", () => {
   test("without close-ups the cells are cut from the one image and the spot is still found", async () => {
     const judge = cells(MENU_ITEM);
     const spot = await locate(judge);
-    expect(judge.calls).toHaveLength(1 + 4 * 9 + 1);
+    expect(judge.calls).toHaveLength(1 + 4 * 9 + 6);
     expect(spot.found).toBe(true);
     if (spot.found) {
       expect(Math.abs(spot.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
@@ -105,7 +105,7 @@ describe("a target on the screen image", () => {
       return narrow(kind, id, state, q, request);
     });
     const spot = await locate(judge, { image });
-    expect(checks).toBe(2);
+    expect(checks).toBe(7);
     expect(spot).toMatchObject({ found: true, ref: null });
   });
 
@@ -165,7 +165,7 @@ describe("plans with images", () => {
       { do: "click", target: "the gear icon" },
     ]);
     expect(plain.captures).toEqual([undefined]);
-    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(1 + 4 * 9 + 1);
+    expect(flat.calls.filter((c) => c.kind === "screen_locate")).toHaveLength(1 + 4 * 9 + 6);
     const flatClick = acted(plain.actions)[0] as { at: Point };
     expect(Math.abs(flatClick.at.x - MENU_ITEM.x)).toBeLessThanOrEqual(20);
   });

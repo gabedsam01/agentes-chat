@@ -110,7 +110,8 @@ export async function openImage(base64: string) {
     height: pixels.height,
     /**
      * `region` (the image's own pixels, clamped inside it) drawn `out` big, as a base64 JPEG. A `cross` is a red
-     * cross outlined in white centered on that point of the image, about 30 pixels wide once drawn; a `box` is a red
+     * crosshair outlined in white, its four arms around that point of the image and its middle left empty (24
+     * pixels across), about 52 pixels wide; a `box` is a red
      * rectangle outlined in white around that region of it.
      */
     async crop(
@@ -135,18 +136,22 @@ export async function openImage(base64: string) {
   };
 }
 
-/** A cross centered on (cx, cy), `k` image pixels to a drawn one: white, then red inside it. */
+/** A crosshair centered on (cx, cy), its middle left empty, `k` image pixels to a drawn one: white, then red inside it. */
 function drawCross(p: Pixels, cx: number, cy: number, k: number) {
-  const arm = Math.round(15 * k);
+  const arm = Math.round(26 * k);
+  // The middle stays empty, wider than a small control: a cross drawn over one hid it (measured on an 18-px close
+  // button, also with a 14-px middle).
+  const gap = Math.round(12 * k);
   const paint = (half: number, rgb: [number, number, number]) => {
     const t = Math.max(1, Math.round(half * k));
     for (let d = -arm; d <= arm; d++)
-      for (let o = -t; o <= t; o++)
-        for (const [px, py] of [
-          [cx + d, cy + o],
-          [cx + o, cy + d],
-        ] as const)
-          if (px >= 0 && py >= 0 && px < p.width && py < p.height) p.rgb.set(rgb, (py * p.width + px) * 3);
+      if (Math.abs(d) >= gap)
+        for (let o = -t; o <= t; o++)
+          for (const [px, py] of [
+            [cx + d, cy + o],
+            [cx + o, cy + d],
+          ] as const)
+            if (px >= 0 && py >= 0 && px < p.width && py < p.height) p.rgb.set(rgb, (py * p.width + px) * 3);
   };
   paint(2.5, [255, 255, 255]);
   paint(1, [230, 0, 0]);
@@ -154,7 +159,16 @@ function drawCross(p: Pixels, cx: number, cy: number, k: number) {
 
 /** A rectangle's outline around `r`, `k` image pixels to a drawn one: white, then red inside it. */
 function drawBox(p: Pixels, r: Region, k: number) {
-  const [x0, y0, x1, y1] = [Math.round(r.x), Math.round(r.y), Math.round(r.x + r.width), Math.round(r.y + r.height)];
+  // Kept inside the picture: a side drawn past its edge isn't there, and a cell in a screen's corner read as open
+  // (measured on a window's close button).
+  const edge = Math.max(1, Math.round(2.5 * k));
+  const inside = (v: number, most: number) => Math.min(Math.max(edge, Math.round(v)), most - 1 - edge);
+  const [x0, y0, x1, y1] = [
+    inside(r.x, p.width),
+    inside(r.y, p.height),
+    inside(r.x + r.width, p.width),
+    inside(r.y + r.height, p.height),
+  ];
   const paint = (half: number, rgb: [number, number, number]) => {
     const t = Math.max(1, Math.round(half * k));
     const dot = (px: number, py: number) => {
