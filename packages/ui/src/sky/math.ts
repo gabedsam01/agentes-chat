@@ -9,7 +9,7 @@ import { type AgentColorName, EYE_COLOR, gradientOf, spriteBody, spriteGrid } fr
 /* ---------- tones ---------- */
 
 /** The landing's dusk-to-ember sky, deep twilight indigo to warm cream. */
-export const SKY_TONES = ["#0e0c2a", "#1a1440", "#331d4f", "#652b55", "#b44a52", "#e07b39", "#ffb46a", "#ffe6cc"];
+export const SKY_TONES = ["#0e0c2a", "#1a1440", "#331d4f", "#652b55", "#b44a52", "#dc6a52", "#ffb46a", "#ffe6cc"];
 
 /** The night over the team while it has no AI (the connect scenes on the web and the phone): deep dusk first. */
 export const TEAM_NIGHT = ["#07061a", "#0a0920", "#0e0c2a", "#130f35", "#1a1440", "#241848", "#331d4f", "#482353"];

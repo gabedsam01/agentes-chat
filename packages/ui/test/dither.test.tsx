@@ -32,7 +32,7 @@ describe("agent dither", () => {
     expect(ditherUrl("sky", 10).startsWith("data:image/svg+xml,")).toBe(true);
   });
 
-  test("agents are drawn by the engine; people are not; the logo carries the dither", () => {
+  test("agents are drawn by the engine; people are not; the logo renders the squadchat mark", () => {
     const before = liveAgentCount();
     const { container } = render(
       <>
@@ -47,7 +47,9 @@ describe("agent dither", () => {
     expect(liveAgentCount()).toBe(before + 1);
     expect(agent?.querySelector("canvas.ac-avatar__canvas")).not.toBeNull();
     expect(person?.querySelector("canvas")).toBeNull();
-    expect(container.querySelectorAll(".ac-logo__dither")).toHaveLength(2);
+    expect(container.querySelectorAll(".ac-logo__mark")).toHaveLength(2);
+    expect(container.querySelectorAll(".ac-logo__bubble")).toHaveLength(2);
+    expect(container.querySelectorAll(".ac-logo__agent")).toHaveLength(2);
   });
 });
 

@@ -2226,6 +2226,10 @@ html:not([data-pointer]) .ac-chip--button:focus-visible {
   height: 1.25em;
   flex: none;
 }
+.ac-logo > .ac-logo__mark {
+  /* Instrument Serif's capitals sit 0.05em above the line box's middle; lift the mark onto them. */
+  translate: 0 -0.05em;
+}
 .ac-logo__bubble {
   fill: var(--ink);
 }

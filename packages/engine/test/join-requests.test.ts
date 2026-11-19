@@ -1189,7 +1189,7 @@ describe("words", () => {
       expect(shown.length).toBeLessThanOrEqual(60);
       // A real link, so no client links it on its own, and no hair spaces to break a copied address.
       expect(address).toBe("ana@example.com");
-      expect(e.html).toContain('<a class="ln-m" href="mailto:ana@example.com" style="color:#5c5c58;');
+      expect(e.html).toContain('<a class="ln-m" href="mailto:ana@example.com" style="color:#535076;');
       expect(e.html).toContain(">ana@example.com</a>");
     }
   });

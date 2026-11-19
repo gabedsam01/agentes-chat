@@ -986,9 +986,7 @@ describe("the computer", () => {
     const post = github.calls.find((c) => c.method === "POST");
     expect(post?.auth).toBe(`Bearer ${GH_TOKEN}`);
     // Signed for the person who asked (ADR 0156), though the model wrote no body.
-    expect(JSON.parse(post?.text ?? "{}").body).toBe(
-      `${SIGNATURE_MARK}\n<sub>Dev, agente de ana no agentes.chat</sub>`,
-    );
+    expect(JSON.parse(post?.text ?? "{}").body).toBe(`${SIGNATURE_MARK}\n<sub>Dev, agente de ana no squadchat</sub>`);
   });
 });
 
