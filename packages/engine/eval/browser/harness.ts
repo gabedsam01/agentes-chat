@@ -261,17 +261,35 @@ export function jevJudge(log: JudgeLog): Judge {
 
 /**
  * The installation's decision model (ADR 0200): the only judge that reads images. `DECISION_PROVIDER`
- * (`openai` | `gemini`), `DECISION_API_KEY`, optional `DECISION_MODEL` (the provider's first listed model).
+ * (`openai` | `gemini` | `openrouter`), `DECISION_API_KEY`, optional `DECISION_MODEL` (the provider's first listed
+ * model; required on OpenRouter).
  */
 export function decisionJudge(log: JudgeLog): Judge {
-  const provider = process.env.DECISION_PROVIDER ?? "";
-  if (!isDecisionProvider(provider) || provider === "local")
-    throw new Error("DECISION_PROVIDER must be `openai` or `gemini` (images go to the decision model, ADR 0200).");
+  const named = process.env.DECISION_PROVIDER ?? "";
+  // `openrouter`: a decision model on OpenRouter (`DECISION_MODEL` such as `openai/gpt-6-luna-decisions`), asked in
+  // the System One shape Jev takes there, with an OpenRouter key. Only for measuring: the server has no such provider.
+  const viaOpenRouter = named === "openrouter";
+  const provider = viaOpenRouter ? "local" : named;
+  if (!isDecisionProvider(provider) || (provider === "local" && !viaOpenRouter))
+    throw new Error(
+      "DECISION_PROVIDER must be `openai`, `gemini` or `openrouter` (images go to the decision model, ADR 0200).",
+    );
+  const openRouter: typeof fetch | undefined = viaOpenRouter
+    ? Object.assign(
+        (url: string | URL | Request, init?: RequestInit) =>
+          fetch(String(url).replace(/\/v1\/systemone$/, "/decisions"), {
+            ...init,
+            headers: { ...(init?.headers as Record<string, string>), "X-OpenRouter-Title": "agentes.chat eval" },
+            body: openRouterBody(String(init?.body ?? "{}")),
+          }),
+        { preconnect: fetch.preconnect },
+      )
+    : undefined;
   const model = process.env.DECISION_MODEL || DECISION_MODELS.find((m) => m.provider === provider)?.id;
   if (!model) throw new Error(`no default decision model for ${provider}: set DECISION_MODEL.`);
   const apiKey = requireKey("DECISION_API_KEY");
   return {
-    name: `decision:${provider}/${model}`,
+    name: `decision:${viaOpenRouter ? "openrouter" : provider}/${model}`,
     async ask(request) {
       let t0 = performance.now();
       let ok = false;
@@ -287,8 +305,10 @@ export function decisionJudge(log: JudgeLog): Judge {
               provider: provider as DecisionProviderId,
               apiKey,
               timeoutMs: Number(process.env.DECISION_TIMEOUT_MS ?? 10000),
+              ...(viaOpenRouter ? { baseURL: "https://openrouter.ai/api/alpha", runtime: "custom" as const } : {}),
             },
             { model, state: request.state, questions: request.questions, ...(images ? { assets: images } : {}) },
+            openRouter,
           );
         // An account's tokens a minute run out within one eval: wait as the provider says, so the wait isn't timed.
         let result: Awaited<ReturnType<typeof decide>> | undefined;
@@ -319,6 +339,23 @@ export function decisionJudge(log: JudgeLog): Judge {
       }
     },
   };
+}
+
+/**
+ * Jev's body in the shape OpenRouter gives OpenAI's and Gemini's models pictures in: `state` a list, the state as
+ * text, then each picture after a line with its name (as the server's own adapters send them), never `assets`.
+ */
+function openRouterBody(raw: string): string {
+  const body = JSON.parse(raw) as { state: unknown; assets?: Record<string, { data_base64: string; format: string }> };
+  if (!body.assets) return raw;
+  const parts: unknown[] = [typeof body.state === "string" ? body.state : JSON.stringify(body.state)];
+  for (const [name, a] of Object.entries(body.assets))
+    parts.push(name, {
+      type: "image_url",
+      image_url: { url: `data:image/${a.format === "png" ? "png" : "jpeg"};base64,${a.data_base64}` },
+    });
+  const { assets: _, ...rest } = body;
+  return JSON.stringify({ ...rest, state: parts });
 }
 
 /** Text questions to Jev, requests with images to the decision model (ADR 0200). */

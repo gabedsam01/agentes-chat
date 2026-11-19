@@ -45,6 +45,11 @@ export function decodePng(png: Uint8Array): Pixels {
   const px = new Uint8Array(stride * height);
   for (let y = 0; y < height; y++) {
     const filter = raw[y * (stride + 1)] ?? 0;
+    if (filter === 0) {
+      // Unfiltered rows (what an uncompressed PNG holds) are copied as they are.
+      px.set(raw.subarray(y * (stride + 1) + 1, (y + 1) * (stride + 1)), y * stride);
+      continue;
+    }
     for (let i = 0; i < stride; i++) {
       const x = raw[y * (stride + 1) + 1 + i] ?? 0;
       const a = i >= channels ? (px[y * stride + i - channels] ?? 0) : 0;
@@ -89,7 +94,7 @@ export function pngOf(p: Pixels, x: number, y: number, w: number, h: number): Ui
   return Buffer.concat([
     Buffer.from(PNG_SIGNATURE),
     chunk("IHDR", ihdr),
-    chunk("IDAT", deflateSync(raw)),
+    chunk("IDAT", deflateSync(raw, { level: 1 })), // only ever read back here or by Bun.Image
     chunk("IEND", new Uint8Array()),
   ]);
 }
@@ -110,9 +115,10 @@ export async function openImage(base64: string) {
     height: pixels.height,
     /**
      * `region` (the image's own pixels, clamped inside it) drawn `out` big, as a base64 JPEG. A `cross` is a red
-     * crosshair outlined in white, its four arms around that point of the image and its middle left empty (24
-     * pixels across), about 52 pixels wide; a `box` is a red
-     * rectangle outlined in white around that region of it.
+     * crosshair outlined in white, its four arms around that point of the image and its middle left empty, 52
+     * pixels wide (more on a close-up drawn bigger, as the image's pixels grow); a `box` is a red rectangle
+     * outlined in white just outside that region of it. A picture with a mark gets a grey margin around it, wide
+     * enough for the mark past its edge.
      */
     async crop(
       region: Region,
@@ -123,22 +129,44 @@ export async function openImage(base64: string) {
       const y = Math.min(Math.max(0, Math.floor(region.y)), pixels.height - 1);
       const w = Math.min(Math.max(1, Math.ceil(region.width)), pixels.width - x);
       const h = Math.min(Math.max(1, Math.ceil(region.height)), pixels.height - y);
-      let png = pngOf(pixels, x, y, w, h);
-      if (mark?.cross || mark?.box) {
-        const part: Pixels = { width: w, height: h, rgb: decodePng(png).rgb };
-        const k = Math.max(1, w / out.width);
-        if (mark.box) drawBox(part, { ...mark.box, x: mark.box.x - x, y: mark.box.y - y }, k);
-        if (mark.cross) drawCross(part, Math.round(mark.cross.x - x), Math.round(mark.cross.y - y), k);
-        png = pngOf(part, 0, 0, w, h);
-      }
-      return new Bun.Image(png).resize(out.width, out.height).jpeg({ quality: 70 }).toBase64();
+      const sized = new Bun.Image(pngOf(pixels, x, y, w, h)).resize(out.width, out.height);
+      if (!mark?.box && !mark?.cross) return sized.jpeg({ quality: 70 }).toBase64();
+      // Marks go on the picture as sent, in a grey margin around it: drawn on the image first, a box's sides were
+      // 20 pixels wide on a close-up three times bigger, and a box's side or a cross's arm on the screen's edge lay
+      // over the window's close button there or wasn't there at all (measured).
+      const drawn = decodePng(await sized.png({ compressionLevel: 0 }).bytes());
+      const [sx, sy] = [drawn.width / w, drawn.height / h];
+      const k = Math.max(1, sx);
+      const margin = mark.cross ? Math.ceil(CROSS_ARM * k) : MARGIN;
+      const framed: Pixels = {
+        width: drawn.width + 2 * margin,
+        height: drawn.height + 2 * margin,
+        rgb: new Uint8Array((drawn.width + 2 * margin) * (drawn.height + 2 * margin) * 3).fill(128),
+      };
+      for (let r = 0; r < drawn.height; r++)
+        framed.rgb.set(
+          drawn.rgb.subarray(r * drawn.width * 3, (r + 1) * drawn.width * 3),
+          ((r + margin) * framed.width + margin) * 3,
+        );
+      const { box, cross } = mark;
+      if (box)
+        drawBox(framed, {
+          x: (box.x - x) * sx + margin,
+          y: (box.y - y) * sy + margin,
+          width: box.width * sx,
+          height: box.height * sy,
+        });
+      if (cross) drawCross(framed, Math.round((cross.x - x) * sx + margin), Math.round((cross.y - y) * sy + margin), k);
+      return new Bun.Image(pngOf(framed, 0, 0, framed.width, framed.height)).jpeg({ quality: 70 }).toBase64();
     },
   };
 }
 
-/** A crosshair centered on (cx, cy), its middle left empty, `k` image pixels to a drawn one: white, then red inside it. */
+const CROSS_ARM = 26;
+
+/** A crosshair centered on (cx, cy), its middle left empty, `k` times its own size: white, then red inside it. */
 function drawCross(p: Pixels, cx: number, cy: number, k: number) {
-  const arm = Math.round(26 * k);
+  const arm = Math.round(CROSS_ARM * k);
   // The middle stays empty, wider than a small control: a cross drawn over one hid it (measured on an 18-px close
   // button, also with a 14-px middle).
   const gap = Math.round(12 * k);
@@ -157,20 +185,20 @@ function drawCross(p: Pixels, cx: number, cy: number, k: number) {
   paint(1, [230, 0, 0]);
 }
 
-/** A rectangle's outline around `r`, `k` image pixels to a drawn one: white, then red inside it. */
-function drawBox(p: Pixels, r: Region, k: number) {
-  // Kept inside the picture: a side drawn past its edge isn't there, and a cell in a screen's corner read as open
-  // (measured on a window's close button).
-  const edge = Math.max(1, Math.round(2.5 * k));
+/** The grey margin a picture with a box gets on each side, wide enough for a side drawn past the picture's edge. */
+const MARGIN = 8;
+
+/** A rectangle's outline just outside `r`, white, then red inside it, kept inside the picture. */
+function drawBox(p: Pixels, r: Region) {
+  const edge = 3;
   const inside = (v: number, most: number) => Math.min(Math.max(edge, Math.round(v)), most - 1 - edge);
   const [x0, y0, x1, y1] = [
-    inside(r.x, p.width),
-    inside(r.y, p.height),
-    inside(r.x + r.width, p.width),
-    inside(r.y + r.height, p.height),
+    inside(r.x - edge, p.width),
+    inside(r.y - edge, p.height),
+    inside(r.x + r.width + edge, p.width),
+    inside(r.y + r.height + edge, p.height),
   ];
-  const paint = (half: number, rgb: [number, number, number]) => {
-    const t = Math.max(1, Math.round(half * k));
+  const paint = (t: number, rgb: [number, number, number]) => {
     const dot = (px: number, py: number) => {
       if (px >= 0 && py >= 0 && px < p.width && py < p.height) p.rgb.set(rgb, (py * p.width + px) * 3);
     };
@@ -185,7 +213,7 @@ function drawBox(p: Pixels, r: Region, k: number) {
       }
     }
   };
-  paint(2.5, [255, 255, 255]);
+  paint(3, [255, 255, 255]);
   paint(1, [230, 0, 0]);
 }
 

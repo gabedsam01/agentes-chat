@@ -410,6 +410,9 @@ const WHOLE_PX = { width: 1280, height: 800 };
 
 /** A cell the judge says yes to this surely holds the control's center (the spot is checked after). */
 const CELL_AT = 0.5;
+/** A cell this sure, and this far above the next, goes on past the first round though under `CELL_AT`. */
+const CLEAR_AT = 0.3;
+const CLEAR_MARGIN = 0.25;
 /** A neighbor goes on with the surest cell when its yes is at most this much less sure. */
 const JOIN_MARGIN = 0.25;
 /** How far beside the aim the check also looks, in screen pixels: half a small control. */
@@ -706,7 +709,10 @@ export async function locateOnImage(input: {
       }
       const ranked = holds.map((p, i) => ({ p, cell: cells[i] as ScreenRegion })).sort((x, y) => y.p - x.p);
       const best = ranked[0];
-      if (!best || best.p < CELL_AT) {
+      // Past the first round a clear winner goes on below `CELL_AT` too: the spot is checked at the end anyway, and
+      // a control at the screen's edge got 0.43 against 0.08 for every other cell (measured).
+      const clear = round > 0 && !!best && best.p >= CLEAR_AT && best.p - (ranked[1]?.p ?? 0) >= CLEAR_MARGIN;
+      if (!best || (best.p < CELL_AT && !clear)) {
         if (round === 0) return { found: false, reason: "unsure" };
         // Unsure only this close: the control may sit at an edge of the screen (measured: a window's close button
         // in its corner). The surest cells of this round go to the check beside the last aim.

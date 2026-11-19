@@ -56,9 +56,9 @@ describe("cropImage", () => {
     ).toBeGreaterThan(200);
   });
 
-  test("a box past the picture's edge is drawn inside it: its side on the edge is there", async () => {
+  test("a box past the picture's edge is drawn in the margin around it: its side on the edge is there", async () => {
     const picture = await openImage(scene());
-    // The box runs past the right edge; the middle pixel of a cut of the last 20 columns' right edge is red.
+    // The box runs past the right edge; its side there is in the grey margin, 4 pixels in from the picture's edge.
     const out = await picture.crop(
       { x: 40, y: 10, width: 20, height: 20 },
       { width: 20, height: 20 },
