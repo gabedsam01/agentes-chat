@@ -134,9 +134,15 @@ export async function openImage(base64: string) {
       // Marks go on the picture as sent, in a grey margin around it: drawn on the image first, a box's sides were
       // 20 pixels wide on a close-up three times bigger, and a box's side or a cross's arm on the screen's edge lay
       // over the window's close button there or wasn't there at all (measured).
-      const drawn = decodePng(await sized.png({ compressionLevel: 0 }).bytes());
+      // At its own size (the whole screen) the region's pixels are taken as they are, not resized and read back.
+      const drawn: Pixels =
+        out.width === w && out.height === h
+          ? { width: w, height: h, rgb: decodePng(pngOf(pixels, x, y, w, h)).rgb }
+          : decodePng(await sized.png({ compressionLevel: 0 }).bytes());
       const [sx, sy] = [drawn.width / w, drawn.height / h];
-      const k = Math.max(1, sx);
+      // As big as on the screen's own pixels, up to the twice a check's close-up is enlarged (`targets.ts`): an image
+      // smaller than it says it is would otherwise get a mark, and a margin, hundreds of times too big.
+      const k = Math.min(2, Math.max(1, sx));
       const margin = mark.cross ? Math.ceil(CROSS_ARM * k) : MARGIN;
       const framed: Pixels = {
         width: drawn.width + 2 * margin,
