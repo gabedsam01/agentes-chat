@@ -209,8 +209,6 @@ export interface PlanDeps {
   before?: ScreenObservation | null;
   /** The judge may look at images (Jev's vision): the fallback for targets the text lacks. */
   vision?: boolean;
-  /** False: on an image, only among the screen's listed elements, never at a bare spot (ADR 0200). Default true. */
-  spots?: boolean;
   /**
    * Something covering a target is closed once (a cookie banner) and the step runs again; default on.
    * Off on a desktop, where what covers is usually a real dialog ("Save changes?") whose buttons can
@@ -560,7 +558,6 @@ export async function runPlan(deps: PlanDeps, steps: ScreenStep[]): Promise<Plan
           image,
           url: current.url,
           kind,
-          ...(deps.spots === false ? { spots: false } : {}),
           ...(deps.surface.regions
             ? { zoom: async (region: ScreenRegion) => (await deps.surface.capture?.(region)) ?? null }
             : {}),

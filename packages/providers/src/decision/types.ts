@@ -124,9 +124,4 @@ export interface DecisionModelInfo {
   license?: string;
   /** The page a person reads before choosing it. */
   site?: string;
-  /**
-   * False: it finds a control on a screenshot only among the screen's listed elements, never at a bare spot: measured,
-   * it said yes to spots beside small controls (ADR 0200).
-   */
-  spots?: false;
 }

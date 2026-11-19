@@ -303,7 +303,6 @@ export function buildEngine(o: EngineOptions) {
   }
   // Screenshots go only to the decision model, and only when it reads images (ADR 0200): with a fake judge (tests) nothing looks at them.
   const vision = o.judge ? undefined : () => decisionModel.seesImages();
-  const spots = o.judge ? undefined : () => decisionModel.findsSpots();
   // Nothing is judged for a workspace on hold or suspended: Jev bills the server, not the workspace.
   context.judge = standingJudge(db, context.judge);
   // The agents' conversation layer: a fast reply on the org's cheap model while a task works or waits.
@@ -415,7 +414,6 @@ export function buildEngine(o: EngineOptions) {
     pubsub: adapters.pubsub,
     judge: context.judge,
     vision,
-    spots,
     publicUrl: config.PUBLIC_URL,
     errors: o.errors,
     vault,
@@ -563,7 +561,6 @@ export function buildEngine(o: EngineOptions) {
         pubsub: adapters.pubsub,
         judge: context.judge,
         vision,
-        spots,
         publicUrl: config.PUBLIC_URL,
       }),
       // Git through our proxy (ADR 0024): connected machines clone and push through the runner's `git.sync`

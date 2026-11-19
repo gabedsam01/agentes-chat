@@ -488,8 +488,6 @@ export async function locateOnImage(input: {
   kind?: ScreenKind;
   /** A close-up of a region of the screen, at its native size, or null when it can't be taken. */
   zoom?: (region: ScreenRegion) => Promise<ScreenImage | null>;
-  /** False: only among the marks, never at a bare spot (a model that said yes beside small controls). */
-  spots?: boolean;
 }): Promise<Located> {
   const words = ON_IMAGE[input.kind ?? "browser"];
   const target = input.target.trim();
@@ -630,8 +628,6 @@ export async function locateOnImage(input: {
       return fail(error);
     }
   }
-
-  if (input.spots === false) return { found: false, reason: "not among the screen's elements" };
 
   // No mark fits: narrow the screen down. `region` is in screen pixels; `source` is the image the cells are cut from.
   const origin = input.image.origin ?? { x: 0, y: 0 };

@@ -102,21 +102,4 @@ describe("DecisionModel.seesImages", () => {
     await f.db.update(schema.instanceDecisionModel).set({ enabled: false });
     expect(await read()).toBe(false);
   });
-
-  test("GPT-6 Luna reads images but finds a target only among the screen's elements (ADR 0200)", async () => {
-    f = await setup();
-    const wrapper = createLocalKeyWrapper(SECRET);
-    const read = async () => {
-      const model = createDecisionModel({ db: f.db, keyWrapper: wrapper, keyWrappers: [wrapper] });
-      await model.ready();
-      return [model.seesImages(), model.findsSpots()];
-    };
-    const images = { inputs: ["text", "image"] };
-    await f.db
-      .insert(schema.instanceDecisionModel)
-      .values({ id: "default", provider: "gemini", model: "gemini-decision-1", enabled: true, capabilities: images });
-    expect(await read()).toEqual([true, true]);
-    await f.db.update(schema.instanceDecisionModel).set({ provider: "openai", model: "gpt-6-luna" });
-    expect(await read()).toEqual([true, false]);
-  });
 });
