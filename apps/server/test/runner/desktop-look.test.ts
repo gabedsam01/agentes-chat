@@ -200,8 +200,8 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
   // over the glass's white at 0.88 is one colour, at 1 - 0.12 × 0.82 ≈ 0.9 alpha. docklike's launchers carry
   // `open_group` while their app has windows and `active_group` while one of them is active; the panel's own dock
   // has a button for each window instead, checked while it is active.
-  expect([4, 32, 63].map((ink) => Math.round((ink * 0.18 + 255 * 0.88 * 0.82) / (1 - 0.12 * 0.82)))).toEqual([
-    205, 210, 217,
+  expect([18, 16, 43].map((ink) => Math.round((ink * 0.18 + 255 * 0.88 * 0.82) / (1 - 0.12 * 0.82)))).toEqual([
+    208, 207, 213,
   ]);
   expect(
     css,
@@ -209,7 +209,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
 .xfce4-panel.background {
   background-color: rgba(255, 255, 255, 0.88);
   background-image: none;
-  border: 1px solid rgba(4, 32, 63, 0.18);
+  border: 1px solid rgba(18, 16, 43, 0.18);
   border-radius: 16px;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.9);
 }
@@ -225,7 +225,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
 #XfcePanelWindowWrapper.xfce4-panel.background {
   border: none;
   border-radius: 0 15px 15px 0;
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(205, 210, 217, 0.9);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(208, 207, 213, 0.9);
 }
 
 .xfce4-panel.background button {
@@ -239,17 +239,17 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
 }
 
 .xfce4-panel.background button:hover {
-  background-color: rgba(4, 32, 63, 0.07);
+  background-color: rgba(18, 16, 43, 0.07);
 }
 
 .xfce4-panel.background button:active,
 .xfce4-panel.background button:checked,
 .xfce4-panel.background button.active_group {
-  background-color: rgba(4, 32, 63, 0.11);
+  background-color: rgba(18, 16, 43, 0.11);
 }
 
 #separator-2 {
-  color: rgba(4, 32, 63, 0.16);
+  color: rgba(18, 16, 43, 0.16);
 }
 
 /* A minimized window's icon as bright as the others' (faded, it reads as disabled). */
@@ -263,7 +263,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
  */
 .xfce4-panel.background .tasklist button,
 .xfce4-panel.background button.open_group {
-  background-image: linear-gradient(rgba(4, 32, 63, 0.65), rgba(4, 32, 63, 0.65));
+  background-image: linear-gradient(rgba(18, 16, 43, 0.65), rgba(18, 16, 43, 0.65));
   background-size: 8px 3px;
   background-repeat: no-repeat;
   background-position: 50% 100%;
@@ -271,7 +271,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
 
 .xfce4-panel.background .tasklist button:checked,
 .xfce4-panel.background button.active_group {
-  background-image: linear-gradient(rgb(4, 32, 63), rgb(4, 32, 63));
+  background-image: linear-gradient(rgb(18, 16, 43), rgb(18, 16, 43));
   background-size: 16px 3px;
 }
 `);
@@ -545,7 +545,7 @@ test("the keeper: its source, its settings and its autostart entry, so it starts
     [
       "[Desktop Entry]",
       "Type=Application",
-      "Name=agentes.chat",
+      "Name=squadchat",
       "Comment=Lists the windows open on this desktop, to open them again after its computer restarted or moved",
       `Exec=python3 -I ${home}/.local/share/agentes/keeper.py ${home}/.local/share/agentes/keeper.json`,
       "NoDisplay=true",
@@ -604,8 +604,8 @@ test("files that change come with a new LOOK_VERSION: desktops that have the loo
   }
   // Changed the look on purpose? Bump LOOK_VERSION and put the new hash here.
   expect({ version: LOOK_VERSION, files: hash.digest("hex").slice(0, 16) }).toEqual({
-    version: 8,
-    files: "dfde5d80b93e502a",
+    version: 9,
+    files: "45a9aea3bc412655",
   });
 });
 
@@ -767,7 +767,7 @@ test("its settings for a running session: every property its channels give a val
     "/backdrop/screen0/monitorVNC-0/workspace0/rgba1",
     "-n",
     "-a",
-    ...["0.811765", "0.901961", "1.000000", "1.000000"].flatMap((v) => ["-t", "double", "-s", v]),
+    ...["1.000000", "0.901961", "0.800000", "1.000000"].flatMap((v) => ["-t", "double", "-s", v]),
   ]);
   expect(settings).toContainEqual(set("xfwm4", "/general/theme", "string", "Orchis-Light"));
   expect(settings).toContainEqual(set("xfwm4", "/general/margin_bottom", "int", "60"));
