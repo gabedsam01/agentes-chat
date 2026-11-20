@@ -126,7 +126,7 @@ const DOCK_RADIUS = 16;
  * The dock's hairline as it shows on its glass, in one colour: the ink at 0.18 over white at 0.88. Where a ring
  * draws it on nothing (docklike's corners), it lands on the wallpaper in the same tone as the dock's own frame.
  */
-const HAIRLINE_ON_GLASS = "rgba(207, 207, 212, 0.9)";
+const HAIRLINE_ON_GLASS = "rgba(208, 207, 213, 0.9)";
 
 /** Browser, Files and Terminal, in the dock's and the menu's order. */
 interface DockApp {

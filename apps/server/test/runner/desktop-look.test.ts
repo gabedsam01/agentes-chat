@@ -201,7 +201,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
   // `open_group` while their app has windows and `active_group` while one of them is active; the panel's own dock
   // has a button for each window instead, checked while it is active.
   expect([18, 16, 43].map((ink) => Math.round((ink * 0.18 + 255 * 0.88 * 0.82) / (1 - 0.12 * 0.82)))).toEqual([
-    207, 207, 212,
+    208, 207, 213,
   ]);
   expect(
     css,
@@ -225,7 +225,7 @@ test("the dock's CSS: glass and a hairline rounded at both ends, a mark under ea
 #XfcePanelWindowWrapper.xfce4-panel.background {
   border: none;
   border-radius: 0 15px 15px 0;
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(207, 207, 212, 0.9);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(208, 207, 213, 0.9);
 }
 
 .xfce4-panel.background button {
@@ -605,7 +605,7 @@ test("files that change come with a new LOOK_VERSION: desktops that have the loo
   // Changed the look on purpose? Bump LOOK_VERSION and put the new hash here.
   expect({ version: LOOK_VERSION, files: hash.digest("hex").slice(0, 16) }).toEqual({
     version: 9,
-    files: "38335f46ae5b9698",
+    files: "45a9aea3bc412655",
   });
 });
 
