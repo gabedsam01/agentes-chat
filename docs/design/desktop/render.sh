@@ -18,5 +18,16 @@ rm -rf "$out/profile" "$assets/desktop-wallpaper.png"
   --user-data-dir="$out/profile" --screenshot="$assets/desktop-wallpaper.png" "file://$here/wall.html" >/dev/null 2>&1
 [ -s "$assets/desktop-wallpaper.png" ] || { echo "no wallpaper" >&2; exit 1; }
 rm -rf "$out/profile"
-rsvg-convert -w 32 -h 32 "$repo/apps/web/public/favicon.svg" -o "$assets/desktop-mark.png"
+if command -v rsvg-convert >/dev/null 2>&1; then
+  rsvg-convert -w 32 -h 32 "$repo/apps/web/public/favicon.svg" -o "$assets/desktop-mark.png"
+else
+  printf '<!doctype html><style>html,body{margin:0;width:32px;height:32px;background:transparent;overflow:hidden}img{display:block;width:32px;height:32px}</style><img src="file://%s">' \
+    "$repo/apps/web/public/favicon.svg" > "$out/mark.html"
+  "${CHROMIUM:-chromium}" --headless --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
+    --force-color-profile=srgb --default-background-color=00000000 --allow-file-access-from-files \
+    --window-size=32,32 --user-data-dir="$out/profile" --screenshot="$assets/desktop-mark.png" \
+    "file://$out/mark.html" >/dev/null 2>&1
+  rm -rf "$out/profile" "$out/mark.html"
+fi
+[ -s "$assets/desktop-mark.png" ] || { echo "no mark" >&2; exit 1; }
 for png in "$assets/desktop-wallpaper.png" "$assets/desktop-mark.png"; do base64 < "$png" | tr -d '\n' > "$png.b64"; done

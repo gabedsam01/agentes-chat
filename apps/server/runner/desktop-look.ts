@@ -34,7 +34,7 @@ import { xmlEscape, xmlUnescape } from "./xml";
  */
 
 /** Bumped whenever what `lookFiles` writes changes. */
-export const LOOK_VERSION = 8;
+export const LOOK_VERSION = 9;
 
 /** Orchis's light theme (GTK and xfwm4), else GTK's Adwaita and xfwm4's Default. */
 export type LookTheme = "orchis" | "stock";
@@ -119,14 +119,14 @@ const WALLPAPER = Buffer.from(WALLPAPER_BASE64, "base64");
 const MARK = Buffer.from(MARK_BASE64, "base64");
 
 /** The ink of the sky's agents (the wallpaper's logo): the dock's lines and its window bars. */
-const INK = "4, 32, 63";
+const INK = "18, 16, 43";
 /** The dock's rounded ends; its frame is 1 px. */
 const DOCK_RADIUS = 16;
 /**
  * The dock's hairline as it shows on its glass, in one colour: the ink at 0.18 over white at 0.88. Where a ring
  * draws it on nothing (docklike's corners), it lands on the wallpaper in the same tone as the dock's own frame.
  */
-const HAIRLINE_ON_GLASS = "rgba(205, 210, 217, 0.9)";
+const HAIRLINE_ON_GLASS = "rgba(207, 207, 212, 0.9)";
 
 /** Browser, Files and Terminal, in the dock's and the menu's order. */
 interface DockApp {
@@ -312,9 +312,9 @@ const backdrop = (home: string) => `<?xml version="1.0" encoding="UTF-8"?>
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
           <property name="rgba1" type="array">
-            <value type="double" value="0.811765"/>
-            <value type="double" value="0.901961"/>
             <value type="double" value="1.000000"/>
+            <value type="double" value="0.901961"/>
+            <value type="double" value="0.800000"/>
             <value type="double" value="1.000000"/>
           </property>
           <property name="image-style" type="int" value="5"/>
@@ -388,12 +388,12 @@ const terminal = (home: string, bash: string | null) => `<?xml version="1.0" enc
 
 <channel name="xfce4-terminal" version="1.0">
   <property name="color-use-theme" type="bool" value="false"/>
-  <property name="color-background" type="string" value="#1c1c1b"/>
-  <property name="color-foreground" type="string" value="#efefec"/>
+  <property name="color-background" type="string" value="#12102b"/>
+  <property name="color-foreground" type="string" value="#eeecfa"/>
   <property name="color-cursor-use-default" type="bool" value="false"/>
-  <property name="color-cursor" type="string" value="#5aa8ff"/>
+  <property name="color-cursor" type="string" value="#ff8533"/>
   <property name="color-bold-use-default" type="bool" value="true"/>
-  <property name="color-palette" type="string" value="#242423;#f08a80;#5fc48a;#e0a84a;#5aa8ff;#c9a2f5;#6cc7d6;#d6d6d2;#71716c;#f5a69e;#7fd3a2;#ebbd6a;#8cc3ff;#d9bdfa;#92d8e3;#efefec"/>
+  <property name="color-palette" type="string" value="#1a183b;#f08a80;#5fc48a;#ffb46a;#7d94ff;#c9a2f5;#6cc7d6;#d8d5e8;#6d6b8a;#f5a69e;#7fd3a2;#ffd09e;#a6b6ff;#d9bdfa;#92d8e3;#eeecfa"/>
 ${
   bash
     ? `  <property name="run-custom-command" type="bool" value="true"/>
@@ -436,7 +436,7 @@ const keeperAutostart = (home: string) =>
   [
     "[Desktop Entry]",
     "Type=Application",
-    "Name=agentes.chat",
+    "Name=squadchat",
     "Comment=Lists the windows open on this desktop, to open them again after its computer restarted or moved",
     `Exec=python3 -I ${execArg(`${home}/${KEEPER_FILE}`)} ${execArg(`${home}/${KEEPER_SETTINGS}`)}`,
     "NoDisplay=true",

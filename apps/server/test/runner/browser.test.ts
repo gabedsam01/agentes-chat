@@ -542,7 +542,7 @@ test.if(posix)("the runner starts the agent's Chrome itself and every command co
   expect(ua).toContain("Chrome/156.0.0.0");
   expect(ua).not.toContain("Headless");
   // The agent's start page file, no extension.
-  expect(chrome.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+  expect(chrome.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
   expect(chrome.args.some((a) => a.startsWith("--load-extension"))).toBe(false);
 
   const [call] = t.logged();
@@ -2410,7 +2410,7 @@ test.if(posix)(
     expect(t.chromes[1]?.profile).toBe(profile);
     expect(t.chromes[1]?.cookies).toEqual(["shop_session", "shop_prefs"]);
     // One page, as before: the agent's command goes on it.
-    expect(t.chromes[1]?.tabs).toEqual([expect.stringMatching(/^file:\/\/.+\/agentes-start\.html$/)]);
+    expect(t.chromes[1]?.tabs).toEqual([expect.stringMatching(/^file:\/\/.+\/squadchat-start\.html$/)]);
   },
 );
 
@@ -2698,8 +2698,8 @@ test.if(posix)(
     await snap.manager.warm(dev, folder, false);
     const page = new URL(snap.chromes[0]?.args.at(-1) ?? "");
     expect(page.protocol).toBe("file:");
-    expect(decodeURIComponent(page.pathname)).toBe(path.join(folder, ".agentes", "start", "agentes-start.html"));
-    expect(existsSync(path.join(folder, ".agentes", "start", "agentes-start.html"))).toBe(true);
+    expect(decodeURIComponent(page.pathname)).toBe(path.join(folder, ".agentes", "start", "squadchat-start.html"));
+    expect(existsSync(path.join(folder, ".agentes", "start", "squadchat-start.html"))).toBe(true);
     // Any other browser keeps it under the runner's home, out of the agent's folder.
     const other = setup();
     const otherFolder = await other.folder();
@@ -2719,7 +2719,7 @@ test.if(posix)(
     expect(twice.map((w) => w.started).sort()).toEqual([false, true]);
     expect(t.chromes).toHaveLength(1);
     expect(headless(t.chromes[0])).toBe(true);
-    expect(t.chromes[0]?.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+    expect(t.chromes[0]?.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
     expect(t.logged()).toEqual([]);
     expect(t.sockets).toHaveLength(0);
     expect(t.frames).toEqual([]);
@@ -3803,7 +3803,7 @@ test.if(posix)(
 
       expect(await t.act("open", ["https://shop.example.com"])).toMatchObject({ success: true });
       expect(leftoverAtStart).toEqual([false]);
-      expect(chromes.started.map((c) => c.tabs)).toEqual([[expect.stringMatching(/\/agentes-start\.html$/)]]);
+      expect(chromes.started.map((c) => c.tabs)).toEqual([[expect.stringMatching(/\/squadchat-start\.html$/)]]);
       const recorded = JSON.parse(readFileSync(path.join(t.home, "browser", "chromes.json"), "utf8")) as {
         pid: number;
       }[];
@@ -3875,7 +3875,7 @@ test.if(posix)(
 
       expect(await t.act("open", ["https://shop.example.com"])).toMatchObject({ success: true });
       expect(leftoverAtStart).toEqual([false]);
-      expect(chromes.started.map((c) => c.tabs)).toEqual([[expect.stringMatching(/\/agentes-start\.html$/)]]);
+      expect(chromes.started.map((c) => c.tabs)).toEqual([[expect.stringMatching(/\/squadchat-start\.html$/)]]);
     } finally {
       leftover.kill("SIGKILL");
     }
@@ -3994,7 +3994,7 @@ test.if(posix)(
       json.targets.push(
         { id: "BLANK", url: "about:blank" },
         { id: "NEW", url: "chrome://newtab/" },
-        { id: "START", url: "file:///home/dev/.agentes/start/agentes-start.html" },
+        { id: "START", url: "file:///home/dev/.agentes/start/squadchat-start.html" },
         { id: "COPY", url: "https://shop.example.com/cart" },
         { id: "POPUP", url: "https://accounts.example.com/signin" },
         ...sites,
@@ -4023,7 +4023,7 @@ test.if(posix)(
       await Bun.sleep(20);
       json.targets.splice(0);
       await t.act("open", ["https://shop.example.com/"]);
-      expect(chromes.started[2]?.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+      expect(chromes.started[2]?.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
       expect(chromes.started[2]?.args).not.toContain("https://site0.example/a?step=0");
     } finally {
       devtools.stop();
@@ -4056,7 +4056,7 @@ test.if(posix)(
       expect(chromes.started[0]?.killed || chromes.started[0]?.closed).toBe(true);
 
       await t.act("open", ["https://heavy.example/"]);
-      expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+      expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
       expect(chromes.started[1]?.args).not.toContain("https://other.example/");
 
       await waitFor(() => devtools.asked.includes("Network.enable page-1"));
@@ -4095,7 +4095,7 @@ test.if(posix)("a browser the runner closed as idle starts on its one page after
 
     boot = "boot-b";
     await t.act("open", ["https://heavy.example/"]);
-    expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+    expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
   } finally {
     devtools.stop();
   }
@@ -4126,7 +4126,7 @@ test.if(posix)(
 
       boot = "boot-b";
       await t.act("open", ["https://shop.example.com/"]);
-      expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/agentes-start\.html$/);
+      expect(chromes.started[1]?.args.at(-1)).toMatch(/^file:\/\/.+\/squadchat-start\.html$/);
       await t.manager.stop(dev);
 
       const long = `https://long.example/#${"x".repeat(5000)}`;
