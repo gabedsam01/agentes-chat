@@ -4,7 +4,7 @@ import { setupDom } from "@agenteschat/ui/testing/dom";
 setupDom();
 
 import type { HostLook } from "@agenteschat/client";
-import { DOCS_SITE } from "@agenteschat/i18n/docs";
+import { LANDING_SITE } from "@agenteschat/i18n/docs";
 import { accentPalette } from "@agenteschat/ui";
 import { act, cleanup } from "@testing-library/react";
 import { brandTabTitle, createI18n, translateTabTitle } from "@/i18n";
@@ -23,6 +23,7 @@ const NORTHWIND = {
 afterEach(() => {
   cleanup();
   document.documentElement.removeAttribute("style");
+  brandTabTitle("squadchat");
 });
 
 const agentVar = () => document.documentElement.style.getPropertyValue("--agent");
@@ -39,11 +40,11 @@ describe("the sign-in page", () => {
     const logo = screen().getByRole("img", { name: "Northwind Studio" });
     expect(logo.getAttribute("src")).toBe(NORTHWIND.logoUrl);
     expect(document.querySelector(".auth--host")).not.toBeNull();
-    expect(screen().queryByRole("img", { name: "agentes" })).toBeNull();
-    const powered = screen().getByRole("link", { name: "Feito com agentes.chat" });
-    expect(powered.getAttribute("href")).toBe(DOCS_SITE);
+    expect(screen().queryByRole("img", { name: "squadchat" })).toBeNull();
+    const powered = screen().getByRole("link", { name: "Feito com squadchat" });
+    expect(powered.getAttribute("href")).toBe(LANDING_SITE);
     expect(screen().queryByRole("button", { name: /Continuar com/ })).toBeNull();
-    expect(agentVar()).toBe(accentPalette(NORTHWIND.accent).light.agent);
+    expect(agentVar()).toBe(accentPalette(NORTHWIND.accent).dark.agent);
     // On a Cloud server too: no line naming the product's service, no way to its chooser.
     await settle(4);
     expect(document.querySelector(".auth__place")).toBeNull();
@@ -59,13 +60,13 @@ describe("the sign-in page", () => {
   test("on a registered host whose operator turned the powered-by line off: its look without the line", async () => {
     await signInPage({ ...NORTHWIND, poweredBy: false }, false);
     expect(screen().getByRole("img", { name: "Northwind Studio" })).toBeTruthy();
-    expect(screen().queryByRole("link", { name: "Feito com agentes.chat" })).toBeNull();
+    expect(screen().queryByRole("link", { name: "Feito com squadchat" })).toBeNull();
     expect(document.querySelector(".auth__powered")).toBeNull();
   });
 
   test("anywhere else: exactly as before", async () => {
     await signInPage(null);
-    expect(screen().getByRole("img", { name: "agentes" })).toBeTruthy();
+    expect(screen().getByRole("img", { name: "squadchat" })).toBeTruthy();
     expect(document.querySelector(".auth--host, .auth__powered")).toBeNull();
     expect(screen().getByRole("button", { name: /Continuar com GitHub/ })).toBeTruthy();
     expect(agentVar()).toBe("");
@@ -79,12 +80,12 @@ test("inside a workspace the host's accent is gone: the workspace's own or the d
   state.authConfig = { host: NORTHWIND };
   await renderApp(`/org/${ORG_ID}/home`, { api: createFakeApi(state) });
   await settle();
-  expect(agentVar()).not.toBe(accentPalette(NORTHWIND.accent).light.agent);
+  expect(agentVar()).not.toBe(accentPalette(NORTHWIND.accent).dark.agent);
 });
 
 test("a suspended workspace's screen keeps the workspace's accent, on any host, while it shows and once lifted", async () => {
   const WORKSPACE = "#aa00ff";
-  const workspaceAgent = accentPalette(WORKSPACE).light.agent;
+  const workspaceAgent = accentPalette(WORKSPACE).dark.agent;
   for (const host of [null, NORTHWIND]) {
     const state = seedState();
     state.authConfig = { host };
@@ -119,11 +120,11 @@ test("a suspended workspace's screen keeps the workspace's accent, on any host, 
 test("the tab's title names the host where it names the product, in every language and on every page", async () => {
   const i18n = createI18n("en");
   translateTabTitle(i18n);
-  expect(document.title).toContain("agentes.chat");
+  expect(document.title).toContain("squadchat");
   brandTabTitle("Northwind Studio");
   expect(document.title).toBe("Northwind Studio · Your team and your agents, in the same conversation");
   await act(async () => {
-    document.title = "#general · Acme · agentes.chat";
+    document.title = "#general · Acme · squadchat";
     await Promise.resolve();
   });
   expect(document.title).toBe("#general · Acme · Northwind Studio");
@@ -135,7 +136,7 @@ test("the tab's title names the host where it names the product, in every langua
   // A name with "$" is taken as written.
   brandTabTitle("Cash $& Co.");
   await act(async () => {
-    document.title = "agentes.chat";
+    document.title = "squadchat";
     await Promise.resolve();
   });
   expect(document.title).toBe("Cash $& Co.");

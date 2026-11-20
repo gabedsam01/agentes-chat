@@ -1,7 +1,7 @@
 {
   "app": {
-    "name": "agentes",
-    "tabTitle": "agentes.chat · Votre équipe et vos agents, dans la même conversation"
+    "name": "squadchat",
+    "tabTitle": "squadchat · Votre équipe et vos agents, dans la même conversation"
   },
   "common": {
     "close": "Fermer",
@@ -28,7 +28,7 @@
     "overLimit": "Le texte fait {{length}} caractères et la limite est de {{max}}. Raccourcissez-le.",
     "ourSide": "Un problème est survenu de notre côté. Réessayez dans un moment.",
     "signedOut": "Votre session a expiré. Reconnectez-vous pour continuer.",
-    "newVersion": "Une nouvelle version d'agentes.chat est disponible.",
+    "newVersion": "Une nouvelle version de squadchat est disponible.",
     "reload": "Recharger",
     "copy": "Copier",
     "copied": "Copié",
@@ -51,7 +51,7 @@
     "notAllowed": "Vous n'avez pas l'autorisation pour cela.",
     "tooMany": "Trop de tentatives. Réessayez plus tard.",
     "offline": "Vous êtes hors ligne. Vérifiez votre connexion et réessayez.",
-    "unreachable": "Impossible de joindre agentes.chat pour le moment. Réessayez dans un instant."
+    "unreachable": "Impossible de joindre squadchat pour le moment. Réessayez dans un instant."
   },
   "roles": {
     "owner": "Propriétaire",
@@ -568,8 +568,8 @@
       "continue": "Continuer sur mon serveur",
       "address": "Adresse du serveur",
       "connect": "Se connecter",
-      "invalid": "Ce n'est pas une adresse. Écrivez-la comme dans le navigateur, par exemple agentes.example.com.",
-      "unreachable": "Nous n'avons pas trouvé agentes.chat à {{host}}. Vérifiez l'adresse et que le serveur est allumé.",
+      "invalid": "Ce n'est pas une adresse. Écrivez-la comme dans le navigateur, par exemple squadchat.example.com.",
+      "unreachable": "Nous n'avons pas trouvé squadchat à {{host}}. Vérifiez l'adresse et que le serveur est allumé.",
       "none": "Vous n'en avez pas encore ?",
       "noneLink": "Voyez comment avoir le vôtre, gratuitement"
     },
@@ -633,7 +633,7 @@
     "termsMiddle": " et la",
     "privacy": "Politique de confidentialité",
     "termsAfter": ".",
-    "poweredBy": "Propulsé par agentes.chat",
+    "poweredBy": "Propulsé par squadchat",
     "signOut": "Se déconnecter",
     "earlyAccess": {
       "otherEmail": "Cette invitation est pour une autre adresse. Inscrivez-vous avec l'adresse à laquelle elle a été envoyée.",
@@ -680,11 +680,11 @@
       "openMail": "Ouvrir {{app}}",
       "ownerWaits": "Ce serveur attend son propriétaire.",
       "ownerWaitsLead": "Ouvrez le lien propriétaire de ce serveur (il se termine par /owner#claim=…), sur cet ordinateur ou sur votre téléphone.",
-      "noPassword": "Ce compte se connecte depuis l'app agentes.chat.",
+      "noPassword": "Ce compte se connecte depuis l'app squadchat.",
       "noPasswordLead": "Sur l'ordinateur qui fait tourner ce serveur, ouvrez l'app et choisissez Ajouter un mot de passe dans Paramètres › Votre compte.",
       "backToSignIn": "Retour à la connexion",
       "backToAccount": "Revenir à {{name}}",
-      "toAuthorizeApp": "Pour connecter une app à agentes.chat."
+      "toAuthorizeApp": "Pour connecter une app à squadchat."
     },
     "desktop": {
       "browser": "Continuez dans votre navigateur",
@@ -695,7 +695,7 @@
       "otherServer": "Utiliser un autre serveur",
       "opening": "Ouverture de {{provider}}…",
       "confirm": "Est-ce bien votre app ?",
-      "confirmLead": "Ce code doit correspondre à celui affiché par l'app agentes.chat sur votre ordinateur.",
+      "confirmLead": "Ce code doit correspondre à celui affiché par l'app squadchat sur votre ordinateur.",
       "confirmYes": "Oui, connecter l'app",
       "confirmNo": "Ce n'était pas moi",
       "done": "Tout est prêt.",
@@ -719,19 +719,19 @@
     },
     "desktopOwner": {
       "continue": "Continuer sur ce {{device}}",
-      "text": "Vous avez installé agentes.chat sur ce {{device}} : pas besoin de mot de passe.",
+      "text": "Vous avez installé squadchat sur ce {{device}} : pas besoin de mot de passe.",
       "gone": "Le propriétaire de ce serveur a supprimé son compte, donc « Continuer sur ce {{device}} » ne peut connecter personne. Connectez-vous plutôt avec votre propre e-mail.",
-      "none": "Il ne reste plus aucun compte sur l’agentes.chat de ce {{device}}. Créez son nouveau propriétaire dans la fenêtre qui s’est ouverte."
+      "none": "Il ne reste plus aucun compte sur le squadchat de ce {{device}}. Créez son nouveau propriétaire dans la fenêtre qui s’est ouverte."
     },
     "server": {
       "into": "Connexion à <b>{{server}}</b>",
-      "intoHere": "Connexion à l’agentes.chat <b>de ce {{device}}</b>",
+      "intoHere": "Connexion au squadchat <b>de ce {{device}}</b>",
       "intoCloud": "Connexion à <b>agentes.chat Cloud</b>",
       "change": "Changer de serveur"
     },
     "forgotHere": {
       "ownerTitle": "Ici, pas besoin de mot de passe.",
-      "ownerLead": "Vous avez installé agentes.chat sur ce {{device}}. Entrez par ici, puis créez un nouveau mot de passe.",
+      "ownerLead": "Vous avez installé squadchat sur ce {{device}}. Entrez par ici, puis créez un nouveau mot de passe.",
       "notOwner": "Ce n’est pas le compte de la personne qui l’a installé ? Demandez à un propriétaire de votre workspace un lien de nouveau mot de passe.",
       "title": "Ce serveur n’envoie pas d’e-mails.",
       "lead": "Demandez à un propriétaire de votre workspace un lien de nouveau mot de passe. Il le crée dans Membres, et le lien est valable 1 heure.",
@@ -986,7 +986,7 @@
         "edit": "Modifier l'avatar",
         "upload": "Envoyer une photo",
         "area": "Vous travaillez sur quoi ?",
-        "areaHint": "Facultatif. Juste pour savoir qui utilise agentes.chat."
+        "areaHint": "Facultatif. Juste pour savoir qui utilise squadchat."
       },
       "area": {
         "options": {
@@ -1064,7 +1064,7 @@
         "asleep": "Endormie jusqu'à l'abonnement",
         "price": "<b>Abonnement {{name}}</b> · {{price}} par mois",
         "name": "<b>Abonnement {{name}}</b>",
-        "generic": "Un abonnement agentes.chat",
+        "generic": "Un abonnement squadchat",
         "cancel": "Résiliable à tout moment",
         "cta": "Activer l'équipe",
         "all": "Voir tous les abonnements",
@@ -1129,7 +1129,7 @@
     },
     "yourCompany": "votre entreprise",
     "purpose": {
-      "title": "À quoi allez-vous utiliser agentes.chat ?",
+      "title": "À quoi allez-vous utiliser squadchat ?",
       "lead": "Vous pourrez le changer plus tard, rien n'est perdu.",
       "personal": "Pour moi",
       "personalText": "Des agents pour votre agenda, vos factures, votre entraînement et tout ce que vous leur demandez.",
@@ -1212,7 +1212,7 @@
         "leadDots": "MCP permet à votre dot d'accéder à cet espace de travail par un plugin que vous ajoutez dans ChatGPT, pour qu'il y crée les agents tout seul.",
         "howTo": "Comment se connecter, app par app",
         "paste": "Collez cette demande dans l'app :",
-        "prompt": "Utilise le serveur MCP d'agentes.chat que tu viens de connecter ({{url}}) pour transférer ce que tu as vers agentes.chat. Appelle d'abord import_summary pour voir ce qui existe déjà, afin de ne rien dupliquer. Ensuite, pour chaque agent, instruction, compétence et routine que tu as, crée l'équivalent avec create_agent, create_skill et create_routine, et enregistre ce que chaque agent doit retenir avec add_memory.",
+        "prompt": "Utilise le serveur MCP de squadchat que tu viens de connecter ({{url}}) pour transférer ce que tu as vers squadchat. Appelle d'abord import_summary pour voir ce qui existe déjà, afin de ne rien dupliquer. Ensuite, pour chaque agent, instruction, compétence et routine que tu as, crée l'équivalent avec create_agent, create_skill et create_routine, et enregistre ce que chaque agent doit retenir avec add_memory.",
         "promptLabel": "Demande pour votre app d'IA",
         "copy": "Copier la demande",
         "copied": "Collez-la maintenant dans votre app d'IA.",
@@ -1350,7 +1350,7 @@
         "see": "Voir ce qui est arrivé"
       },
       "otherName": "Une autre app",
-      "agenteschatName": "agentes.chat",
+      "agenteschatName": "squadchat",
       "where": {
         "openbotrun": "Déposez openbot-import.json (issu de Migrator by OpenBot) ou openbot-transfer.json (issu du transfert d'instance), ou le .zip dans lequel il est arrivé.",
         "openmausbot": "Dans OpenMausBot : clic droit sur l'équipe → Partager l'équipe… → Enregistrer le fichier.",
@@ -1743,8 +1743,8 @@
     "keyStep": {
       "title": "Quelle IA vont-ils utiliser ?",
       "lead": "Connectez-vous avec votre abonnement IA : aucune clé API nécessaire.",
-      "paid": "Votre abonnement agentes.chat est actif. Leur ordinateur arrive.",
-      "confirming": "Confirmation du paiement de l'abonnement agentes.chat de cet espace de travail.",
+      "paid": "Votre abonnement squadchat est actif. Leur ordinateur arrive.",
+      "confirming": "Confirmation du paiement de l'abonnement squadchat de cet espace de travail.",
       "leadNoComputer": "Vos agents réfléchissent avec une clé API, ou avec votre abonnement IA sur un ordinateur que vous connectez."
     },
     "jev": {
@@ -1755,7 +1755,7 @@
       "title": "Limite de dépenses par agent",
       "label": "Limite mensuelle par agent, en dollars",
       "perMonth": "/mois",
-      "noteKey": "Uniquement pour l'utilisation de l'API, facturée par le fournisseur de la clé, pas par agentes.chat. Quand un agent l'atteint, il s'arrête et vous prévient. Les abonnements ne comptent pas ici.",
+      "noteKey": "Uniquement pour l'utilisation de l'API, facturée par le fournisseur de la clé, pas par squadchat. Quand un agent l'atteint, il s'arrête et vous prévient. Les abonnements ne comptent pas ici.",
       "notePlatform": "Uniquement pour l'utilisation de l'API. Quand un agent l'atteint, il s'arrête et vous prévient."
     },
     "keySite": "Créez la clé sur {{site}}.",
@@ -1812,7 +1812,7 @@
     },
     "team": {
       "title": "Qui d'autre travaille avec vous ?",
-      "payment": "Vous pourrez inviter votre équipe une fois un abonnement agentes.chat choisi.",
+      "payment": "Vous pourrez inviter votre équipe une fois un abonnement squadchat choisi.",
       "lead": "Invitez-les par e-mail, ou partagez le lien.",
       "leadLink": "Partagez-leur le lien d'invitation.",
       "emails": "E-mails",
@@ -1926,7 +1926,7 @@
     "reload": "Recharger",
     "search": "Rechercher ou demander…",
     "look": "Clic droit",
-    "lookOurs": "agentes.chat",
+    "lookOurs": "squadchat",
     "lookSystem": "Système",
     "markRead": "Marquer comme lu",
     "muteChannel": "Mettre le salon en sourdine",
@@ -1951,8 +1951,8 @@
     "copied": "Copié. Collez-le dans le terminal.",
     "mac": {
       "why": "<b>L'app est en bêta.</b> La première fois, votre Mac vous demande donc de confirmer :",
-      "drag": "Faites glisser agentes.chat dans Applications.",
-      "dragLong": "Ouvrez le fichier téléchargé et faites glisser agentes.chat dans Applications.",
+      "drag": "Faites glisser squadchat dans Applications.",
+      "dragLong": "Ouvrez le fichier téléchargé et faites glisser squadchat dans Applications.",
       "blocked": "Ouvrez l'app et cliquez sur Terminé.",
       "blockedSub": "Ne cliquez pas sur Placer dans la corbeille.",
       "settings": "Dans Réglages › Confidentialité et sécurité, cliquez sur Ouvrir quand même.",
@@ -1979,17 +1979,17 @@
       "why": "Pour Ubuntu, Debian et les systèmes similaires (x64). Linux ne demande rien de plus :",
       "apt": "Installez le .deb d'un double-clic, ou depuis le terminal.",
       "aptLong": "Double-cliquez sur le fichier téléchargé puis sur Installer, ou collez ceci dans le terminal :",
-      "open": "Ouvrez agentes.chat depuis vos applications.",
+      "open": "Ouvrez squadchat depuis vos applications.",
       "otherTitle": "Vous utilisez Arch, Fedora ou un autre système qui n'accepte pas les .deb ?",
       "otherText": "Téléchargez l'AppImage : elle fonctionne sur toutes les distributions et se met à jour toute seule. Collez ensuite ceci dans le terminal, dans le dossier où vous l'avez enregistrée :",
       "appImage": "Télécharger l'AppImage"
     },
     "page": {
-      "docTitle": "Télécharger l'app · agentes.chat",
-      "title": "Téléchargez l'app agentes.chat",
+      "docTitle": "Télécharger l'app · squadchat",
+      "title": "Téléchargez l'app squadchat",
       "beta": "Bêta",
       "text": "Votre workspace dans sa propre fenêtre, avec les notifications de votre système. En un clic, les agents travaillent sur cet ordinateur, dans leurs propres dossiers.",
-      "open": "Ouvrir agentes.chat",
+      "open": "Ouvrir squadchat",
       "version": "Version {{version}}",
       "versionSize": "Version {{version}} · {{size}}",
       "soon": "Il n'y a pas encore de version pour {{system}}.",
@@ -1999,7 +1999,7 @@
       "installOn": "Installer sur {{system}}",
       "system": "Système",
       "whyTitle": "Pourquoi mon ordinateur demande-t-il de confirmer ?",
-      "whyText": "agentes.chat est en bêta : la version Mac n'est pas encore notariée par Apple, et le programme d'installation Windows ne porte pas encore de certificat Microsoft. Sans eux, votre ordinateur demande une fois avant d'ouvrir une app téléchargée sur internet. Ensuite, elle s'ouvre directement et se met à jour toute seule. Avant la fin de la bêta, cette étape disparaîtra.",
+      "whyText": "squadchat est en bêta : la version Mac n'est pas encore notariée par Apple, et le programme d'installation Windows ne porte pas encore de certificat Microsoft. Sans eux, votre ordinateur demande une fois avant d'ouvrir une app téléchargée sur internet. Ensuite, elle s'ouvre directement et se met à jour toute seule. Avant la fin de la bêta, cette étape disparaîtra.",
       "openSource": "Code source ouvert",
       "onlyHere": "Publiée uniquement ici et dans les versions publiées du projet",
       "signedUpdates": "Mises à jour signées"
@@ -2048,7 +2048,7 @@
       "runAnyway": "Exécuter quand même",
       "activities": "Activités",
       "readingLists": "Lecture des listes de paquets... Fait",
-      "settingUp": "Paramétrage de agentes-chat ({{version}}) ..."
+      "settingUp": "Paramétrage de squadchat ({{version}}) ..."
     }
   },
   "appIcon": {
@@ -2314,7 +2314,7 @@
     "addAccount": "Ajouter un compte",
     "addAccountHint": "Connectez-vous à un autre compte sans quitter celui-ci",
     "yourServer": "Votre serveur",
-    "serverHere": "L’agentes.chat de ce {{device}}",
+    "serverHere": "Le squadchat de ce {{device}}",
     "serverStopped": "arrêté",
     "serverOffline": "hors ligne depuis {{time}}",
     "serverSignedOut": "non connecté",
@@ -2493,12 +2493,12 @@
     "private": "Toute personne qui scanne ce code se connecte en tant que vous.",
     "failed": "Impossible de créer le code.",
     "localOnly": "Ce serveur ne s'ouvre que sur l'ordinateur où il tourne, donc votre téléphone ne peut pas le joindre.",
-    "localOnlyHow": "Dans l'app agentes.chat de cet ordinateur, activez Y accéder depuis votre téléphone et vos collègues dans Préférences › Serveurs. Puis revenez ici.",
+    "localOnlyHow": "Dans l'app squadchat de cet ordinateur, activez Y accéder depuis votre téléphone et vos collègues dans Préférences › Serveurs. Puis revenez ici.",
     "localOnlyHere": "Activez Y accéder depuis votre téléphone et vos collègues. Puis revenez ici."
   },
   "surface": {
     "link": {
-      "consent": "{{assistant}} d'agentes.chat peut vous écrire sur {{surface}} à propos de vos espaces de travail, et vous appeler seulement en cas d'urgence si vous l'autorisez. Écrivez stop pour désactiver.",
+      "consent": "{{assistant}} de squadchat peut vous écrire sur {{surface}} à propos de vos espaces de travail, et vous appeler seulement en cas d'urgence si vous l'autorisez. Écrivez stop pour désactiver.",
       "title": "Parlez à {{assistant}} sur {{surface}}",
       "qr": "QR code qui ouvre {{surface}} avec votre code déjà saisi",
       "making": "Création de votre code",
@@ -3052,8 +3052,8 @@
       "greetingPersonal": "Bonjour, je suis {{name}}. Je mets en place vos agents avec vous.",
       "lead": "Je crée les agents, je connecte les applications et j’invite les personnes. Rien ne change sans votre demande, et je ne fais que ce que vous pouvez faire.",
       "leadPersonal": "Je crée vos agents et je connecte vos applications. Rien ne change sans votre demande.",
-      "heldLead": "Choisissez ce que fait votre entreprise et l'équipe apparaît ici. Les agents se mettent au travail dès que le workspace a un abonnement agentes.chat.",
-      "heldLeadPersonal": "Choisissez les domaines où vous voulez de l'aide et vos agents apparaissent ici. Ils se mettent au travail dès que vous avez un abonnement agentes.chat.",
+      "heldLead": "Choisissez ce que fait votre entreprise et l'équipe apparaît ici. Les agents se mettent au travail dès que le workspace a un abonnement squadchat.",
+      "heldLeadPersonal": "Choisissez les domaines où vous voulez de l'aide et vos agents apparaissent ici. Ils se mettent au travail dès que vous avez un abonnement squadchat.",
       "connect": {
         "title": "Connecter une IA pour l’équipe",
         "titlePersonal": "Connecter une IA pour vos agents",
@@ -3530,7 +3530,7 @@
       "plans_not_yours": "Le {{plan}} d'ici est seulement à {{owner}}. Connectez le vôtre et je réponds.",
       "plan_unattended": "{{name}} n'a pas répondu : la demande ne venait pas d'une personne, et le forfait du workspace ne répond qu'à son propriétaire.",
       "runner_outdated": "{{name}} ne peut pas répondre pour l'instant : le programme sur l'ordinateur de l'abonnement doit être mis à jour.",
-      "plan_tools": "{{name}} s'est arrêté avant de répondre : l'IA de l'abonnement sur cet ordinateur n'est pas restée dans les outils d'agentes.chat.",
+      "plan_tools": "{{name}} s'est arrêté avant de répondre : l'IA de l'abonnement sur cet ordinateur n'est pas restée dans les outils de squadchat.",
       "model_limit": "{{name}} ne peut pas répondre maintenant : {{model}} a atteint sa propre limite sur l'abonnement. Les autres modèles de l'abonnement fonctionnent toujours.",
       "model_region": "{{name}} ne peut pas répondre : {{model}} a besoin de la région Global activée dans OpenCode (Settings › Privacy).",
       "model_off": "{{name}} ne peut pas répondre : OpenCode a refusé {{model}} avec cette clé. Activez le modèle ou le compte dans OpenCode, ou choisissez un autre modèle.",
@@ -3541,16 +3541,16 @@
     "kept": {
       "title": "J'ai gardé votre message",
       "wait": {
-        "payment": "Je répondrai ici dès que le workspace aura un abonnement agentes.chat.",
-        "unpaid": "Je répondrai ici dès que le paiement de l'abonnement agentes.chat sera passé.",
-        "ended": "Je répondrai ici dès que le workspace se réabonnera à agentes.chat."
+        "payment": "Je répondrai ici dès que le workspace aura un abonnement squadchat.",
+        "unpaid": "Je répondrai ici dès que le paiement de l'abonnement squadchat sera passé.",
+        "ended": "Je répondrai ici dès que le workspace se réabonnera à squadchat."
       },
-      "askAdmin": "Je répondrai ici dès qu'un admin aura réglé l'abonnement agentes.chat.",
+      "askAdmin": "Je répondrai ici dès qu'un admin aura réglé l'abonnement squadchat.",
       "plan": "L'abonnement apporte l'ordinateur des agents, toujours allumé. L'IA est celle que vous payez déjà : Claude, ChatGPT et d'autres, ou une clé API.",
       "activeTitle": "Abonnement actif",
       "activeLine": "Connectez une IA et {{name}} répond ici.",
       "receipt": "Gardé",
-      "channel": "Gardé. Les agents répondent dès que le workspace a un abonnement agentes.chat."
+      "channel": "Gardé. Les agents répondent dès que le workspace a un abonnement squadchat."
     },
     "receipt": "Personne ne répondra : aucune IA connectée",
     "notYours": {
@@ -3581,7 +3581,7 @@
       "gitMissing": "{{program}} a besoin de Git for Windows sur {{computer}}.",
       "getGit": "Télécharger Git for Windows",
       "cantStart": "{{program}} est sur {{computer}}, mais ne démarre pas : {{message}}",
-      "outdated": "Mettez à jour l'app agentes.chat sur {{computer}} pour installer d'ici.",
+      "outdated": "Mettez à jour l'app squadchat sur {{computer}} pour installer d'ici.",
       "asked": "Demande envoyée. {{name}} reçoit un bouton pour l'installer."
     },
     "titleFor": "Connecter une IA pour {{name}}",
@@ -3659,7 +3659,7 @@
         "unshare": "Moi seulement"
       }
     },
-    "billing": "Un forfait se connecte sur l'ordinateur du workspace, et l'ordinateur vient avec un forfait agentes.chat actif.",
+    "billing": "Un forfait se connecte sur l'ordinateur du workspace, et l'ordinateur vient avec un forfait squadchat actif.",
     "billingWeb": "Choisissez-en un sur le web, sur agentes.chat.",
     "orPayGo": "Ou payer à l'usage",
     "pay": {
@@ -3731,7 +3731,7 @@
       "untested": "Aucun modèle de {{name}} n’a encore réussi de test.",
       "testModels": "Tester les modèles",
       "savedUnchecked": "Enregistrée, mais {{provider}} n'a pas répondu et la clé n'a pas pu être vérifiée. Si elle échoue, la conversation dit pourquoi.",
-      "closed": "Les clés API s'ouvrent avec l'abonnement agentes.chat du workspace.",
+      "closed": "Les clés API s'ouvrent avec l'abonnement squadchat du workspace.",
       "notPlan": "La clé d'un abonnement de code va dans sa propre option ci-dessus.",
       "billing": "Activez la facturation pour le projet de la clé. Sans facturation, Google peut utiliser ce que vos agents envoient.",
       "privacy": "{{provider}} transmet ce que vos agents envoient à l'entreprise qui crée ou héberge le modèle, selon les conditions et les paramètres de confidentialité de {{provider}}."
@@ -4469,7 +4469,7 @@
     "clearsAt": "S'efface à {{time}}",
     "clearsOn": "S'efface {{when}}",
     "help": {
-      "auto": "En ligne tant qu'agentes.chat est ouvert.",
+      "auto": "En ligne tant que squadchat est ouvert.",
       "away": "Parti un moment : les autres savent que les réponses peuvent tarder.",
       "busy": "Tout le monde voit qu'il vaut mieux ne pas vous déranger pour l'instant.",
       "out": "Loin du travail (vacances, jour de congé) : tout le monde le voit jusqu’à ce que ton statut disparaisse.",
@@ -4995,7 +4995,7 @@
       "removeText_other": "Ses {{count}} éléments quittent le Vault et vos agents cessent de les utiliser. Rien ne change dans {{name}}.",
       "removed": "{{name}} déconnecté",
       "listOf": "Connexions à {{name}}",
-      "note": "Vos agents lisent ce qui s'y trouve quand ils en ont besoin. Rien n'est copié dans agentes.chat, sauf les noms et les adresses.",
+      "note": "Vos agents lisent ce qui s'y trouve quand ils en ont besoin. Rien n'est copié dans squadchat, sauf les noms et les adresses.",
       "error": {
         "auth_failed": "Connexion refusée",
         "locked": "Mot de passe incorrect",
@@ -5799,7 +5799,7 @@
       "eyebrow": "Demande d'approbation",
       "close": "Fermer",
       "exact": "L'action exacte",
-      "builtIn": "Outil agentes.chat",
+      "builtIn": "Outil squadchat",
       "orgConnector": "Connecteur de votre espace de travail",
       "bound": "Uniquement pour ces valeurs : tout changement nécessite une nouvelle approbation.",
       "why": "Pourquoi",
@@ -6275,7 +6275,7 @@
       "steps": {
         "title": "Il reste une étape, sur {{computer}} lui-même",
         "waiting": "En attente",
-        "one": "Cliquez sur l'icône agentes.chat près de l'horloge",
+        "one": "Cliquez sur l'icône squadchat près de l'horloge",
         "two": "Préférences",
         "three": "Activez Navigateur",
         "done": "C'est tout. Cette page le détecte toute seule, pas besoin de recharger.",
@@ -7043,10 +7043,10 @@
       "afterPlanNext": "C'est l'étape qui suit l'abonnement.",
       "plan": {
         "todo": "Activez l'équipe.",
-        "todoDesc": "Avec un abonnement agentes.chat, les agents se mettent au travail.",
+        "todoDesc": "Avec un abonnement squadchat, les agents se mettent au travail.",
         "action": "Voir les abonnements",
         "todoPersonal": "Activez vos agents.",
-        "todoDescPersonal": "Avec un abonnement agentes.chat, vos agents se mettent au travail."
+        "todoDescPersonal": "Avec un abonnement squadchat, vos agents se mettent au travail."
       },
       "about": {
         "action": "Raconter",
@@ -8173,7 +8173,7 @@
     "crashTitle": "Un problème est survenu",
     "crashText": "Rechargez la page pour continuer.",
     "crashCode": "Si vous demandez de l'aide, donnez le code {{id}}.",
-    "unreachableTitle": "Impossible de joindre agentes.chat",
+    "unreachableTitle": "Impossible de joindre squadchat",
     "unreachableText": "Il est peut-être en train de redémarrer. Cette page s'ouvre d'elle-même dès qu'il est de retour.",
     "offlineTitle": "Vous êtes hors ligne",
     "offlineText": "Cette page s'ouvre d'elle-même dès que vous êtes de nouveau en ligne."
@@ -9907,7 +9907,7 @@
       "title": "Fichiers de la mission",
       "folder": "dossier",
       "tabs": "Fichier",
-      "missionSub": "Plan et règles · mis à jour par agentes.chat",
+      "missionSub": "Plan et règles · mis à jour par squadchat",
       "decisionsSub": "Décisions approuvées",
       "notesSub": "Notes de {{executor}}",
       "synced": "synchronisé {{when}}",
@@ -9984,7 +9984,7 @@
       "title": "Nouvelle mission",
       "text": "Un projet au long cours pour un agent. Il propose un plan, travaille sur son ordinateur et demande décisions et relectures dans le fil.",
       "goal": "Objectif",
-      "goalPlaceholder": "Par ex. créer l'app mobile agentes.chat avec Expo, à partir de l'app web actuelle.",
+      "goalPlaceholder": "Par ex. créer l'app mobile squadchat avec Expo, à partir de l'app web actuelle.",
       "agent": "Agent",
       "computer": "Ordinateur",
       "noMachine": "Aucun connecté",
@@ -10947,7 +10947,7 @@
   },
   "jev": {
     "title": "Jev",
-    "about": "Un modèle rapide de TypeSafe, conçu pour les décisions rapides. agentes.chat lui pose de petites questions, comme qui doit répondre. Vous payez TypeSafe directement, ou via OpenRouter au même prix.",
+    "about": "Un modèle rapide de TypeSafe, conçu pour les décisions rapides. squadchat lui pose de petites questions, comme qui doit répondre. Vous payez TypeSafe directement, ou via OpenRouter au même prix.",
     "lead": "Aide vos agents à travailler en équipe.",
     "how": "Comment fonctionne Jev",
     "why": {
@@ -11098,7 +11098,7 @@
         "online": "{{computer}} redémarre ou se reconnecte. Ceci change tout seul dès son retour.",
         "installing": "{{program}} est en cours d'installation sur {{computer}}. Ceci change tout seul une fois terminé.",
         "updating": "{{program}} est en cours de mise à jour sur {{computer}}. Ceci change tout seul une fois terminé.",
-        "runnerOld": "Le programme agentes.chat sur {{computer}} n'est pas à jour et la mise à jour est en route. Ceci change tout seul une fois terminé.",
+        "runnerOld": "Le programme squadchat sur {{computer}} n'est pas à jour et la mise à jour est en route. Ceci change tout seul une fois terminé.",
         "execOff": "{{computer}} ne peut pas encore lancer {{program}}. On s'en occupe, et ceci change tout seul.",
         "toolOff": "{{program}} n'est pas encore autorisé sur {{computer}}. Cela vient de nous : réessayez plus tard.",
         "preparing": "{{computer}} se prépare. Ceci change tout seul une fois terminé.",
@@ -11112,7 +11112,7 @@
     },
     "page": {
       "title": "Vos abonnements",
-      "hint": "Chaque abonnement reste sur l'ordinateur où il a été connecté, et la personne qui gère cet ordinateur peut y accéder. agentes.chat ne garde que son nom, son e-mail et son utilisation.",
+      "hint": "Chaque abonnement reste sur l'ordinateur où il a été connecté, et la personne qui gère cet ordinateur peut y accéder. squadchat ne garde que son nom, son e-mail et son utilisation.",
       "emptyTitle": "Utilisez l'abonnement IA que vous payez déjà",
       "emptyViewer": "La personne qui s'occupe de l'IA de l'espace de travail connecte un abonnement, et il apparaît ici.",
       "connect": "Connecter une IA",
@@ -12478,7 +12478,7 @@
     "reasons": {
       "no_computer": "Choisissez un ordinateur connecté dans Ordinateur pour l'utiliser.",
       "exec_off": "L'ordinateur a été connecté sans permission d'exécuter des programmes.",
-      "runner_old": "Mettez à jour le programme agentes.chat sur l'ordinateur pour l'utiliser.",
+      "runner_old": "Mettez à jour le programme squadchat sur l'ordinateur pour l'utiliser.",
       "tool_offOne": "{{program}} est désactivé sur {{computer}}.",
       "not_installed": "{{program}} n'est pas installé sur {{computer}}.",
       "cant_start": "{{program}} est sur {{computer}}, mais ne démarre pas.",
@@ -13033,7 +13033,7 @@
   "storage": {
     "title": "Stockage",
     "options": "Où conserver les fichiers",
-    "agentes": "Stockage agentes.chat",
+    "agentes": "Stockage squadchat",
     "agentesText": "Vos fichiers restent dans notre stockage, séparés par espace de travail.",
     "server": "Ce serveur",
     "serverText": {
@@ -13044,7 +13044,7 @@
     },
     "showFolder": "Afficher le dossier",
     "place": {
-      "agentes": "le stockage agentes.chat",
+      "agentes": "le stockage squadchat",
       "server": "ce serveur"
     },
     "s3": "Votre propre stockage",
@@ -13156,7 +13156,7 @@
       "step": {
         "bucketTitle": "Créez un bucket",
         "keyTitle": "Créez la clé d'accès",
-        "userTitle": "Créez un utilisateur rien que pour agentes.chat",
+        "userTitle": "Créez un utilisateur rien que pour squadchat",
         "r2Bucket": "Dans le tableau de bord Cloudflare, ouvrez <b>R2</b> et cliquez sur <b>Create bucket</b>. N'importe quel nom convient.",
         "r2Key": "Sur la page R2, sous <b>API Tokens</b>, cliquez sur <b>Manage</b> puis sur <b>Create API Token</b>. Choisissez l'autorisation <b>Object Read & Write</b> et votre bucket. À la fin, Cloudflare affiche les trois valeurs ci-dessous une seule fois.",
         "s3Bucket": "Dans la console AWS, ouvrez <b>S3</b> et cliquez sur <b>Create bucket</b>. Notez la région choisie.",
@@ -13234,11 +13234,11 @@
   },
   "githubApp": {
     "title": "Dépôts GitHub",
-    "text": "Là où l'app agentes.chat est installée, les agents ouvrent des pull requests, issues, commentaires et commits en tant que l'app, avec le nom de l'agent et de la personne qui a demandé.",
-    "install": "Installer l'app agentes.chat",
+    "text": "Là où l'app squadchat est installée, les agents ouvrent des pull requests, issues, commentaires et commits en tant que l'app, avec le nom de l'agent et de la personne qui a demandé.",
+    "install": "Installer l'app squadchat",
     "installMore": "Installer sur un autre compte",
     "none": "Aucun compte GitHub pour l'instant.",
-    "usingAccount": "Aujourd'hui, les agents apparaissent sur GitHub en tant que {{account}}. Installez l'app pour qu'ils apparaissent en tant que l'app agentes.chat.",
+    "usingAccount": "Aujourd'hui, les agents apparaissent sur GitHub en tant que {{account}}. Installez l'app pour qu'ils apparaissent en tant que l'app squadchat.",
     "allRepos": "Tous les dépôts",
     "someRepos": "Dépôts sélectionnés",
     "suspended": "Suspendu sur GitHub",
@@ -13247,27 +13247,27 @@
     "remove": "Retirer",
     "removeName": "Retirer {{account}}",
     "removeTitle": "Retirer l'app de {{account}} ?",
-    "removeText": "L'app agentes.chat est désinstallée de {{account}} sur GitHub, et les agents cessent d'utiliser les dépôts de ce compte par son biais.",
+    "removeText": "L'app squadchat est désinstallée de {{account}} sur GitHub, et les agents cessent d'utiliser les dépôts de ce compte par son biais.",
     "removeLast": "C'est le dernier, donc les agents perdent GitHub jusqu'à ce que quelqu'un installe l'app ou connecte un compte.",
     "removed": "App retirée de {{account}} et désinstallée sur GitHub.",
     "notUninstalled": "App retirée ici, mais GitHub n'a pas confirmé la désinstallation de {{account}}. Désinstallez-la là-bas.",
     "openPage": "Ouvrir",
-    "installed": "App agentes.chat installée.",
+    "installed": "App squadchat installée.",
     "requested": "Seul le propriétaire du compte GitHub peut installer l'app. Demandez-lui de l'installer depuis Connecteurs › GitHub dans cet espace de travail.",
     "notVisible": "Votre compte GitHub ne voit pas cette installation. Installez-la avec un compte qui y a accès.",
     "otherWorkspace": "Ce compte GitHub est déjà lié à un autre espace de travail. Retirez l'app là-bas avant de l'installer ici.",
-    "installedOutside": "L'app a été installée sur ce compte GitHub en dehors d'agentes.chat. Retirez-la sur GitHub, puis réinstallez-la depuis Connecteurs › GitHub.",
+    "installedOutside": "L'app a été installée sur ce compte GitHub en dehors de squadchat. Retirez-la sur GitHub, puis réinstallez-la depuis Connecteurs › GitHub.",
     "ownerUnknown": "GitHub n'a pas indiqué qui est propriétaire de cette organisation. La personne qui gère le serveur doit ajouter l'autorisation d'organisation Members (lecture seule) à l'app GitHub, puis vous la réinstallez.",
     "misconfigured": "L'app GitHub a la mauvaise clé secrète sur le serveur, donc l'installation ne peut pas aboutir. La personne qui gère le serveur doit remplacer la clé dans les paramètres de l'app.",
     "connectAccount": "Connecter un compte GitHub",
     "ownerHint": "Le propriétaire de ce serveur peut créer l'app GitHub ici, dans Connecteurs.",
-    "viaApp": "Via l'app agentes.chat sur {{accounts}}",
-    "disconnectApp": "L'app agentes.chat est aussi désinstallée de {{accounts}} sur GitHub.",
-    "disconnectKeepsApp": "Les agents restent sur GitHub via l'app agentes.chat sur {{accounts}}.",
-    "keptApp": "Compte GitHub déconnecté. Les agents restent sur GitHub via l'app agentes.chat.",
+    "viaApp": "Via l'app squadchat sur {{accounts}}",
+    "disconnectApp": "L'app squadchat est aussi désinstallée de {{accounts}} sur GitHub.",
+    "disconnectKeepsApp": "Les agents restent sur GitHub via l'app squadchat sur {{accounts}}.",
+    "keptApp": "Compte GitHub déconnecté. Les agents restent sur GitHub via l'app squadchat.",
     "signature": {
-      "forPerson": "{{agent}}, agent de {{person}} sur agentes.chat",
-      "alone": "{{agent}}, un agent sur agentes.chat"
+      "forPerson": "{{agent}}, agent de {{person}} sur squadchat",
+      "alone": "{{agent}}, un agent sur squadchat"
     },
     "manifestPage": {
       "title": "Création de l'app GitHub",
@@ -14909,7 +14909,7 @@
     "local": {
       "transport": "Transport MCP",
       "tab": "Local · stdio",
-      "where": "S’exécute là où agentes.chat est installé : sur votre ordinateur dans l’installation de bureau, dans le conteneur avec Docker. Un ordinateur relié à un autre serveur n’est pas utilisé ici.",
+      "where": "S’exécute là où squadchat est installé : sur votre ordinateur dans l’installation de bureau, dans le conteneur avec Docker. Un ordinateur relié à un autre serveur n’est pas utilisé ici.",
       "checking": "Vérification de la prise en charge des programmes MCP locaux…",
       "checkFailed": "Impossible de vérifier la prise en charge du MCP local. Rouvrez cette fenêtre pour réessayer.",
       "disabled": "Les programmes locaux sont désactivés ici. Seul l’exploitant d’un serveur auto-hébergé de confiance, fermé à l’inscription publique, peut activer MCP_STDIO_ENABLED.",
@@ -14924,7 +14924,7 @@
       "env": "Environnement (objet JSON)",
       "envHelp": "Par exemple {\"API_KEY\":\"…\"}. Stocké chiffré, et les secrets propres au serveur ne sont pas hérités.",
       "invalid": "Indiquez un exécutable, un tableau JSON d’arguments textuels et un objet JSON de valeurs d’environnement textuelles.",
-      "failed": "Impossible de connecter le MCP local. Vérifiez l’exécutable et les chemins sur la machine où agentes.chat s’exécute, et si le programme parle MCP via stdio.",
+      "failed": "Impossible de connecter le MCP local. Vérifiez l’exécutable et les chemins sur la machine où squadchat s’exécute, et si le programme parle MCP via stdio.",
       "permissions": "S’exécute en tant qu’utilisateur système du serveur. L’accès aux outils et les approbations se règlent aux étapes suivantes."
     },
     "steps": "Étapes",
@@ -14946,7 +14946,7 @@
     "continueInComposio": "Continuer sur Composio",
     "github": {
       "how": "Comment les agents accèdent à GitHub",
-      "app": "L'app agentes.chat",
+      "app": "L'app squadchat",
       "recommended": "Recommandé",
       "appText": "Les agents apparaissent en tant que l'app, et vous choisissez les dépôts sur GitHub.",
       "account": "Un compte GitHub",
@@ -14968,7 +14968,7 @@
     "or": "ou",
     "withKey": "Connecter avec une clé API",
     "needsKey": "Ce serveur ne prend pas en charge OAuth. Connectez-le avec une clé API.",
-    "notApproved": "{{name}} n'autorise la connexion qu'aux applications qu'il a approuvées, et agentes.chat ne l'est pas encore. S'il vous fournit une clé API, vous pouvez vous connecter avec.",
+    "notApproved": "{{name}} n'autorise la connexion qu'aux applications qu'il a approuvées, et squadchat ne l'est pas encore. S'il vous fournit une clé API, vous pouvez vous connecter avec.",
     "serverSaid": "Le serveur a répondu : {{detail}}",
     "headers": {
       "title": "En-têtes de requête",
@@ -15621,7 +15621,7 @@
       "noAssistant": "L'assistant de cet espace de travail n'est pas autorisé à vous parler. Choisissez un autre espace de travail à relier.",
       "noWorkspace": "Vous n'êtes plus dans cet espace de travail. Choisissez un autre espace de travail à relier.",
       "linkGone": "Cette liaison n'attend plus : elle a expiré après 10 minutes ou a été annulée. Créez un nouveau code pour recommencer.",
-      "taken": "Cet expéditeur est relié à un autre compte agentes.chat. Supprimez la liaison là-bas, puis envoyez un nouveau code.",
+      "taken": "Cet expéditeur est relié à un autre compte squadchat. Supprimez la liaison là-bas, puis envoyez un nouveau code.",
       "undoGone": "Ce lien d'annulation a déjà servi ou a expiré. Supprimez plutôt la liaison dans vos paramètres de notifications.",
       "codeGone": "Ce code est erroné, déjà utilisé ou expiré après 10 minutes. Créez un nouveau code et renvoyez-le."
     },
@@ -15670,7 +15670,7 @@
       "generalKept": "#general ne peut pas être supprimé.",
       "generalStays": "Tout le monde reste dans #general.",
       "mcpUnreachable": "Connexion au serveur MCP impossible. Vérifiez son adresse et réessayez.",
-      "notApproved": "Ce service n'a pas encore approuvé agentes.chat.",
+      "notApproved": "Ce service n'a pas encore approuvé squadchat.",
       "alreadyInvited": "Cette personne a déjà une invitation.",
       "alreadyAsked": "Quelqu'un a déjà demandé pour cette personne.",
       "mailboxConnected": "Cette boîte mail est déjà connectée.",
@@ -15828,7 +15828,7 @@
       "noComputer": "Cet agent n'a pas encore d'ordinateur pour les missions.",
       "computerOffline": "L'ordinateur de l'agent est hors ligne.",
       "execDisabled": "Les commandes sont désactivées sur cet ordinateur.",
-      "runnerOutdated": "Le programme de l'ordinateur est trop ancien pour les missions : mettez à jour l'app agentes.chat sur place, ou relancez sa commande d'installation.",
+      "runnerOutdated": "Le programme de l'ordinateur est trop ancien pour les missions : mettez à jour l'app squadchat sur place, ou relancez sa commande d'installation.",
       "exists": "Ce fil a déjà une mission.",
       "closed": "Cette mission est clôturée.",
       "wrongStatus": "L'état de la mission ne permet pas cela.",
@@ -15931,7 +15931,7 @@
       "notOwner": "Seule la personne qui a connecté cet ordinateur active ses outils. Demandez-lui.",
       "askSelf": "C'est votre ordinateur : activez-le avec le bouton.",
       "adminAskSelf": "Vous pouvez le faire ici vous-même.",
-      "accountMethodUnsupported": "Cet ordinateur ne peut pas encore connecter Claude de cette façon. Mettez à jour le programme agentes.chat dessus ou utilisez une clé API.",
+      "accountMethodUnsupported": "Cet ordinateur ne peut pas encore connecter Claude de cette façon. Mettez à jour le programme squadchat dessus ou utilisez une clé API.",
       "offline": "{{name}} est hors ligne pour le moment. Réessayez quand il sera de retour.",
       "paused": "{{name}} est en pause : rien de nouveau n'y démarre tant qu'il n'a pas repris.",
       "timeout": "L'ordinateur n'a pas répondu à temps. Réessayez."
@@ -16087,7 +16087,7 @@
       "ask": "Demander à {{name}}",
       "asked": "Demande envoyée. {{name}} reçoit un bouton pour l'activer.",
       "done": "Activé sur {{machine}}.",
-      "outdated": "Mettez à jour l'app agentes.chat sur {{machine}} pour l'activer d'ici.",
+      "outdated": "Mettez à jour l'app squadchat sur {{machine}} pour l'activer d'ici.",
       "offline": "{{machine}} est hors ligne. Dès son retour, le bouton active {{tool}}."
     },
     "remotePause": {
@@ -16101,7 +16101,7 @@
       "byYouUntil": "Mis en pause par toi jusqu'à {{time}}.",
       "byName": "Mis en pause par {{name}}.",
       "byNameUntil": "Mis en pause par {{name}} jusqu'à {{time}}.",
-      "outdated": "Mets à jour l'app agentes.chat sur cet ordinateur pour le mettre en pause d'ici.",
+      "outdated": "Mets à jour l'app squadchat sur cet ordinateur pour le mettre en pause d'ici.",
       "paused": "{{name}} est en pause",
       "resumed": "{{name}} reprend le travail"
     },
@@ -16159,9 +16159,9 @@
     },
     "host": {
       "label": "L'ordinateur de ce serveur",
-      "desc": "Là où agentes.chat est installé.",
-      "descUsers": "Là où agentes.chat est installé, un utilisateur par agent.",
-      "descShared": "L'ordinateur sur lequel agentes.chat est installé. Les agents travaillent sous l'identité de la personne qui l'a installé.",
+      "desc": "Là où squadchat est installé.",
+      "descUsers": "Là où squadchat est installé, un utilisateur par agent.",
+      "descShared": "L'ordinateur sur lequel squadchat est installé. Les agents travaillent sous l'identité de la personne qui l'a installé.",
       "stop": "Ne plus l'utiliser dans cet espace de travail",
       "stopTitle": "Ne plus utiliser l'ordinateur de ce serveur ?",
       "stopText": "Les agents de cet espace de travail cessent d'utiliser cet ordinateur dès maintenant. Vous pourrez le réutiliser quand vous voudrez.",
@@ -16172,7 +16172,7 @@
     },
     "download": {
       "title": "Connecter un autre ordinateur",
-      "text": "Installez l'app agentes.chat sur l'ordinateur.",
+      "text": "Installez l'app squadchat sur l'ordinateur.",
       "mac": "Télécharger l'app pour {{system}}",
       "version": "Version {{version}}",
       "versionSize": "Version {{version}} · {{size}}",
@@ -16183,7 +16183,7 @@
       "unavailable": "L'app n'est pas encore disponible.",
       "unavailableCommand": "L'app n'est pas encore disponible. Pour l'instant, utilisez la commande ci-dessous.",
       "firstTime": "La première fois",
-      "step1": "Ouvrez le fichier téléchargé et faites glisser agentes.chat dans Applications.",
+      "step1": "Ouvrez le fichier téléchargé et faites glisser squadchat dans Applications.",
       "step1Install": "Ouvrez le fichier téléchargé pour l'installer.",
       "otherText": "Lancez ceci dans le terminal de l'ordinateur, puis confirmez le code qu'il affiche.",
       "waiting": "En attente de la connexion de l'ordinateur…"
@@ -16214,7 +16214,7 @@
       "ownFolder": "Dossier de chaque agent",
       "ownFolderText": "Toujours. Un agent ne voit pas celui d'un autre.",
       "noFolders": "Aucun dossier en plus. Chaque agent n'utilise que son propre dossier.",
-      "noReport": "Cet ordinateur n'a pas encore indiqué ce qu'il autorise. Mettez agentes.chat à jour dessus.",
+      "noReport": "Cet ordinateur n'a pas encore indiqué ce qu'il autorise. Mettez squadchat à jour dessus.",
       "hidden": "Seuls les admins et la personne qui l'a connecté voient les dossiers et les outils de cet ordinateur.",
       "nobody": "Aucun agent ne l'utilise encore",
       "usedBy": "Qui utilise {{folder}}",
@@ -16259,7 +16259,7 @@
       "disableText": "Les agents n'utilisent plus {{tool}} sur cet ordinateur. Pour le réactiver : sur l'ordinateur lui-même, ou ici par la personne qui l'a connecté.",
       "disabled": "{{tool}} désactivé.",
       "grantTitle": "Pour autoriser davantage",
-      "grantText": "Les autorisations se donnent sur l'ordinateur lui-même : ouvrez-y l'app agentes.chat (Préférences → Dossiers).",
+      "grantText": "Les autorisations se donnent sur l'ordinateur lui-même : ouvrez-y l'app squadchat (Préférences → Dossiers).",
       "grantTextTerminal": "Les autorisations se donnent sur l'ordinateur lui-même, dans son Terminal :",
       "grantTextAdmin": "Les autorisations se donnent sur l'ordinateur lui-même, dans son Terminal, en tant qu'administrateur :",
       "grantTerminal": "Pas d'app ? Dans le terminal de l'ordinateur :",
@@ -16368,7 +16368,7 @@
       "forbidden": "Vous ne pouvez pas voir cet écran",
       "forbiddenText": "Son propriétaire choisit qui peut utiliser {{name}}.",
       "outdated": "L'app sur {{host}} est trop ancienne pour ça",
-      "outdatedText": "Mettez à jour agentes.chat sur {{host}}, puis réessayez.",
+      "outdatedText": "Mettez à jour squadchat sur {{host}}, puis réessayez.",
       "unavailable": "Cet écran ne peut pas être affiché",
       "unavailableText": "Vérifiez que adb ou Xcode est installé sur {{host}}, puis réessayez.",
       "needsHelper": "Terminez la configuration de l'iPhone sur le Mac pour ajouter l'app de test dont il a besoin.",
@@ -16527,7 +16527,7 @@
       "thisMac": "Ce Mac",
       "thisPc": "Ce PC",
       "thisComputer": "Cet ordinateur",
-      "thisLine": "Avec l'app agentes.chat",
+      "thisLine": "Avec l'app squadchat",
       "openApp": "Ouvrir l'app",
       "server": "Un serveur ou un VPS",
       "serverLine": "Une ligne à coller dans son terminal",
@@ -16542,7 +16542,7 @@
     },
     "computer": {
       "title": "Connecter un autre ordinateur",
-      "step1": "Installez l'app agentes.chat dessus :",
+      "step1": "Installez l'app squadchat dessus :",
       "step2": "Ouvrez-la et connectez-vous avec votre compte.",
       "step3": "Cliquez sur Autoriser quand elle demande de laisser les agents de {{org}} l'utiliser.",
       "shows": "Il apparaît ici tout seul, pour vous seul jusqu'à ce que vous le partagiez.",
@@ -16552,11 +16552,11 @@
       "noApp": "Impossible d'y installer l'app ? Utilisez une ligne de terminal"
     },
     "thisApp": {
-      "text": "L'app agentes.chat le connecte en un clic, et vous demande d'abord.",
-      "open": "Ouvrir l'app agentes.chat",
+      "text": "L'app squadchat le connecte en un clic, et vous demande d'abord.",
+      "open": "Ouvrir l'app squadchat",
       "browserAsks": "Votre navigateur demande s'il peut l'ouvrir : choisissez Ouvrir, et Toujours autoriser s'il le propose.",
       "noApp": "Vous n'avez pas l'app ?",
-      "afterInstall": "Après l'installation, cliquez de nouveau sur Ouvrir l'app agentes.chat. Le lien fonctionne une fois, pendant 10 minutes.",
+      "afterInstall": "Après l'installation, cliquez de nouveau sur Ouvrir l'app squadchat. Le lien fonctionne une fois, pendant 10 minutes.",
       "waiting": "En attente de l'app sur cet ordinateur…",
       "expired": "Ce lien a expiré.",
       "again": "Créer un nouveau lien",
@@ -16633,7 +16633,7 @@
       },
       "qrLabel": "QR code qui ouvre ces étapes sur le téléphone",
       "qrLine": "Faites-le depuis votre téléphone",
-      "qrCaption": "Scannez-le pour ouvrir ces étapes dans l'app agentes.chat, avec un bouton pour chaque réglage.",
+      "qrCaption": "Scannez-le pour ouvrir ces étapes dans l'app squadchat, avec un bouton pour chaque réglage.",
       "buildNumber": "Numéro de build",
       "buildNumberSub": "BP2A.250605.031",
       "usbRow": "Débogage USB",
@@ -16677,23 +16677,23 @@
       "qrCaption": "Il propose un réseau Wi-Fi nommé agentes-…, qui n'existe pas. Gardez le téléphone sur le Wi-Fi de l'ordinateur.",
       "fail": {
         "mdns_off": "{{computer}} ne peut pas chercher de téléphones sur le Wi-Fi. Mettez à jour Android platform-tools dessus, ou utilisez un câble.",
-        "mdns_offMac": "{{computer}} ne peut pas chercher de téléphones sur le Wi-Fi. Sur ce Mac, activez agentes.chat dans Réglages Système › Confidentialité et sécurité › Réseau local, puis réessayez.",
+        "mdns_offMac": "{{computer}} ne peut pas chercher de téléphones sur le Wi-Fi. Sur ce Mac, activez squadchat dans Réglages Système › Confidentialité et sécurité › Réseau local, puis réessayez.",
         "same_wifi": "Impossible de joindre le téléphone. Il n'est pas sur le même réseau que {{computer}}. Mettez-le sur le même Wi-Fi et réessayez.",
-        "same_wifiMac": "Impossible de joindre le téléphone. Mettez-le sur le même Wi-Fi que {{computer}}. Sur ce Mac, activez aussi agentes.chat dans Réglages Système › Confidentialité et sécurité › Réseau local.",
+        "same_wifiMac": "Impossible de joindre le téléphone. Mettez-le sur le même Wi-Fi que {{computer}}. Sur ce Mac, activez aussi squadchat dans Réglages Système › Confidentialité et sécurité › Réseau local.",
         "refused": "Le téléphone a arrêté l'association. Laissez son écran d'association ouvert et réessayez.",
         "refusedCode": "Le téléphone n'a pas accepté ce code. Vérifiez le code et l'adresse, puis associez à nouveau.",
         "timed_out": "Aucun téléphone associé en 2 minutes. Si l'appareil photo a scanné le code ou si le téléphone a quitté le Wi-Fi, remettez-le sur le même Wi-Fi que {{computer}} et scannez depuis Débogage sans fil.",
-        "timed_outMac": "Aucun téléphone associé en 2 minutes. Si l'appareil photo a scanné le code ou si le téléphone a quitté le Wi-Fi, remettez-le sur le même Wi-Fi que {{computer}} et scannez depuis Débogage sans fil. Sur ce Mac, activez aussi agentes.chat dans Réglages Système › Confidentialité et sécurité › Réseau local.",
+        "timed_outMac": "Aucun téléphone associé en 2 minutes. Si l'appareil photo a scanné le code ou si le téléphone a quitté le Wi-Fi, remettez-le sur le même Wi-Fi que {{computer}} et scannez depuis Débogage sans fil. Sur ce Mac, activez aussi squadchat dans Réglages Système › Confidentialité et sécurité › Réseau local.",
         "outdated": "L'association par Wi-Fi demande Android 14 ou plus récent avec la mise à jour de sécurité de mai 2026. Mettez à jour le téléphone, ou utilisez un câble.",
         "adb_missing": "{{computer}} n'a pas Android platform-tools. Installez-y Android Studio, puis réessayez.",
-        "update": "L'association par Wi-Fi demande un agentes.chat plus récent sur {{computer}}. Mettez-le à jour, puis réessayez.",
+        "update": "L'association par Wi-Fi demande un squadchat plus récent sur {{computer}}. Mettez-le à jour, puis réessayez.",
         "canceled": "L'association s'est arrêtée. Réessayez.",
         "failed": "L'association n'a pas fonctionné. Réessayez, ou utilisez un câble."
       }
     },
     "iphone": {
       "title": "Connecter un iPhone",
-      "lead": "Les iPhone se connectent via un Mac, où l'app agentes.chat s'occupe de la configuration.",
+      "lead": "Les iPhone se connectent via un Mac, où l'app squadchat s'occupe de la configuration.",
       "mac": "Mac",
       "noMac": "Les agents ne peuvent utiliser un iPhone que via un Mac, et aucun n'est encore connecté.",
       "noMacNote": "Pas de Mac ? Demandez à un collègue de connecter le sien.",
@@ -16732,9 +16732,9 @@
         "failedAny": "Impossible de corriger sur {{mac}}.",
         "stillCommandLineTools": "La correction a abouti, mais le Mac utilise encore les Command Line Tools. Réessayez, ou lancez ceci dans Terminal, il demande le mot de passe du Mac.",
         "stillLicense": "La correction a abouti, mais Xcode sur {{mac}} attend encore que sa licence soit acceptée. Réessayez, ou lancez ceci dans Terminal, il demande le mot de passe du Mac.",
-        "outdated": "Mettez à jour l'app agentes.chat sur {{mac}} pour corriger en un clic. Ou lancez ceci dans son Terminal, il demande le mot de passe du Mac.",
+        "outdated": "Mettez à jour l'app squadchat sur {{mac}} pour corriger en un clic. Ou lancez ceci dans son Terminal, il demande le mot de passe du Mac.",
         "follows": "Cette fenêtre continue toute seule quand le Mac a fini.",
-        "window": "agentes.chat veut mettre Xcode en service pour connecter des iPhone.",
+        "window": "squadchat veut mettre Xcode en service pour connecter des iPhone.",
         "ok": "OK"
       },
       "getXcode": "Obtenir Xcode",
@@ -16760,7 +16760,7 @@
         "openXcode": "Ouvrir Xcode",
         "opened": "Xcode s'est ouvert sur {{mac}}. Regardez à nouveau dans les Réglages de l'iPhone, puis fermez Xcode.",
         "unlock": "Vous l'avez activé et l'iPhone a redémarré ? Déverrouillez-le. L'alerte avec Activer n'apparaît qu'après.",
-        "outdated": "L'app agentes.chat sur {{mac}} n'est pas à jour. Mettez l'app à jour, ou lancez ceci dans le Terminal si vous l'avez installée par là."
+        "outdated": "L'app squadchat sur {{mac}} n'est pas à jour. Mettez l'app à jour, ou lancez ceci dans le Terminal si vous l'avez installée par là."
       },
       "uiAutomationText": "Dans Réglages › Développeur, après le redémarrage.",
       "helperText": "Créée et renouvelée par le Mac tous les 7 jours. Un Apple Account gratuit dans Xcode suffit.",
@@ -17097,7 +17097,7 @@
       "claude": {
         "lead": "claude.ai, Claude Desktop et téléphone : un seul connecteur fonctionne partout.",
         "step1": "Ouvrez Personnaliser › Connecteurs (Customize › Connectors) sur claude.ai ou Claude Desktop.",
-        "step2": "Cliquez sur + Ajouter, puis Ajouter un connecteur personnalisé, nommez-le agentes.chat, collez l'adresse et cliquez sur Continuer.",
+        "step2": "Cliquez sur + Ajouter, puis Ajouter un connecteur personnalisé, nommez-le squadchat, collez l'adresse et cliquez sur Continuer.",
         "step3": "Choisissez Se connecter maintenant, cliquez sur Ajouter et autorisez sur la page qui s'ouvre.",
         "phone": "Il apparaît sur votre téléphone une fois ajouté sur l'ordinateur.",
         "team": "Avec les abonnements Team et Enterprise, le propriétaire de l'organisation Claude ajoute le connecteur dans Paramètres de l'organisation › Connecteurs. Ensuite, chaque personne clique sur Connecter dans Personnaliser › Connecteurs.",
@@ -17132,9 +17132,9 @@
         "open": "Ouvrez {{place}}.",
         "click": "Cliquez sur {{button}}.",
         "clickThen": "Cliquez sur {{button}}, puis sur {{next}}.",
-        "name": "Nommez-le agentes.chat et collez l'adresse.",
-        "nameDescribe": "Nommez-le agentes.chat et ajoutez une description.",
-        "nameConnect": "Nommez-le agentes.chat et cliquez sur {{button}}.",
+        "name": "Nommez-le squadchat et collez l'adresse.",
+        "nameDescribe": "Nommez-le squadchat et ajoutez une description.",
+        "nameConnect": "Nommez-le squadchat et cliquez sur {{button}}.",
         "paste": "Collez l'adresse.",
         "pasteIn": "Collez l'adresse dans {{field}}.",
         "choosePaste": "Choisissez {{option}} et collez l'adresse.",
@@ -17155,8 +17155,8 @@
         "reload": "Puis tapez <code>{{command}}</code> dans la discussion.",
         "loginRun": "Pour vous connecter, exécutez <code>{{command}}</code>.",
         "loginType": "Pour vous connecter, tapez <code>{{command}}</code> dans l'app.",
-        "signIn": "Connectez-vous avec votre compte agentes.chat sur la page qui s'ouvre.",
-        "signInManage": "Connectez-vous avec votre compte agentes.chat sur la page qui s'ouvre, et choisissez {{access}}.",
+        "signIn": "Connectez-vous avec votre compte squadchat sur la page qui s'ouvre.",
+        "signInManage": "Connectez-vous avec votre compte squadchat sur la page qui s'ouvre, et choisissez {{access}}.",
         "mention": "Dans la discussion, tapez <code>@</code> et choisissez <code>{{name}}</code>.",
         "signInFirst": "L'app vous demande de vous connecter la première fois que vous l'utilisez.",
         "token": "Créez un jeton personnel et mettez-le à la place de {{placeholder}}.",
@@ -17209,7 +17209,7 @@
       "canRead": "Lire les réponses et ce que font les agents.",
       "canManage": "Créer et modifier des agents, routines et compétences en votre nom. Vous êtes averti de ce qu'elle crée.",
       "never": "Jamais",
-      "neverApprove": "Approuver les actions des agents. Les approbations restent aux personnes dans agentes.chat.",
+      "neverApprove": "Approuver les actions des agents. Les approbations restent aux personnes dans squadchat.",
       "neverSettings": "Modifier les paramètres, les membres ou les permissions.",
       "neverHidden": "Voir ce que vous ne pouvez pas voir.",
       "loopbackWarning": "N'importe quel programme sur cet ordinateur peut recevoir cet accès. Continuez seulement si vous venez de lancer ceci dans Claude Code ou une autre app sur cet ordinateur.",
@@ -17223,7 +17223,7 @@
       "done": "Vous pouvez retourner sur {{app}}.",
       "cancelledTitle": "Connexion annulée",
       "cancelled": "Rien n'a été partagé.",
-      "goHome": "Aller sur agentes.chat",
+      "goHome": "Aller sur squadchat",
       "language": "Langue",
       "error": {
         "app_desconhecido": "Nous ne reconnaissons pas cette app",
@@ -17298,7 +17298,7 @@
       "sentence": "{{who}} a lu {{what}}",
       "who": {
         "server": "La personne qui gère ce serveur",
-        "cloud": "Le support agentes.chat"
+        "cloud": "Le support squadchat"
       },
       "what": {
         "message": "un message",
@@ -17492,7 +17492,7 @@
     "section": {
       "account": "Votre compte",
       "notifications": "Notifications",
-      "download": "Apps agentes.chat",
+      "download": "Apps squadchat",
       "general": "Général",
       "right_hand": "Bras droit",
       "members": "Membres",
@@ -17513,7 +17513,7 @@
       "voice": "Voix",
       "apps": "Applications d'IA",
       "approvals": "Approbations",
-      "about": "À propos d’agentes.chat",
+      "about": "À propos de squadchat",
       "generalPersonal": "À propos de vous",
       "keysPersonal": "IA et applications",
       "membersPersonal": "Personnes"
@@ -17700,11 +17700,11 @@
     },
     "telemetry": {
       "title": "Statistiques d'utilisation",
-      "label": "Envoyer des statistiques d'utilisation anonymes à agentes.chat",
+      "label": "Envoyer des statistiques d'utilisation anonymes à squadchat",
       "help": "Des chiffres comme le nombre de personnes, d'agents, la taille des machines, les jetons d'IA utilisés et la quantité de données envoyées et reçues par les navigateurs des agents. Jamais de messages, fichiers, noms ou sites.",
       "envOff": "Désactivé dans les paramètres de ce serveur (TELEMETRY=off).",
-      "envOffDesktop": "Désactivé dans l'app agentes.chat sur l'ordinateur de ce serveur (Préférences › Serveurs).",
-      "envOffHere": "Désactivé dans l'app agentes.chat de cet ordinateur.",
+      "envOffDesktop": "Désactivé dans l'app squadchat sur l'ordinateur de ce serveur (Préférences › Serveurs).",
+      "envOffHere": "Désactivé dans l'app squadchat de cet ordinateur.",
       "see": "Voir ce qui est envoyé",
       "dialogTitle": "Ce qui est envoyé",
       "dialogText": "Une fois par jour. Voici exactement le prochain rapport."
@@ -18408,7 +18408,7 @@
         "comment": "{{who}} a commenté la PR #{{number}} ({{repo}}) sur GitHub",
         "commentIssue": "{{who}} a commenté l'issue #{{number}} ({{repo}}) sur GitHub",
         "commentDiscussion": "{{who}} a commenté la discussion #{{number}} ({{repo}}) sur GitHub",
-        "opened": "{{who}} a appelé l'app agentes.chat dans #{{number}} ({{repo}}) sur GitHub",
+        "opened": "{{who}} a appelé l'app squadchat dans #{{number}} ({{repo}}) sur GitHub",
         "reviewed": "{{who}} a relu la PR #{{number}} ({{repo}}) sur GitHub",
         "approved": "{{who}} a approuvé la PR #{{number}} ({{repo}}) sur GitHub",
         "changes": "{{who}} a demandé des modifications sur la PR #{{number}} ({{repo}}) sur GitHub",
@@ -18843,14 +18843,14 @@
       "no_ai_plans_not_yours": "Le {{plan}} d'ici est seulement à {{owner}}. Connectez le vôtre et je réponds.",
       "no_ai_plan_unattended": "Je n'ai pas répondu : la demande ne venait pas d'une personne, et le forfait du workspace ne répond qu'à son propriétaire.",
       "no_ai_runner_outdated": "Je ne peux pas répondre pour l'instant : le programme sur l'ordinateur de mon abonnement doit être mis à jour.",
-      "no_ai_plan_tools": "Je me suis arrêté avant de répondre : l'IA de mon abonnement sur cet ordinateur n'est pas restée dans les outils d'agentes.chat.",
+      "no_ai_plan_tools": "Je me suis arrêté avant de répondre : l'IA de mon abonnement sur cet ordinateur n'est pas restée dans les outils de squadchat.",
       "no_ai_model_limit": "Je ne peux pas répondre maintenant : {{model}} a atteint sa propre limite sur mon abonnement.",
       "no_ai_model_region": "Je ne peux pas répondre : {{model}} a besoin de la région Global activée dans OpenCode (Settings › Privacy).",
       "no_ai_model_off": "Je ne peux pas répondre : OpenCode a refusé {{model}} avec ma clé. Activez le modèle ou le compte dans OpenCode, ou changez mon modèle.",
       "no_ai_plan_inactive": "Je ne peux pas répondre : OpenCode Go n'est pas actif sur le compte OpenCode de ma clé. Vérifiez l'abonnement Go dans OpenCode, ou connectez une clé du compte qui a Go.",
       "no_ai_commands_off": "Je ne peux pas répondre maintenant : les commandes sont désactivées sur l'ordinateur de mon abonnement.",
       "no_ai_cli_missing": "Je ne peux pas encore répondre : le programme de mon IA n'est pas installé sur mon ordinateur.",
-      "no_ai_plan_hold": "J'ai gardé votre message. Je répondrai ici dès que le workspace aura un abonnement agentes.chat et une IA connectée.",
+      "no_ai_plan_hold": "J'ai gardé votre message. Je répondrai ici dès que le workspace aura un abonnement squadchat et une IA connectée.",
       "no_ai_no_computer": "Je ne peux pas encore répondre : mon IA a besoin d'un ordinateur et je n'en ai aucun.",
       "redacted": "[supprimé : cela ressemblait à une connexion ou à une clé]",
       "action_connect_ai": "Connecter une IA",
@@ -19359,7 +19359,7 @@
     "machine": {
       "ready": "Prêt",
       "off": "Désactivé",
-      "offHelp": "La personne qui a connecté l'ordinateur l'active ici ou dans l'app agentes.chat de cet ordinateur : Préférences → Outils.",
+      "offHelp": "La personne qui a connecté l'ordinateur l'active ici ou dans l'app squadchat de cet ordinateur : Préférences → Outils.",
       "needsCommand": "Nécessite une commande",
       "notReady": "Pas encore prêt",
       "turnOff": "Désactiver",
@@ -19641,7 +19641,7 @@
     "paused": "Les agents de cet espace de travail sont en pause pour vérification.",
     "suspended": "Cet espace de travail est indisponible pour le moment.",
     "createRefused": "Vous ne pouvez pas créer d'espace de travail pour le moment.",
-    "createUnpaid": "Vous avez déjà un espace de travail en attente d'un abonnement agentes.chat. Choisissez son abonnement avant d'en créer un autre.",
+    "createUnpaid": "Vous avez déjà un espace de travail en attente d'un abonnement squadchat. Choisissez son abonnement avant d'en créer un autre.",
     "createUnpaidOpen": "Ouvrir {{name}}",
     "createInactive": "Vous avez déjà un espace de travail qui n'est pas encore actif, vous ne pouvez donc pas en créer un autre pour le moment.",
     "agentPaused": "Cet agent est en pause pour le moment.",
@@ -19662,25 +19662,25 @@
       "active": "L'espace de travail fonctionne de nouveau",
       "agentHold": "{{name}} est en pause",
       "billing": {
-        "payment": "L'espace de travail a besoin d'un abonnement agentes.chat",
-        "unpaid": "Le paiement de l'abonnement agentes.chat n'est pas passé",
-        "ended": "L'abonnement agentes.chat de l'espace de travail a pris fin"
+        "payment": "L'espace de travail a besoin d'un abonnement squadchat",
+        "unpaid": "Le paiement de l'abonnement squadchat n'est pas passé",
+        "ended": "L'abonnement squadchat de l'espace de travail a pris fin"
       }
     },
     "billing": {
-      "payment": "Cet espace de travail n'a pas encore d'abonnement agentes.chat. Ses agents se mettront au travail dès qu'il en aura un.",
-      "unpaid": "Le paiement de l'abonnement agentes.chat de cet espace de travail n'est pas passé, et ses agents se sont arrêtés.",
-      "ended": "L'abonnement agentes.chat de cet espace de travail a pris fin, et ses agents se sont arrêtés. Ses conversations et ses fichiers restent là pour être lus et téléchargés.",
-      "sub": "Vous pouvez toujours lire et écrire ici. Les agents reviennent dès que l'abonnement agentes.chat est en règle.",
+      "payment": "Cet espace de travail n'a pas encore d'abonnement squadchat. Ses agents se mettront au travail dès qu'il en aura un.",
+      "unpaid": "Le paiement de l'abonnement squadchat de cet espace de travail n'est pas passé, et ses agents se sont arrêtés.",
+      "ended": "L'abonnement squadchat de cet espace de travail a pris fin, et ses agents se sont arrêtés. Ses conversations et ses fichiers restent là pour être lus et téléchargés.",
+      "sub": "Vous pouvez toujours lire et écrire ici. Les agents reviennent dès que l'abonnement squadchat est en règle.",
       "cta": {
-        "payment": "Voir les abonnements agentes.chat",
+        "payment": "Voir les abonnements squadchat",
         "unpaid": "Mettre à jour le paiement",
         "ended": "Se réabonner"
       },
       "askAdmin": "La personne qui gère cet espace de travail peut régler cela.",
-      "paid": "Paiement reçu. L'abonnement agentes.chat démarre dans un instant.",
-      "teamReady": "Votre équipe est prête. Il lui manque un abonnement agentes.chat pour démarrer.",
-      "invites": "Les invitations s'ouvrent avec l'abonnement agentes.chat."
+      "paid": "Paiement reçu. L'abonnement squadchat démarre dans un instant.",
+      "teamReady": "Votre équipe est prête. Il lui manque un abonnement squadchat pour démarrer.",
+      "invites": "Les invitations s'ouvrent avec l'abonnement squadchat."
     },
     "cloud": {
       "review": "En pause pour une vérification de sécurité, jusqu'à ce que notre équipe l'examine. Nos contrôles automatiques ont détecté une activité qui pourrait enfreindre nos Conditions (section 5). Pour contester, écrivez à {{email}}.",
@@ -19817,7 +19817,7 @@
     "open": "Ouvrir l'abonnement et la facturation",
     "opening": "Ouverture…",
     "failed": "Impossible de l'ouvrir pour le moment. Réessayez dans un instant.",
-    "adminsOnly": "Seuls les propriétaires et admins de l'espace de travail gèrent son abonnement agentes.chat.",
+    "adminsOnly": "Seuls les propriétaires et admins de l'espace de travail gèrent son abonnement squadchat.",
     "seeOptions": "Voir les options",
     "people": "Personnes",
     "files": "Fichiers",
@@ -19835,8 +19835,8 @@
   "limits": {
     "members": {
       "full": "Cet espace de travail compte {{members}} personnes sur {{limit}}.",
-      "fullOne": "L'abonnement agentes.chat de cet espace de travail est prévu pour 1 personne.",
-      "fullAdmin": "Pour faire venir plus de monde, consultez les options de l'abonnement agentes.chat.",
+      "fullOne": "L'abonnement squadchat de cet espace de travail est prévu pour 1 personne.",
+      "fullAdmin": "Pour faire venir plus de monde, consultez les options de l'abonnement squadchat.",
       "fullMember": "Demandez à la personne qui gère l'espace de travail de faire de la place.",
       "fullAddSeat": "Toutes les places payées sont prises. Ajoutez une place dans Abonnement et facturation.",
       "fullTop": "Cet abonnement ne peut pas accueillir plus de personnes. Changez d'abonnement dans Abonnement et facturation.",
@@ -19852,7 +19852,7 @@
       "meter": "Vous avez utilisé {{used}} sur {{limit}}.",
       "near": "Vous avez utilisé {{used}} sur {{limit}}. Les envois s'arrêtent à la limite, et rien n'est supprimé.",
       "full": "Envois en pause à {{limit}}. Rien n'a été supprimé.",
-      "fullAdmin": "Changez l'abonnement agentes.chat, supprimez les fichiers dont vous ne vous servez plus ou connectez votre propre bucket.",
+      "fullAdmin": "Changez l'abonnement squadchat, supprimez les fichiers dont vous ne vous servez plus ou connectez votre propre bucket.",
       "dailyFull": "Les envois du jour ont atteint {{limit}}. Vous pourrez envoyer de nouveau dans quelques heures.",
       "connectBucket": "Connecter un bucket"
     }
@@ -21149,7 +21149,7 @@
     },
     "action": {
       "signIn": "Se connecter",
-      "open": "Ouvrir agentes.chat",
+      "open": "Ouvrir squadchat",
       "latest": "Ouvrir la version la plus récente",
       "file": "Ouvrir le fichier",
       "retry": "Réessayer"
@@ -21386,7 +21386,7 @@
     "beta": {
       "word": "BETA",
       "title": "Vous arrivez tôt. Tant mieux.",
-      "text": "agentes.chat est en bêta : vous pouvez déjà vraiment travailler avec, et nous le peaufinons encore.",
+      "text": "squadchat est en bêta : vous pouvez déjà vraiment travailler avec, et nous le peaufinons encore.",
       "weekly": {
         "title": "Il s'améliore chaque semaine",
         "text": "Les nouveautés et les corrections sortent en continu."
@@ -21422,7 +21422,7 @@
     "mark": "Beta",
     "open": "Envoyer un retour",
     "ask": "Qu'est-ce qui a manqué, cassé ou gêné ?",
-    "goesCloud": "Ce que vous écrivez part par e-mail à l'équipe d'agentes.chat.",
+    "goesCloud": "Ce que vous écrivez part par e-mail à l'équipe de squadchat.",
     "goesServer": "Ce que vous écrivez part par e-mail à la personne qui gère ce serveur.",
     "placeholder": "Écrivez-le à votre façon",
     "report": "Signaler un problème ici",
@@ -21448,14 +21448,14 @@
     "offer": {
       "group": "Rapport sur l'application",
       "ready": "<b>Rapport prêt</b> : {{summary}}",
-      "goesCloud": "Part en votre nom à l'équipe d'agentes.chat",
+      "goesCloud": "Part en votre nom à l'équipe de squadchat",
       "goesServer": "Part en votre nom à la personne qui gère ce serveur",
       "see": "Voir le rapport",
       "hide": "Fermer le rapport",
       "send": "Envoyer",
       "notNow": "Pas maintenant",
       "answer": "La réponse arrive dans votre boîte e-mail.",
-      "sentCloud": "<b>Rapport envoyé</b> à l'équipe d'agentes.chat",
+      "sentCloud": "<b>Rapport envoyé</b> à l'équipe de squadchat",
       "sentServer": "<b>Rapport envoyé</b> à la personne qui gère ce serveur",
       "sentAuto": "<b>Rapport envoyé sans demander</b> : {{summary}}",
       "view": "Voir",

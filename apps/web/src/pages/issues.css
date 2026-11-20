@@ -1046,7 +1046,7 @@ html:not([data-pointer]) .issue-list__row:focus-visible {
 .issue-table__sort {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--space-1);
   min-width: 0;
   padding: 0;
   border: 0;

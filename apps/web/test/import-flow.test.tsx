@@ -201,7 +201,7 @@ describe("Configurações → Importar e exportar", () => {
     await click(within(card).getByRole("button", { name: "Baixar o arquivo" }));
     expect(saved).toHaveLength(1);
     expect(saved[0]?.[0]).toBe(`/api/app/organizations/${ORG_ID}/export`);
-    expect(saved[0]?.[1]).toMatch(/^agentes-chat-\d{4}-\d{2}-\d{2}\.json$/);
+    expect(saved[0]?.[1]).toMatch(/^squadchat-\d{4}-\d{2}-\d{2}\.json$/);
   });
 
   test("members don't see it", async () => {
@@ -233,7 +233,7 @@ describe("Configurações → Importar e exportar", () => {
         ["Hermes Agent", "/brands/hermes.svg"],
         ["OpenClaw", "/brands/openclaw.svg"],
         ["Paperclip", "/brands/paperclip.svg"],
-        ["agentes.chat", "/favicon.svg"],
+        ["squadchat", "/favicon.svg"],
         // It names many apps: no one maker's logo fits.
         ["Outro app", null],
       ]);
@@ -249,7 +249,7 @@ describe("Configurações → Importar e exportar", () => {
         ["Hermes Agent", "/brands/hermes-dark.svg"],
         ["OpenClaw", "/brands/openclaw.svg"],
         ["Paperclip", "/brands/paperclip-dark.svg"],
-        ["agentes.chat", "/favicon.svg"],
+        ["squadchat", "/favicon.svg"],
         ["Outro app", null],
       ]);
     } finally {
@@ -300,7 +300,7 @@ describe("Configurações → Importar e exportar", () => {
     expect(steps()).toEqual([
       "Na conversa com o seu bot, mande:",
       "Clique em Add it e depois em Authorize.",
-      "Entre com sua conta do agentes.chat na página que abrir e escolha Criar e editar agentes, rotinas e skills.",
+      "Entre com sua conta do squadchat na página que abrir e escolha Criar e editar agentes, rotinas e skills.",
       "Na conversa, digite @ e escolha agentes.",
       "Cole este pedido no app:",
     ]);
@@ -308,7 +308,7 @@ describe("Configurações → Importar e exportar", () => {
     expect([...sheet.querySelectorAll(".machine-command__code")].map((c) => c.textContent)).toEqual([
       `Add a custom MCP server called agentes at ${SERVER_URL}`,
     ]);
-    const prompt = `Use o servidor MCP do agentes.chat que você acabou de conectar (${SERVER_URL}) para trazer o que você tem para o agentes.chat. Primeiro chame import_summary para ver o que já existe lá e não duplicar nada. Depois, para cada agente, instrução, skill e rotina que você tem, crie o equivalente com create_agent, create_skill e create_routine, e guarde o que cada agente deve lembrar com add_memory.`;
+    const prompt = `Use o servidor MCP do squadchat que você acabou de conectar (${SERVER_URL}) para trazer o que você tem para o squadchat. Primeiro chame import_summary para ver o que já existe lá e não duplicar nada. Depois, para cada agente, instrução, skill e rotina que você tem, crie o equivalente com create_agent, create_skill e create_routine, e guarde o que cada agente deve lembrar com add_memory.`;
     expect((within(sheet).getByLabelText("Pedido para o seu app de IA") as HTMLTextAreaElement).value).toBe(prompt);
     await click(within(sheet).getByRole("button", { name: "Copiar o pedido" }), 2);
     expect(writes).toEqual([prompt]);
@@ -357,7 +357,7 @@ describe("Configurações → Importar e exportar", () => {
     expect(within(sheet).getByText(SERVER_URL)).toBeTruthy();
     expect(sheet.textContent).toContain("Não dá para adicionar pelo app do celular.");
     expect(sheet.textContent).toContain(
-      "Entre com sua conta do agentes.chat na página que abrir e escolha Criar e editar agentes, rotinas e skills.",
+      "Entre com sua conta do squadchat na página que abrir e escolha Criar e editar agentes, rotinas e skills.",
     );
   });
 
@@ -527,7 +527,7 @@ describe("Configurações → Importar e exportar", () => {
     const state = seedState();
     state.me?.organizations.push({ id: "org-north", name: "Estúdio Norte", role: "owner", showActivity: true });
     await go(state);
-    await click(button(/^agentes\.chat$/), 4);
+    await click(button(/^squadchat$/), 4);
     const sheet = sheetOf("Trazer de outro workspace");
     expect([...sheet.querySelectorAll(".imp-do .ac-mediarow__head")].map((b) => b.textContent)).toEqual([
       "Baixe o arquivo do outro workspace",
@@ -840,7 +840,7 @@ describe("Configurações → Importar e exportar", () => {
     // A Grok Bot reply pasted in the file sheet: from Grok Bot, by its logo.
     await pasteReply(exportReply("grok-bot", "Minhas automações"));
     expect(text()).toContain("Veio do Grok Bot");
-    expect(document.querySelector(".imp-head .imp-mark img")?.getAttribute("src")).toBe("/brands/grok-bot.svg");
+    expect(document.querySelector(".imp-head .imp-mark img")?.getAttribute("src")).toBe("/brands/grok-bot-dark.svg");
     await click(button("Trocar arquivo"), 2);
 
     // The file a dot makes, dropped on the page.
@@ -1138,7 +1138,7 @@ describe("Configurações → Importar e exportar", () => {
       await click(within(sheetOf("Trazer o time do OpenBot")).getByRole("button", { name: /^Com um comando/ }), 4);
       const sheet = sheetOf("Com um comando");
       const request = field(sheet, "Pedido para o assistente de código").value;
-      expect(request).toContain("Move my OpenBot agents to agentes.chat.");
+      expect(request).toContain("Move my OpenBot agents to squadchat.");
       expect(request).toContain("Ask me where to save the export file.");
       expect(request).toContain('/migrate.sh | sh -s -- --from openbot --out "<folder>" --json');
       expect(request).toContain("agentes-chat-import-openbot.zip");

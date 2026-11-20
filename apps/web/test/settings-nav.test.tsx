@@ -137,7 +137,7 @@ describe("finding the settings", () => {
     if (state.me?.organizations[0]) state.me.organizations[0].role = "member";
     state.instance = { version: "2026.11.06.1", sourceUrl: "https://git.example.com/fork" };
     await go("settings/about", state);
-    expect(screen().getAllByRole("heading", { level: 2, name: "Sobre o agentes.chat" }).length).toBeGreaterThan(0);
+    expect(screen().getAllByRole("heading", { level: 2, name: "Sobre o squadchat" }).length).toBeGreaterThan(0);
     const site = screen().getByRole("link", { name: "agentes.chat" });
     expect(site.closest("h2")?.textContent).toBe("Baseado no agentes.chat da AGENTESCHAT, LLC");
     expect(site.getAttribute("href")).toBe("https://agentes.chat");
@@ -159,16 +159,16 @@ describe("finding the settings", () => {
     const inPalette = async () => {
       await act(async () => fireEvent.keyDown(window, { key: "k", metaKey: true }));
       await type(screen().getByRole("combobox", { name: "Ir para, ou pedir a um agente" }), "sobre");
-      return screen().queryByRole("option", { name: /Sobre o agentes\.chat/ }) !== null;
+      return screen().queryByRole("option", { name: /Sobre o squadchat/ }) !== null;
     };
     await go("settings/about", seedState({ authConfig: { cloud: false } }));
-    expect(nav().getByRole("link", { name: "Sobre o agentes.chat" }).getAttribute("aria-current")).toBe("page");
+    expect(nav().getByRole("link", { name: "Sobre o squadchat" }).getAttribute("aria-current")).toBe("page");
     expect(license()).not.toBeNull();
     expect(await inPalette()).toBe(true);
     cleanup();
 
     await go("settings/about", seedState({ authConfig: { cloud: true } }));
-    expect(nav().queryByRole("link", { name: "Sobre o agentes.chat" })).toBeNull();
+    expect(nav().queryByRole("link", { name: "Sobre o squadchat" })).toBeNull();
     expect(screen().getByRole("heading", { level: 2, name: "Sua conta" })).toBeTruthy();
     // The Cloud has no Sobre for anyone: nothing to say about the person's role.
     expect(screen().queryByText(/não abre com o seu cargo/)).toBeNull();

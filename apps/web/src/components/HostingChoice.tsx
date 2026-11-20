@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import "./hosting.css";
 
 /** What a server of one's own looks like typed: the example in the address field. */
-const EXAMPLE_HOST = "agentes.example.com";
+const EXAMPLE_HOST = "squadchat.example.com";
 
 /** The chosen option's lines: what it gives (the Cloud) or what it asks of you (your own server). */
 function Points({ hosting }: { hosting: Hosting }) {

@@ -1,86 +1,86 @@
-/* agentes — design system 2026-10 (spec: docs/design/refresh-2026-10.md) */
+/* squadchat — design system "turno da noite" / "turno do dia" */
 :root,
 [data-theme="light"] {
-  /* Light is near white: white work area, paper sidebar; gray only in fields' tracks and chosen states. */
-  --bg: #fbfbfa;
+  /* Light ("Turno do Dia"): cool indigo-tinted paper sidebar, crisp white work area. */
+  --bg: #f6f6fb;
   --raised: #ffffff;
   --raised-2: #ffffff;
-  --sunken: #f3f3f0;
-  /* The app shell: the sidebar on the sky's paper (the faintest cool tint) and the work area beside it. */
-  --side: #f6f9fd;
+  --sunken: #e9e8f4;
+  /* The app shell: the sidebar on twilight-mist paper and the work area beside it. */
+  --side: #efeff8;
   --pane: #ffffff;
   /* A sidebar row under the pointer, and the open one: one plate each, a step of ink into the paper. */
   --side-hover: color-mix(in srgb, var(--ink) 5%, var(--side));
   --side-chosen: color-mix(in srgb, var(--ink) 10%, var(--side));
   --glass: rgba(255, 255, 255, 0.88);
-  --glass-solid: #fbfbf9;
-  --line: rgba(23, 23, 22, 0.07);
-  --line2: rgba(23, 23, 22, 0.12);
-  --line-strong: #82827d;
-  --ink: #151514;
-  --ink2: #2a2a28;
-  --muted: #5c5c58;
-  --faint: #6f6f6a;
-  --agent: #0063d1;
-  --agent2: #3d8bff;
-  --agent-soft: #e3eefd;
+  --glass-solid: #f6f6fb;
+  --line: rgba(14, 12, 42, 0.08);
+  --line2: rgba(14, 12, 42, 0.14);
+  --line-strong: #6f6c91;
+  --ink: #12102b;
+  --ink2: #2b284d;
+  --muted: #535076;
+  --faint: #635f87;
+  --agent: #b34d00;
+  --agent2: #e07b39;
+  --agent-soft: #fff0e2;
   --on-agent: #ffffff;
   --ok: #1f7a45;
-  --warn: #9a5b00;
+  --warn: #8a6200;
   --warn-soft: #fbeed5;
   --on-warn: #ffffff;
   --danger: #b42a20;
   --info: #0a6f9e;
-  --plate: rgba(127, 127, 127, 0.1);
-  --plate-soft: rgba(127, 127, 127, 0.06);
-  --e1: 0 1px 1px rgba(23, 23, 22, 0.04), 0 2px 4px -1px rgba(23, 23, 22, 0.05), 0 0 0 1px var(--line);
-  --e2: 0 1px 1px rgba(23, 23, 22, 0.04), 0 6px 16px -4px rgba(23, 23, 22, 0.1), 0 0 0 1px var(--line);
-  --e3: 0 2px 4px rgba(23, 23, 22, 0.04), 0 24px 56px -16px rgba(23, 23, 22, 0.3), 0 0 0 1px var(--line2);
+  --plate: rgba(18, 16, 43, 0.08);
+  --plate-soft: rgba(18, 16, 43, 0.045);
+  --e1: 0 1px 1px rgba(7, 6, 26, 0.04), 0 2px 4px -1px rgba(7, 6, 26, 0.05), 0 0 0 1px var(--line);
+  --e2: 0 1px 1px rgba(7, 6, 26, 0.04), 0 6px 16px -4px rgba(7, 6, 26, 0.1), 0 0 0 1px var(--line);
+  --e3: 0 2px 4px rgba(7, 6, 26, 0.04), 0 24px 56px -16px rgba(7, 6, 26, 0.3), 0 0 0 1px var(--line2);
   --top: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --scrim: rgba(10, 10, 10, 0.32);
+  --scrim: rgba(7, 6, 26, 0.36);
   /* Chosen: held down into the page like a pressed key (--chosen-shadow below). */
   --chosen-bg: var(--sunken);
   --chosen-press: inset 0 2px 5px rgba(0, 0, 0, 0.16), inset 0 1px 1.5px rgba(0, 0, 0, 0.12);
 }
 [data-theme="dark"] {
-  --bg: #0f0f0e;
-  --raised: #1c1c1b;
-  --raised-2: #242423;
-  --sunken: #0a0a09;
+  --bg: #0e0c2a;
+  --raised: #1a1940;
+  --raised-2: #22204f;
+  --sunken: #07061a;
   /* Three columns, two steps: both sidebars a step under the chat (Discord's split). */
-  --side: #0b0d11;
-  --pane: #181817;
+  --side: #0a0920;
+  --pane: #13122f;
   --side-hover: color-mix(in srgb, var(--ink) 6%, var(--side));
   --side-chosen: color-mix(in srgb, var(--ink) 14%, var(--side));
-  --glass: rgba(30, 30, 28, 0.86);
-  --glass-solid: #1e1e1c;
-  --line: rgba(255, 255, 255, 0.1);
-  --line2: rgba(255, 255, 255, 0.15);
-  --line-strong: #71716c;
-  --ink: #efefec;
-  --ink2: #d6d6d2;
-  --muted: #a3a39e;
-  --faint: #8f8f89;
-  --agent: #5aa8ff;
-  --agent2: #8cc3ff;
-  --agent-soft: #11253f;
-  --on-agent: #00203f;
-  --ok: #5fc48a;
-  --warn: #e0a84a;
-  --warn-soft: #33260e;
+  --glass: rgba(14, 12, 42, 0.84);
+  --glass-solid: #1a1940;
+  --line: rgba(214, 210, 255, 0.1);
+  --line2: rgba(214, 210, 255, 0.18);
+  --line-strong: #7d79a8;
+  --ink: #eeecfa;
+  --ink2: #c9c6e4;
+  --muted: #a09dc4;
+  --faint: #908cb6;
+  --agent: #ffb46a;
+  --agent2: #ffd09e;
+  --agent-soft: #2b1c1c;
+  --on-agent: #2a1300;
+  --ok: #7ee2b0;
+  --warn: #f0c954;
+  --warn-soft: #2b2214;
   --on-warn: #2a1c00;
-  --danger: #f08a80;
+  --danger: #ff9a9a;
   --info: #5cc4ea;
-  --plate: rgba(127, 127, 127, 0.14);
-  --plate-soft: rgba(127, 127, 127, 0.08);
+  --plate: rgba(214, 210, 255, 0.12);
+  --plate-soft: rgba(214, 210, 255, 0.07);
   --e1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line);
   --e2: 0 8px 20px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--line);
   --e3: 0 28px 64px -16px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--line2);
-  --top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --scrim: rgba(0, 0, 0, 0.5);
+  --top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --scrim: rgba(7, 6, 26, 0.6);
   /* A black press shows only on a face it can darken: dark's chosen face sits lighter than a card, as light as the
      faint words on it allow (4.5:1), under light's shadow made deeper. */
-  --chosen-bg: #282827;
+  --chosen-bg: #252354;
   --chosen-press: inset 0 2px 5px rgba(0, 0, 0, 0.9), inset 0 1px 1.5px rgba(0, 0, 0, 0.7);
 }
 :root,
@@ -176,6 +176,7 @@
   --touch-target: 44px;
   --font-sans: Onest, "Segoe UI", system-ui, sans-serif;
   --font-mono: "Martian Mono", ui-monospace, Menlo, monospace;
+  --font-brand: "Instrument Serif", Georgia, serif;
   /*
    * Where a line's capitals sit, in x-heights (`ex` follows font-size-adjust): their middle --cap-mid above the line
    * box's middle, their top --cap-top above it. Measured for Source Sans 3 (0.037ex, 0.716ex) and Onest (0.040ex,

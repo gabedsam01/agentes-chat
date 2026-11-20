@@ -42,7 +42,7 @@ describe("computer portraits", () => {
     const sky = (state: "online" | "offline") => {
       const { ctx, cells } = fakeCtx();
       drawComputer(ctx, "mac", state);
-      return [...cells.values()].some((c) => c === "#0063d1" || c === "#2f80e0");
+      return [...cells.values()].some((c) => c === "#331d4f" || c === "#652b55");
     };
     expect(sky("online")).toBe(true);
     expect(sky("offline")).toBe(false);

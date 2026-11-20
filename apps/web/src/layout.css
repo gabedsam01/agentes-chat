@@ -7886,10 +7886,10 @@ html:not([data-pointer]) .run-continue:focus-visible {
  * The sky is the agents' world: the same blue in both themes, ink on it is
  * the deep sky ink. It shows only where the subject is the agents. */
 :root {
-  --sky-ink: #04203f;
-  --sky-ink2: rgba(4, 32, 63, 0.78);
-  --sky-glass: rgba(241, 248, 255, 0.74);
-  --sky-line: rgba(4, 32, 63, 0.12);
+  --sky-ink: #12102b;
+  --sky-ink2: rgba(18, 16, 43, 0.78);
+  --sky-glass: rgba(255, 246, 236, 0.78);
+  --sky-line: rgba(18, 16, 43, 0.14);
 }
 /* A label on a sky (a name, a state): the kit's chip in the sky's glass and ink, readable on every tone of the sky's
    dither in both themes. */
@@ -7909,7 +7909,7 @@ html:not([data-pointer]) .run-continue:focus-visible {
   margin: 12px 16px 0;
   border-radius: 20px;
   overflow: hidden;
-  background: #2b74e6;
+  background: #1a1440;
   color: var(--sky-ink);
 }
 .sky-welcome__text {
@@ -7996,7 +7996,7 @@ html:not([data-pointer]) .sky-welcome__close:focus-visible {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: #0a3f9c;
+  background: #0e0c2a;
 }
 .sky-boot__in {
   position: absolute;
@@ -8006,9 +8006,9 @@ html:not([data-pointer]) .sky-welcome__close:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #fff;
+  color: #eeecfa;
   font-weight: 650;
-  text-shadow: 0 1px 6px rgba(4, 32, 63, 0.6);
+  text-shadow: 0 1px 6px rgba(7, 6, 26, 0.65);
 }
 
 /* Sidebar: the workspace's header, working agents, the horizon */

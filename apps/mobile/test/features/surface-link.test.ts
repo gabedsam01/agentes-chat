@@ -154,7 +154,7 @@ describe("the sheet", () => {
     expect(src.slice(consent, confirm)).not.toMatch(/<Text/);
     const en = await translator("en");
     expect(en("surface.link.consent", { assistant: "Lodi", surface: SURFACE })).toBe(
-      "Lodi by agentes.chat may message you on Example Chat about your workspaces, and call you only when something is urgent and you allow it. Write stop to turn this off.",
+      "Lodi by squadchat may message you on Example Chat about your workspaces, and call you only when something is urgent and you allow it. Write stop to turn this off.",
     );
     const pt = await translator("pt-BR");
     expect(pt("surface.link.consent", { assistant: "Lodi", surface: SURFACE })).toContain("Escreva parar");

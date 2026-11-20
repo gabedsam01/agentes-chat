@@ -43,7 +43,7 @@ export function DesktopHandoverPage({ to }: { to?: string }) {
     <AuthShell>
       <div className="auth__form">
         <header className="auth__ask">
-          <AgentAvatar name="agentes.chat" size="lg" state={failed ? undefined : "writing"} />
+          <AgentAvatar name="squadchat" size="lg" state={failed ? undefined : "writing"} />
           <div className="auth__bubble" key={String(failed)} aria-live="polite">
             <h1 className="auth__title">{failed ? t("auth.desktop.handoverFailed") : t("auth.desktop.handover")}</h1>
             {failed && <p className="auth__lead">{t("auth.desktop.handoverFailedLead")}</p>}

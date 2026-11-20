@@ -47,7 +47,7 @@ export function EmailUndoPage({ token }: { token?: string }) {
       <form className="auth__form" onSubmit={submit} noValidate>
         <header className="auth__ask">
           <AgentAvatar
-            name="agentes.chat"
+            name="squadchat"
             size="lg"
             state={undo.isPending ? "writing" : undefined}
             expression={back ? "happy" : undefined}
@@ -111,7 +111,7 @@ export function SurfaceUndoPage({ token }: { token?: string }) {
       <form className="auth__form" onSubmit={submit} noValidate>
         <header className="auth__ask">
           <AgentAvatar
-            name="agentes.chat"
+            name="squadchat"
             size="lg"
             state={undo.isPending ? "writing" : undefined}
             expression={done ? "happy" : undefined}

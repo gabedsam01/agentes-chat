@@ -66,7 +66,7 @@ export function CardHorizon({
       canvas.height = h;
       canvas.style.height = `${h * CELL}px`;
       const dark = document.documentElement.dataset.theme === "dark";
-      const surface = hexOf(getComputedStyle(card).backgroundColor, dark ? "#191918" : "#f6f6f4");
+      const surface = hexOf(getComputedStyle(card).backgroundColor, dark ? "#13122f" : "#f6f6fb");
       const tones = horizonTones(color, surface, dark);
       const last = tones.length - 1;
       ctx.clearRect(0, 0, w, h);

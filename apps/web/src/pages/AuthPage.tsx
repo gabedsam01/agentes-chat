@@ -588,7 +588,7 @@ export function AuthPage({
       <form className="auth__form" onSubmit={submit} noValidate>
         <header className="auth__ask" ref={header} data-burst>
           <AgentAvatar
-            name="agentes.chat"
+            name="squadchat"
             size="lg"
             state={pending || step === "browser" ? "writing" : undefined}
             expression={expression}

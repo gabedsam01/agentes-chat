@@ -1,12 +1,12 @@
-# Contributing to agentes.chat
+# Contributing to squadchat
 
 Thanks for your interest. This document covers running the code, the checks a pull request must
 pass, the conventions that matter, and how contributions are licensed.
 
 ## Where things happen
 
-- **Questions and ideas:** [GitHub Discussions](https://github.com/agentes-chat/agentes-chat/discussions).
-- **Bugs and concrete feature requests:** issues (please use the issue forms).
+- **Questions and ideas:** [GitHub Discussions](https://github.com/gabedsam01/squad-chat/discussions).
+- **Bugs and concrete feature requests:** [issues](https://github.com/gabedsam01/squad-chat/issues) (please use the issue forms).
 - **Security problems:** never a public issue. See [SECURITY.md](SECURITY.md).
 
 ## Run it for development
@@ -89,24 +89,16 @@ app, a package or the Docker files also boots the image with `docker-compose.yml
 
 ## Licensing of your contribution
 
-- agentes.chat is AGPL-3.0-only ([LICENSE](LICENSE)). A package published under MIT says so in
-  its own LICENSE, and contributions to it are MIT: today that is the setup CLI, `packages/setup`
-  (`@agenteschat/setup`).
-- Contributions require accepting our [Contributor License Agreement](CLA.md) (CLA). The CLA bot
-  asks in a comment on your first pull request, and you accept by commenting with the sentence it
-  gives; after that it covers your later contributions too. There is no DCO sign-off. The bot goes
-  by each commit's author, so commit with an email linked to your GitHub account. A commit that a bot or
-  an AI tool authored under its own account has nobody to accept for it: make yourself its author.
-- You keep the copyright in your contribution. It is licensed to everyone under the license of the
-  code it goes into: here AGPL-3.0-only together with the additional permission under section 7
-  for app stores (at the top of [NOTICE](NOTICE)), so your code ships in the phone and desktop
-  apps like the rest. Through the CLA you also grant AGENTESCHAT, LLC, which maintains
-  agentes.chat, the right to license it on other terms, commercial ones included
-  ([COMMERCIAL.md](COMMERCIAL.md), [ADR 0180](docs/adr/0180-dual-licensing-and-cla.md)).
-- Contributing for your employer: make sure it allows you to. If you accept the CLA on behalf of a
-  company, you need to be able to bind it, and it then covers the company's contributions.
+- squadchat is licensed under [GNU AGPL-3.0-only](LICENSE), together with the additional permission
+  under section 7 for app stores and the section 7(b) attribution term at the top of
+  [NOTICE](NOTICE). A package published under MIT says so in its own LICENSE, and contributions to
+  it are MIT: today that is the setup CLI, `packages/setup` (`@agenteschat/setup`).
+- Contributions to this repository are licensed under the same terms as the code they modify
+  (inbound = outbound), with no separate contributor license agreement required.
+- You keep the copyright in your contribution. Make sure your employer allows it if you are
+  contributing on work time or equipment.
 - Submit only your own code, or code under MIT, BSD, ISC, Apache-2.0 or MPL-2.0 (whole files, with
-  their notices). Never GPL, AGPL, unlicensed or proprietary code.
+  their notices). Never GPL, AGPL, unlicensed or proprietary code from third parties.
 - AI-assisted code is fine. You answer for its origin.
 
 ## Names and logos

@@ -130,9 +130,9 @@ export const envVars = {
   },
   // Mirror: PUBLIC_SOURCE_URL in packages/client/src/lib/about.ts.
   SOURCE_URL: {
-    schema: z.url().default("https://github.com/agentes-chat/agentes-chat"),
+    schema: z.url().default("https://github.com/gabedsam01/squad-chat"),
     description:
-      "Where people get this server's source code, shown as \"Source code\" on the About screen of every app (AGPL-3.0 section 13). Running a modified version: point it at your modified source. Default: agentes.chat's public repository.",
+      "Where people get this server's source code, shown as \"Source code\" on the About screen of every app (AGPL-3.0 section 13). Running a modified version: point it at your modified source. Default: squadchat's public repository.",
     section: "Server",
     example: "https://github.com/your-org/your-fork",
   },
@@ -1170,26 +1170,27 @@ export const envVars = {
   FEEDBACK_EMAIL: {
     schema: z.email().optional(),
     description:
-      "For agentes.chat Cloud. Unset by default. The address the agentes.chat team reads feedback at: what people write in the apps' feedback form there, and what other servers send to its inbox (`POST /api/feedback/inbox`, there only), one email per message, nothing kept. A self-hosted server leaves it unset: its feedback goes to that team (`FEEDBACK_RELAY`).",
+      "Optional address where the operator reads feedback from the apps' feedback form (one email per message, nothing kept). Unset by default: no feedback form is shown unless `FEEDBACK_EMAIL` is set or `FEEDBACK_RELAY=true` with `FEEDBACK_URL`.",
     section: "Operator",
     example: "feedback@example.com",
   },
   FEEDBACK_RELAY: {
-    schema: z.stringbool().default(true),
+    schema: z.stringbool().default(false),
     description:
-      "What a person writes in the feedback form goes to the agentes.chat team, who make the app (`FEEDBACK_URL`), and the form says so. Only when someone presses Send, and only that message: their text, their name and address to answer them, the workspace's name, the app's version and the pictures they added, never a conversation (https://agentes.chat/docs/install-on-a-server#data). `false`: the apps show no form.",
+      "Optional relay that posts feedback from the apps' form to an external inbox (`FEEDBACK_URL`). Off by default (zero data sent anywhere unless both `FEEDBACK_RELAY=true` and `FEEDBACK_URL` are explicitly configured). When `FEEDBACK_EMAIL` is unset and `FEEDBACK_RELAY` is `false`, the apps show no form.",
     section: "Operator",
   },
   FEEDBACK_INBOX: {
-    schema: z.stringbool().default(true),
+    schema: z.stringbool().default(false),
     description:
-      "For agentes.chat Cloud. On agentes.chat's own servers, takes the feedback other servers send (`POST /api/feedback/inbox`) and mails each one to `FEEDBACK_EMAIL`, keeping nothing. `false` stops taking it. No other server has the route.",
+      "Optional inbox endpoint (`POST /api/feedback/inbox`) that forwards relayed feedback to `FEEDBACK_EMAIL`, keeping nothing. Off by default.",
     section: "Operator",
   },
   FEEDBACK_URL: {
-    schema: z.url().default("https://app.agentes.chat/api/feedback/inbox"),
-    description: "Where `FEEDBACK_RELAY` sends a feedback (as JSON in a POST).",
+    schema: z.url().optional(),
+    description: "Where `FEEDBACK_RELAY` sends a feedback (as JSON in a POST). Unset by default.",
     section: "Operator",
+    example: "https://feedback.example.com/api/feedback/inbox",
   },
   OPS_REPORT_EMAIL: {
     schema: z
@@ -1265,15 +1266,16 @@ export const envVars = {
     schema: z
       .stringbool()
       .transform((on) => (on ? "on" : "off") as "on" | "off")
-      .default("on"),
+      .default("off"),
     description:
-      "Send anonymous usage statistics to agentes.chat once a day: counts such as people, agents, machine sizes, AI tokens used and how much data the agents' browsers send and receive. Never messages, files, names or sites. `off` stops it, whatever the switch in Settings → General says (the installation's owner can turn it off there too). `docker compose run --rm agentes telemetry` prints exactly what would be sent (https://agentes.chat/docs/install-on-a-server#data).",
+      "Zero telemetry by default (`off`): nothing is sent to upstream or the maintainer. Only when explicitly set to `on` together with `TELEMETRY_URL` does the server send an anonymous daily count report (never messages, files, names or sites). `docker compose run --rm agentes telemetry` prints what a report would contain without sending anything.",
     section: "Usage report",
   },
   TELEMETRY_URL: {
-    schema: z.url().default("https://telemetry.agentes.chat/v1/report"),
-    description: "Where the usage report is sent (the report as JSON in a POST).",
+    schema: z.url().optional(),
+    description: "Where the usage report is sent (the report as JSON in a POST) when `TELEMETRY=on`. Unset by default.",
     section: "Usage report",
+    example: "https://telemetry.example.com/v1/report",
   },
   INSTALL_MODE: {
     schema: z.enum(["docker", "native", "desktop"]).optional(),

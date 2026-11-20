@@ -128,7 +128,7 @@ export function PlaceScene({
             <span className="ac-place__brand">
               <Avatar
                 kind="agent"
-                name="agentes.chat"
+                name="squadchat"
                 appearance={{ color: "sky", eyes: "round" }}
                 size="xl"
                 framed={false}

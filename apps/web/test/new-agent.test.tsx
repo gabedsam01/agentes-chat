@@ -1556,7 +1556,7 @@ describe("Criar agente: nothing leaves the steps", () => {
     // It opens the import: not one of the roles to choose, so it is never pressed-in.
     expect(other?.hasAttribute("aria-pressed")).toBe(false);
     expect([...(other?.querySelectorAll(".newag__marks img") ?? [])].map((i) => i.getAttribute("src"))).toEqual([
-      "/brands/grok-bot.svg",
+      "/brands/grok-bot-dark.svg",
       "/brands/chatgpt-dots.svg",
       "/brands/openbotrun.svg",
     ]);

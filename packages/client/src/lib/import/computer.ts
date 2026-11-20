@@ -63,7 +63,7 @@ export function migratePrompt(server: string, card: ComputerCard, os: ComputerOs
   const { app } = SOURCES[card];
   const command = migrateCommand(server, card, os, "<folder>");
   const shell = os === "windows" ? " in PowerShell" : "";
-  return `Move my ${app} agents to agentes.chat.
+  return `Move my ${app} agents to squadchat.
 
 1. Ask me where to save the export file. Suggest my Downloads folder.
 
@@ -75,5 +75,5 @@ export function migratePrompt(server: string, card: ComputerCard, os: ComputerOs
 
 3. Tell me what it found (agents, routines, memories, files), what it left out, and the full path of the file. If it failed, tell me what it said.
 
-Don't open or change the file, and don't read keys, tokens or passwords yourself. I will drop the file on agentes.chat.`;
+Don't open or change the file, and don't read keys, tokens or passwords yourself. I will drop the file on squadchat.`;
 }

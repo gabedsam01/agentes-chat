@@ -5,7 +5,7 @@ import { dark, light } from "../src/index";
 const HEX = /^#[0-9a-f]{6}$/;
 
 describe("accentPalette", () => {
-  test("the design system's blue gives back the default tokens exactly", () => {
+  test("the design system's default accent gives back the default tokens exactly", () => {
     const p = accentPalette(DEFAULT_ACCENT);
     for (const [palette, theme] of [
       [p.light, light],
@@ -18,7 +18,7 @@ describe("accentPalette", () => {
         onAgent: theme.onAgent,
       });
     }
-    expect(accentPalette("#0063D1")).toEqual(p);
+    expect(accentPalette("#B34D00")).toEqual(p);
   });
 
   const picks = {

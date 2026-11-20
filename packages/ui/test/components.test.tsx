@@ -870,16 +870,18 @@ describe("Menu", () => {
 });
 
 describe("Logo, Icon, Meter", () => {
-  test("logo has an accessible name; the mark uses the agent token classes", () => {
+  test("logo has an accessible name; the mark uses the logo token classes", () => {
     const { container } = render(
       <>
         <Logo />
         <Logo variant="expanded" />
       </>,
     );
-    expect(body().getByRole("img", { name: "agentes" })).toBeTruthy();
-    expect(body().getByRole("img", { name: "agentes.chat" }).textContent).toBe("agentes.chat");
-    expect(container.querySelector(".ac-logo__body")).not.toBeNull();
+    const logos = body().getAllByRole("img", { name: "squadchat" });
+    expect(logos).toHaveLength(2);
+    expect(logos[0]?.textContent).toBe("squadchat");
+    expect(container.querySelector(".ac-logo__bubble")).not.toBeNull();
+    expect(container.querySelector(".ac-logo__agent")).not.toBeNull();
   });
 
   test("every icon renders a stroke-only 20px glyph, decorative unless labelled", () => {

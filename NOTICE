@@ -37,6 +37,11 @@ logos (section 7(e)). See TRADEMARKS.md.
 Source: https://github.com/agentes-chat/agentes-chat. Release images and desktop app releases
 are built from the tag of their version.
 
+squadchat — Modified fork of agentes.chat (2026), maintained at
+https://github.com/gabedsam01/squad-chat (https://squad-chat-6wd.pages.dev).
+Distributed under GNU AGPL-3.0-only with all upstream notices and Section 7 terms above preserved.
+squadchat is an independent fork and is not affiliated with or endorsed by AGENTESCHAT, LLC.
+
 Third-party software keeps its own license. The license texts are next to what they cover:
 
 - apps/desktop/src-tauri/licenses/bun: the desktop app's runner is compiled with Bun (MIT),
@@ -75,6 +80,11 @@ Third-party software keeps its own license. The license texts are next to what t
   0.6B v3 (CC BY 4.0) and OpenAI's Whisper tiny (MIT), as ONNX exports by others; deploy/speech/
   NOTICE credits them and goes into the image. It is built on the python image (Debian, with its
   ffmpeg) and Python packages from PyPI, each keeping its license.
+- landing/src/assets/fonts: Instrument Serif (Copyright 2022 The Instrument Serif Project Authors,
+  https://github.com/Instrument/instrument-serif, SIL Open Font License 1.1; license text in
+  landing/src/assets/fonts/LICENSE-fontsource-instrument-serif.txt), along with Instrument Sans,
+  Bricolage Grotesque, and JetBrains Mono (all SIL Open Font License 1.1; full license texts in
+  landing/src/assets/fonts/).
 
 Every mark and logo listed here is a trademark of its owner, used only to name its product or
 service; none of these licenses grants trademark rights.

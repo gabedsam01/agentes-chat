@@ -20,12 +20,12 @@ afterEach(() => cleanup());
  */
 type Who = "paid" | "owner" | "member" | "selfhost";
 
-const WHY = "Um plano entra no computador do workspace, e o computador vem com um plano ativo do agentes.chat.";
+const WHY = "Um plano entra no computador do workspace, e o computador vem com um plano ativo do squadchat.";
 const ASK = "Quem administra o workspace pode resolver isso.";
-const PAY = "Ver planos do agentes.chat";
+const PAY = "Ver planos do squadchat";
 const KEY = "Usar uma chave de API";
-const HELD = "Os agentes usam a chave quando o plano do agentes.chat do workspace estiver ativo.";
-const CLOSED = "As chaves de API abrem com o plano do agentes.chat do workspace.";
+const HELD = "Os agentes usam a chave quando o plano do squadchat do workspace estiver ativo.";
+const CLOSED = "As chaves de API abrem com o plano do squadchat do workspace.";
 
 const COMPUTER: AiComputer = {
   machineId: "machine_1",
@@ -171,7 +171,7 @@ describe("a plan with no agentes.chat plan in force", () => {
     const { dialog } = await connect("selfhost");
     for (const choice of PLAN_CHOICES) {
       const panel = await planPanel(dialog, choice);
-      expect(shownText(panel)).not.toContain("agentes.chat");
+      expect(shownText(panel)).not.toContain("squadchat");
       expect(buttonNamed(panel, PAY)).toBeNull();
     }
     await pickCard(dialog, "Chave de API");

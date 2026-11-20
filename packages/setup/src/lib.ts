@@ -701,7 +701,7 @@ export function diagnoseAppLogs(logs: string): Problem | null {
 
 /** The question's words are the web app's switch's (Settings → General), so every place says the same. */
 export const TELEMETRY_TEXT = [
-  "Send anonymous usage statistics to agentes.chat: counts such as people, agents,",
+  "Send anonymous usage statistics to squadchat: counts such as people, agents,",
   "machine sizes, AI tokens used and how much data the agents' browsers send and",
   "receive. Never messages, files, names or sites.",
 ];

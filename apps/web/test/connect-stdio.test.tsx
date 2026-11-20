@@ -40,7 +40,7 @@ test("disabled stdio explains execution host and cannot submit", async () => {
     org: true,
   });
   await screen().findByText(/Programas locais estão desativados/);
-  expect(screen().getByText(/Executa onde o agentes\.chat está instalado/).textContent).toContain("contêiner");
+  expect(screen().getByText(/Executa onde o squadchat está instalado/).textContent).toContain("contêiner");
   expect((screen().getByRole("button", { name: "Conectar" }) as HTMLButtonElement).disabled).toBe(true);
 });
 

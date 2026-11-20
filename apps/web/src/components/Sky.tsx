@@ -784,8 +784,8 @@ export function OnboardingProgress({ progress }: { progress: number }) {
     palette: (bg) => {
       const [r, g, b] = parseColor(bg);
       const dark = r * 0.3 + g * 0.59 + b * 0.11 < 128;
-      const sky = dark ? ["#0f56c4", "#2b74e6", "#4b93ff", "#78b4ff"] : ["#a6cfff", "#78b4ff", "#4b93ff", "#2b74e6"];
-      return [bg, mix(bg, "#78b4ff", dark ? 0.1 : 0.14), ...sky];
+      const sky = dark ? ["#652b55", "#b44a52", "#e07b39", "#ffb46a"] : ["#ffd09e", "#ffb46a", "#e07b39", "#b34d00"];
+      return [bg, mix(bg, "#ffb46a", dark ? 0.1 : 0.14), ...sky];
     },
     // Called once per frame, before the field: eases the fill toward the target.
     blobs: () => {

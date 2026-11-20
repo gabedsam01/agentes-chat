@@ -11,9 +11,7 @@ import {
   useRemoveCredential,
   useRemoveCredentialCopies,
   useRotateCredential,
-  useServerTelemetry,
   useSetOpenRouterModels,
-  useSetServerTelemetry,
   useSettings,
   useUpdateSettings,
   useUsageReport,
@@ -108,7 +106,6 @@ import { RolesSection } from "@/components/roles/RolesSection";
 import { SkillsSection } from "@/components/Skills";
 import { StorageSection } from "@/components/StorageSettings";
 import { TeamMemoryCard } from "@/components/TeamMemory";
-import { OpenPrefsButton, useLocalServerHere } from "@/components/ThisMac";
 import { VoiceSettingsSection } from "@/components/VoiceSettings";
 import { VaultSection } from "@/components/vault/VaultSection";
 import { AccentRow } from "@/components/WorkspaceAccent";
@@ -675,7 +672,6 @@ function GeneralSection() {
 
       <TeamMemoryCard />
 
-      <UsageStatisticsCard />
       {org.role === "owner" && !org.deletion && <DeleteWorkspaceCard />}
       <OrgLogoDialog open={logo} onClose={() => setLogo(false)} />
       <WorkspaceModeDialog
@@ -710,95 +706,6 @@ function DeleteWorkspaceCard() {
         }
       />
       <DeleteWorkspaceDialog org={org} open={open !== null} onClose={() => setOpen(null)} />
-    </Card>
-  );
-}
-
-/**
- * The usage report's switch (ADR 0060 §5): the title, the switch and "Ver o que é enviado". Only the
- * installation's owner gets it (the API answers `null` to everyone else, and on agentes.chat itself).
- */
-function UsageStatisticsCard() {
-  const { t } = useTranslation();
-  const telemetry = useServerTelemetry();
-  const set = useSetServerTelemetry();
-  const [open, setOpen] = useState(false);
-  const here = useLocalServerHere();
-  const data = telemetry.data;
-  if (!data) return null;
-  // Switched off in the app that runs this server: on that very computer, its Preferences › Servers one click away.
-  const inApp = data.envOff && data.report.install === "desktop" && here;
-  return (
-    <Card aria-labelledby="sec-telemetry">
-      <CardHeader
-        id="sec-telemetry"
-        icon="chart"
-        title={t("settings.telemetry.title")}
-        action={
-          <Button
-            variant="link"
-            onClick={() => {
-              setOpen(true);
-              void telemetry.refetch();
-            }}
-          >
-            {t("settings.telemetry.see")}
-          </Button>
-        }
-      />
-      <div className="settings-rows">
-        <div className="settings-row ac-actrow">
-          <div className="settings-row__text ac-actrow__text">
-            <span className="ac-hintline">
-              <label className="settings-row__label" htmlFor="set-telemetry">
-                {t("settings.telemetry.label")}
-              </label>
-              <InfoHint name={t("common.about", { label: t("settings.telemetry.label") })} id="set-telemetry-hint">
-                {t("settings.telemetry.help")}
-              </InfoHint>
-            </span>
-            {inApp ? (
-              <span className="settings-row__status ac-actline">
-                <span id="set-telemetry-help">{t("settings.telemetry.envOffHere")}</span>
-                <OpenPrefsButton tab="servers">{t("machines.thisMac.openServers")}</OpenPrefsButton>
-              </span>
-            ) : (
-              data.envOff && (
-                <span className="settings-row__status" id="set-telemetry-help">
-                  {t(
-                    data.report.install === "desktop"
-                      ? "settings.telemetry.envOffDesktop"
-                      : "settings.telemetry.envOff",
-                  )}
-                </span>
-              )
-            )}
-          </div>
-          <div className="settings-row__control">
-            <Switch
-              id="set-telemetry"
-              checked={data.enabled && !data.envOff}
-              onCheckedChange={(on) => set.mutate(on)}
-              disabled={data.envOff || set.isPending}
-              aria-describedby={data.envOff ? "set-telemetry-hint set-telemetry-help" : "set-telemetry-hint"}
-            />
-          </div>
-        </div>
-      </div>
-      <Dialog
-        open={open}
-        onOpenChange={setOpen}
-        title={t("settings.telemetry.dialogTitle")}
-        description={t("settings.telemetry.dialogText")}
-        closeLabel={t("common.close")}
-        width={560}
-      >
-        <DialogBody>
-          <pre className="md__code" style={{ margin: 0, maxHeight: 420 }}>
-            {JSON.stringify(data.report, null, 2)}
-          </pre>
-        </DialogBody>
-      </Dialog>
     </Card>
   );
 }

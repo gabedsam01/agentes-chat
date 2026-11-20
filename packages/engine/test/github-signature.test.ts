@@ -81,9 +81,7 @@ describe("the line and the credit (ADR 0156)", () => {
   test("in the workspace owner's language, for the person who asked, else the agent's responsável, else nobody", async () => {
     f = await setup();
     const bia = await addMember(f.db, f.org.id, "member", "bia");
-    expect(await signatureLine(f.db, { orgId: f.org.id, agentId: f.agent.id })).toBe(
-      "Dev, agente de ana no agentes.chat",
-    );
+    expect(await signatureLine(f.db, { orgId: f.org.id, agentId: f.agent.id })).toBe("Dev, agente de ana no squadchat");
 
     await addChannelMember(f.db, f.owner.id, f.org.id, f.general.id, { userId: bia.id });
     const msg = await postPersonMessage({ db: f.db, pubsub: f.pubsub }, bia.id, f.org.id, f.general.id, { body: "oi" });
@@ -100,14 +98,14 @@ describe("the line and the credit (ADR 0156)", () => {
       })
       .returning();
     const ctx = { orgId: f.org.id, agentId: f.agent.id, runId: run?.id };
-    expect(await signatureLine(f.db, ctx)).toBe("Dev, agente de bia no agentes.chat");
+    expect(await signatureLine(f.db, ctx)).toBe("Dev, agente de bia no squadchat");
 
     await f.db.update(schema.users).set({ locale: "en" }).where(eq(schema.users.id, f.owner.id));
-    expect(await signatureLine(f.db, ctx)).toBe("Dev, agent for bia on agentes.chat");
+    expect(await signatureLine(f.db, ctx)).toBe("Dev, agent for bia on squadchat");
     await f.db.update(schema.agents).set({ ownerUserId: null }).where(eq(schema.agents.id, f.agent.id));
     await f.db.delete(schema.organizationMembers).where(eq(schema.organizationMembers.userId, bia.id));
     expect(await signatureLine(f.db, { orgId: f.org.id, agentId: f.agent.id, runId: run?.id })).toBe(
-      "Dev, an agent on agentes.chat",
+      "Dev, an agent on squadchat",
     );
   });
 

@@ -381,23 +381,26 @@ describe("```mermaid fences", () => {
       asked.push(`${dark ? "dark" : "light"}: ${source}`);
       return `<svg xmlns="http://www.w3.org/2000/svg"><text>${dark ? "dark" : "light"}</text></svg>`;
     });
-    const el = render(<Markdown source={fence(FLOW)} />).container;
-    await settle();
-    expect(shown(el)).toContain("<text>light</text>");
     const html = document.documentElement;
+    const prev = html.dataset.theme;
+    html.dataset.theme = "dark";
     try {
-      await act(async () => {
-        html.dataset.theme = "dark";
-      });
-      await settle();
-      expect(shown(el)).toContain("<text>light</text>");
-      await pause(350);
+      const el = render(<Markdown source={fence(FLOW)} />).container;
       await settle();
       expect(shown(el)).toContain("<text>dark</text>");
-      expect(asked).toEqual([`light: ${FLOW}`, `dark: ${FLOW}`]);
+      await act(async () => {
+        html.dataset.theme = "light";
+      });
+      await settle();
+      expect(shown(el)).toContain("<text>dark</text>");
+      await pause(350);
+      await settle();
+      expect(shown(el)).toContain("<text>light</text>");
+      expect(asked).toEqual([`dark: ${FLOW}`, `light: ${FLOW}`]);
     } finally {
       await act(async () => {
-        delete html.dataset.theme;
+        if (prev === undefined) delete html.dataset.theme;
+        else html.dataset.theme = prev;
       });
     }
   });

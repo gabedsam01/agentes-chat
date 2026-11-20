@@ -31,7 +31,7 @@ const cloud = () =>
 test("the tab reads a legal page's title while it shows, and what it read before once it's left", async () => {
   document.title = "agentes.chat";
   await renderPage(<LegalPage kind="terms" />, { api: signedOut() });
-  expect(document.title).toBe(`${legalDocument("terms", "en").title} · agentes.chat`);
+  expect(document.title).toBe(`${legalDocument("terms", "en").title} · squadchat`);
   cleanup();
   expect(document.title).toBe("agentes.chat");
 });
