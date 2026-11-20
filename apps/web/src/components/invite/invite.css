@@ -199,6 +199,9 @@
   min-height: var(--control-h-md);
   padding-block: calc((var(--control-h-md) - 2px - 20px) / 2);
 }
+.ac-select__trigger.invite-role > .ac-select__chev {
+  translate: 0 -1px;
+}
 .invite-role__value {
   display: flex;
   flex-wrap: wrap;

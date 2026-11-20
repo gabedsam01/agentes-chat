@@ -1,6 +1,7 @@
 import { Popover as RPopover } from "radix-ui";
 import {
   type DragEvent,
+  Fragment,
   type KeyboardEvent,
   type ReactNode,
   type RefObject,
@@ -397,11 +398,7 @@ function FormatBar({
       {FORMAT_KINDS.map((kind, i) => {
         const hint = formatShortcutHint(kind, mod);
         return (
-          <span
-            key={kind}
-            className="ac-formatbar__item"
-            data-group-end={FORMAT_GROUP_ENDS.includes(kind) || undefined}
-          >
+          <Fragment key={kind}>
             <button
               type="button"
               className="ac-formatbar__btn"
@@ -413,7 +410,8 @@ function FormatBar({
             >
               <Icon name={FORMAT_ICON[kind]} size={16} />
             </button>
-          </span>
+            {FORMAT_GROUP_ENDS.includes(kind) && <span className="ac-formatbar__sep" aria-hidden="true" />}
+          </Fragment>
         );
       })}
     </div>

@@ -8194,15 +8194,10 @@ html:not([data-pointer]) .ac-video__rail:focus-visible .ac-video__knob {
     transition: none;
   }
 }
-.ac-formatbar__item {
-  display: inline-flex;
-  flex: none;
-}
-.ac-formatbar__item[data-group-end]::after {
-  content: "";
+.ac-formatbar__sep {
   width: 1px;
   height: 16px;
-  margin: auto 0 auto var(--space-1);
+  flex: none;
   background: var(--line);
 }
 .ac-formatbar__btn {

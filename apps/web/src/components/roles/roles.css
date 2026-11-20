@@ -658,11 +658,13 @@ html:not([data-pointer]) .roles-names__more:focus-visible {
 }
 .roles-mail__row {
   flex-wrap: nowrap;
+  align-items: flex-start;
   padding-block: var(--space-3);
 }
 .roles-mail__row > .ac-icon {
   flex: none;
   color: var(--muted);
+  translate: 0 calc(10px - var(--cap-mid) - 50%);
 }
 .roles-mail__text {
   display: grid;

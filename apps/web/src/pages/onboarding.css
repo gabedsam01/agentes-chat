@@ -581,6 +581,9 @@ html:not([data-pointer]) .onb__logo:focus-visible {
   .onb__me {
     order: 1;
   }
+  .onb__rail > .onb__progress {
+    display: none;
+  }
   .onb__cols {
     display: block;
   }
